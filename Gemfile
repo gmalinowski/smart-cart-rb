@@ -54,7 +54,7 @@ group :development, :test do
 
   gem "vite_rails", "~> 3.0"
 
-  gem 'rspec-rails'
+  gem "rspec-rails"
 
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.6"
@@ -74,5 +74,3 @@ group :test do
 end
 
 gem "view_component", "~> 4.5"
-
-
