@@ -98,8 +98,9 @@ global level often require redesigning the entire project.
 
 Wireframes: [link](https://app.moqups.com/aOzyxSGZpRLksQLUObjLiNRienMWPO0M/view/page/a7bc758b4)
 
-
-
+## 2026-03-15
+Scratch database schema.
+Here is the diagram: [link](https://dbdiagram.io/d/69b6d813fb2db18e3b83b356)
 
 
 
