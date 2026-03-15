@@ -43,6 +43,7 @@
     <orderEntry type="library" scope="PROVIDED" name="addressable (v2.8.9, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ast (v2.4.3, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="base64 (v0.3.0, mise: 4.0.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bcrypt (v3.1.21, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bcrypt_pbkdf (v1.1.2, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bigdecimal (v4.0.1, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bindex (v0.8.1, mise: 4.0.1) [gem]" level="application" />
@@ -58,6 +59,7 @@
     <orderEntry type="library" scope="PROVIDED" name="crass (v1.0.6, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="date (v3.5.1, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="debug (v1.11.1, mise: 4.0.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="devise (v5.0.2, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="diff-lcs (v1.6.2, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv (v3.2.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="drb (v2.2.3, mise: 4.0.1) [gem]" level="application" />
@@ -103,6 +105,7 @@
     <orderEntry type="library" scope="PROVIDED" name="net-ssh (v7.3.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="nio4r (v2.7.5, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="nokogiri (v1.19.1, mise: 4.0.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="orm_adapter (v0.5.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ostruct (v0.6.3, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="parallel (v1.27.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="parser (v3.3.10.2, mise: 4.0.1) [gem]" level="application" />
@@ -130,6 +133,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rdoc (v7.2.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="regexp_parser (v2.11.3, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="reline (v0.6.3, mise: 4.0.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="responders (v3.2.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rexml (v3.4.4, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-core (v3.13.6, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-expectations (v3.13.5, mise: 4.0.1) [gem]" level="application" />
@@ -166,6 +170,7 @@
     <orderEntry type="library" scope="PROVIDED" name="view_component (v4.5.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="TEST" name="vite_rails (v3.0.20, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="vite_ruby (v3.9.3, mise: 4.0.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="warden (v1.2.9, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="web-console (v4.3.0, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="TEST" name="webmock (v3.26.1, mise: 4.0.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="websocket (v1.2.11, mise: 4.0.1) [gem]" level="application" />
@@ -209,6 +214,9 @@
     <entry key="config/cable">
       <value>file://$MODULE_DIR$/config/cable.yml</value>
     </entry>
+    <entry key="config/cache">
+      <value>file://$MODULE_DIR$/config/cache.yml</value>
+    </entry>
     <entry key="config/database">
       <value>file://$MODULE_DIR$/config/database.yml</value>
     </entry>
@@ -230,8 +238,8 @@
     <entry key="config/routes.rb">
       <value>file://$MODULE_DIR$/config/routes.rb</value>
     </entry>
-    <entry key="config/secrets">
-      <value>file://$MODULE_DIR$/config</value>
+    <entry key="config/solid_cache">
+      <value>file://$MODULE_DIR$/config/solid_cache.yml</value>
     </entry>
     <entry key="db">
       <value>file://$MODULE_DIR$/db</value>
@@ -265,6 +273,11 @@
     </entry>
     <entry key="public/stylesheets">
       <value>file://$MODULE_DIR$/public/stylesheets</value>
+    </entry>
+    <entry key="test/mailers/previews">
+      <value>file://$MODULE_DIR$/spec/mailers/previews</value>
+      <value>file://$MODULE_DIR$/test/mailers/previews</value>
+      <value>file://$MODULE_DIR$/test/mailers/previews</value>
     </entry>
     <entry key="tmp">
       <value>file://$MODULE_DIR$/tmp</value>

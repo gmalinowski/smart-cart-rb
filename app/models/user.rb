@@ -1,0 +1,14 @@
+class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable,
+         :confirmable
+
+  before_save :update_session_version, if: :will_save_change_to_encrypted_password?
+
+  private
+  def update_session_version
+    self.session_version += 1
+  end
+end
