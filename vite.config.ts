@@ -4,7 +4,11 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [
-      RailsPlugin(),
+      RailsPlugin({
+          fullReload: {
+              additionalPaths: ['app/components/**/*'],
+          }
+      }),
       tailwindcss(),
   ],
 })
