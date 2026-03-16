@@ -102,6 +102,11 @@ Wireframes: [link](https://app.moqups.com/aOzyxSGZpRLksQLUObjLiNRienMWPO0M/view/
 Scratch database schema.
 Here is the diagram: [link](https://dbdiagram.io/d/69b6d813fb2db18e3b83b356)
 
+## 2026-03-16
+Basic auth functionality using Devise — signup, signin, password reset, email confirmation. Added basic styling for all auth pages.
 
+**session_version** — by default, Rails provides no way to invalidate user sessions on other devices. This is because sessions are stored in encrypted cookies, signed with the Rails master key, and the server holds no session state.
+
+The simplest solution, without migrating sessions to the database, was introducing a session_version counter on the User model. Each time a user changes their password, the counter increments. Any existing sessions stored in the browser carry the old version and are immediately rejected on the next request.
 
 
