@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   def check_session_version
     return unless current_user
+    return if session[:session_version].blank?
     if current_user.session_version != session[:session_version]
       sign_out current_user
       redirect_to new_user_session_path

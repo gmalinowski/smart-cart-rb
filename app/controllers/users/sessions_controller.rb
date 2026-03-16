@@ -9,9 +9,9 @@ class Users::SessionsController < Devise::SessionsController
   # end
 
   # POST /resource/sign_in
-  def create
+  def after_sign_in_path_for(resource)
+    session[:session_version] = current_user&.session_version
     super
-    session[:session_version] = current_user.session_version
   end
 
   # DELETE /resource/sign_out

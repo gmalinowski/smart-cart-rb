@@ -4,7 +4,6 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :confirmable
-
   before_save :update_session_version, if: :will_save_change_to_encrypted_password?
 
   private

@@ -1,9 +1,9 @@
 
 <div class="flex flex-col items-center justify-center gap-4">
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "flex flex-col gap-4" }) do |f| %>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "" }) do |f| %>
 
-<!--  <fieldset class="fieldset gap-4 bg-base-200 border-base-300 m-auto rounded-box w-xs border p-4">-->
+    <div class="flex flex-col w-full gap-3">
     <legend class="fieldset-legend">Sign up</legend>
 
     <%= f.label :email, class: "floating-label" do %>
@@ -29,6 +29,7 @@
 
     <%= f.submit "Sign up", class: "btn btn-success mt-4" %>
 <!--  </fieldset>-->
+    </div>
 <% end %>
 
 <%= render "devise/shared/links" %>
