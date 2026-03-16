@@ -1,0 +1,5 @@
+<% if resource.errors.has_key?(input_name) %>
+  <div class="text-error py-2">
+    <%= resource.errors[input_name].first %>
+  </div>
+<% end %>

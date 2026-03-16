@@ -1,0 +1,29 @@
+
+<div class="flex flex-col items-center justify-center gap-4">
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "flex flex-col gap-4"}) do |f| %>
+    <legend class="fieldset-legend">Sign up</legend>
+
+    <%= f.label :email, class: "floating-label" do %>
+      <span>Your email</span>
+      <%= f.email_field :email, placeholder: "Your Email", autofocus: true, autocomplete: "email", class: "input" %>
+      <%= render "devise/shared/field_error", input_name: :email %>
+    <% end %>
+
+    <%= f.label :email, class: "floating-label" do %>
+      <span>Password</span>
+      <%= f.password_field :password, placeholder: "Password", autocomplete: "current-password", class: "input" %>
+      <%= render "devise/shared/field_error", input_name: :password %>
+    <% end %>
+
+    <% if devise_mapping.rememberable? %>
+        <label class="label">
+          <%= f.check_box :remember_me, class: "checkbox" %>
+          <%= f.label :remember_me %>
+        </label>
+    <% end %>
+
+    <%= f.submit "Log in", class: "btn btn-success mt-4" %>
+<% end %>
+
+<%= render "devise/shared/links" %>
+</div>

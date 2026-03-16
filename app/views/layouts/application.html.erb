@@ -1,43 +1,47 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= content_for(:title) || "Smart Cart" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Smart Cart">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<html class="bg-base-300">
+<head>
+  <title><%= content_for(:title) || "Smart Cart" %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Smart Cart">
+  <meta name="mobile-web-app-capable" content="yes">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= yield :head %>
+  <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+  <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+  <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%#= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= vite_stylesheet_tag 'application' %>
-    <%= vite_client_tag %>
-    <%= vite_typescript_tag 'application' %>
-    <!--
-      If using a TypeScript entrypoint file:
-        vite_typescript_tag 'application'
+  <%# Includes all stylesheet files in app/assets/stylesheets %>
+  <%#= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  <%= vite_stylesheet_tag 'application' %>
+  <%= vite_client_tag %>
+  <%= vite_typescript_tag 'application' %>
+  <!--
+    If using a TypeScript entrypoint file:
+      vite_typescript_tag 'application'
 
-      If using a .jsx or .tsx entrypoint, add the extension:
-        vite_javascript_tag 'application.jsx'
+    If using a .jsx or .tsx entrypoint, add the extension:
+      vite_javascript_tag 'application.jsx'
 
-      Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
-    -->
+    Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
+  -->
 
-  </head>
+</head>
 
-  <body>
-    <p class="text-blue-800"><%= notice %></p>
-    <p class="text-red-800"><%= alert %></p>
-    <%= yield %>
-  </body>
+<body class="bg-base-300">
+
+<%= render "layouts/navigation" %>
+<main class="container bg-base-100 mx-auto px-4 py-8">
+  <p class="text-blue-800"><%= notice %></p>
+  <p class="text-red-800"><%= alert %></p>
+  <%= yield %>
+</main>
+</body>
 </html>
