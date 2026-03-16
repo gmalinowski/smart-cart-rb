@@ -1,0 +1,33 @@
+
+<div class="flex flex-col items-center justify-center gap-4">
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+
+  <%= f.hidden_field :reset_password_token %>
+
+    <div class="flex flex-col w-full gap-3">
+      <legend class="fieldset-legend">Change your password</legend>
+
+
+      <%= f.label :email, class: "floating-label" do %>
+        <span>Password</span>
+        <%= f.password_field :password, placeholder: "New Password", autocomplete: "new-password", class: "input" %>
+        <%= render "devise/shared/field_error", input_name: :password %>
+        <% if @minimum_password_length %>
+          <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
+        <% end %>
+      <% end %>
+
+      <%= f.label :password_confirmation, class: "floating-label" do %>
+        <span>Password confirmation</span>
+        <%= f.password_field :password_confirmation, placeholder: "Password confirmation", autocomplete: "new-password", class: "input" %>
+        <%= render "devise/shared/field_error", input_name: :password_confirmation %>
+      <% end %>
+
+
+    <%= f.submit "Change my password", class: "btn btn-success mt-4" %>
+    </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+
+</div>

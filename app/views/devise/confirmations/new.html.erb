@@ -1,0 +1,20 @@
+
+<div class="flex flex-col items-center justify-center gap-4">
+<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
+
+    <div class="flex flex-col w-full gap-3">
+
+    <legend class="fieldset-legend">Resend confirmation instructions</legend>
+    <%= f.label :email, class: "floating-label" do %>
+      <span>Your email</span>
+      <%= f.email_field :email, placeholder: "Your Email", autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), class: "input" %>
+      <%= render "devise/shared/field_error", input_name: :email %>
+    <% end %>
+
+    <%= f.submit "Resend confirmation instructions", class: "btn btn-success mt-4" %>
+    </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+
+</div>
