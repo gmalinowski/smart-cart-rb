@@ -1,0 +1,27 @@
+
+RSpec.describe "ListItems", type: :request do
+  describe "POST /list_items" do
+    context 'when user is logged in' do
+      let (:user) { create(:user) }
+      before { sign_in_with_session user }
+
+      it 'creates a new shopping list with the item' do
+        post list_items_path, params: { name: 'milk' }
+        expect(ShoppingListItem.count).to eq(1)
+        expect(ShoppingList.count).to eq(1)
+      end
+
+      it 'redirects to edit shopping list after creation' do
+        post list_items_path, params: { name: 'milk' }
+        expect(response).to redirect_to(edit_shopping_list_path(ShoppingList.last))
+      end
+    end
+
+    context 'when user is not logged in' do
+      it 'redirects to sign in page' do
+        post list_items_path, params: { name: 'milk' }
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+end
