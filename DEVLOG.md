@@ -109,4 +109,11 @@ Basic auth functionality using Devise — signup, signin, password reset, email 
 
 The simplest solution, without migrating sessions to the database, was introducing a session_version counter on the User model. Each time a user changes their password, the counter increments. Any existing sessions stored in the browser carry the old version and are immediately rejected on the next request.
 
+## 2026-03-17
+2026-03-17
+Homepage with shopping list creation flow.
+
+Added homepage with a single input form — user types a product name and hits "Add". This creates a new shopping list (named with today's date) with the first item, then redirects to the list edit page. List creation logic is encapsulated in a CreateShoppingListWithItem service object.
+
+Database schema changes: Added shopping_lists and shopping_list_items tables with UUID primary keys. Items have cascade delete on shopping list removal. Dropped status column from shopping_lists in favor of dynamic state checking (draft = no groups and no public link).
 
