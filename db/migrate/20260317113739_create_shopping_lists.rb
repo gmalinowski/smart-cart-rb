@@ -4,7 +4,6 @@ class CreateShoppingLists < ActiveRecord::Migration[8.1]
 
       t.belongs_to :owner, foreign_key: { to_table: :users }, null: false, type: :uuid
       t.string :name, null: false
-      t.integer :status, null: false, default: 0
       t.text :note, null: true
       t.timestamps
 

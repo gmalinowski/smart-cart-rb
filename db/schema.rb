@@ -33,7 +33,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_120735) do
     t.string "name", null: false
     t.text "note"
     t.uuid "owner_id", null: false
-    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_shopping_lists_on_owner_id"
   end
