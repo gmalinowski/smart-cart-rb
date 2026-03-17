@@ -80,3 +80,5 @@ gem "view_component", "~> 4.5"
 gem "devise", "~> 5.0"
 
 gem "rails_heroicon", "~> 2.3"
+
+gem "shoulda-matchers", "~> 7.0", group: :test
