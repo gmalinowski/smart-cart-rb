@@ -14,7 +14,7 @@ RSpec.describe "ListItems", type: :request do
 
       it 'redirects to edit shopping list after creation' do
         post list_items_path, params: { shopping_list_item: { name: 'milk' } }
-        expect(response).to redirect_to(edit_shopping_list_path(ShoppingList.last))
+        expect(response).to redirect_to(shopping_list_path(ShoppingList.last))
       end
     end
 

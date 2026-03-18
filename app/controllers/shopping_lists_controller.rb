@@ -1,5 +1,5 @@
 
 class ShoppingListsController < ApplicationController
-  def edit
+  def show
   end
 end
