@@ -5,7 +5,7 @@ class ListItemsController < ApplicationController
     owner_id = current_user.id
     item_name = list_item_params[:name]
     list = CreateShoppingListWithItem.new(item_name: item_name, owner_id: owner_id).call
-    redirect_to edit_shopping_lists_path(list)
+    redirect_to edit_shopping_list_path(list)
   end
 
 
