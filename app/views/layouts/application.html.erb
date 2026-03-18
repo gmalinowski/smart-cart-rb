@@ -7,6 +7,7 @@
   <meta name="application-name" content="Smart Cart">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="view-transition" content="same-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
@@ -47,6 +48,7 @@
   <p class="text-red-800"><%= alert %></p>
     <% end %>
   <%= yield %>
+  <%= render "layouts/dock" %>
 </main>
 </body>
 </html>
