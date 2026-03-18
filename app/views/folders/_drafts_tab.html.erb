@@ -1,0 +1,24 @@
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <!-- head -->
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- row 1 -->
+    <% shopping_lists.each_with_index do |draft_list, index| %>
+      <tr onclick="<%= "itemModal#{index}.showModal()" %>">
+        <td><%= draft_list.name %></td>
+        <td><%= time_ago_in_words(draft_list.created_at) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <% shopping_lists.each_with_index do |draft_list, index| %>
+  <%= render "draft_dialog", list: draft_list, index: index %>
+  <% end %>
+</div>
