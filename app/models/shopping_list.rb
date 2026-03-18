@@ -4,4 +4,6 @@ class ShoppingList < ApplicationRecord
 
   validates :owner_id, presence: true
   validates :name, presence: true
+
+  scope :drafts, -> { all }
 end

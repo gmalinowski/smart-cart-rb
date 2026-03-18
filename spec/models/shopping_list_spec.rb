@@ -14,4 +14,17 @@ RSpec.describe ShoppingList, type: :model do
       expect { list.destroy }.to change(ShoppingListItem, :count).by(-1)
     end
   end
+
+  describe '.drafts' do
+    it 'returns only drafts' do
+      user = create(:user)
+      CreateShoppingListWithItem.new(item_name: 'test', owner_id: user.id).call
+      CreateShoppingListWithItem.new(item_name: 'test', owner_id: user.id).call
+      expect(ShoppingList.drafts.count).to eq(2)
+    end
+
+    it 'excludes lists that belongs to groups'
+    it 'excludes shared with other users lists'
+    it 'excludes public lists'
+  end
 end

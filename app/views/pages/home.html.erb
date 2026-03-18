@@ -10,8 +10,8 @@
 <%= form_with url: list_items_path, method: :post, scope: :shopping_list_item, class: "flex gap-2 items-center mt-8 justify-center" do |f| %>
   <%= f.label :name, class: "floating-label" do %>
     <span>What's running low? 🛒</span>
-    <%= f.text_field :name, placeholder: "Add an item...", autofocus: true, required: true, autocomplete: "off", class: "input input-secondary" %>
+    <%= f.text_field :name, placeholder: "Add an item...", autofocus: true, required: true, autocomplete: "off", class: "input input-sm input-secondary" %>
     <% end %>
-    <%= f.submit "Add", class: "btn btn-sm btn-secondary" %>
+    <%= f.submit "Add", class: "btn btn-xs btn-secondary" %>
 <% end %>
 </div>
