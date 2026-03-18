@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="bg-base-300">
+<html class="">
 <head>
   <title><%= content_for(:title) || "Smart Cart" %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -36,12 +36,16 @@
 
 </head>
 
-<body class="bg-base-300">
+<body class="">
 
 <%= render "layouts/navigation" %>
-<main class="container bg-base-100 mx-auto px-4 py-8">
+<main class="prose container bg-base-100 mx-auto">
+  <% if flash[:notice] %>
   <p class="text-blue-800"><%= notice %></p>
+    <% end %>
+  <% if flash[:alert] %>
   <p class="text-red-800"><%= alert %></p>
+    <% end %>
   <%= yield %>
 </main>
 </body>
