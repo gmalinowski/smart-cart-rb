@@ -16,4 +16,9 @@ RSpec.describe User, type: :model do
       }.not_to change { user.session_version }
     end
   end
+
+  describe 'validations' do
+    it { should validate_presence_of(:email) }
+    it { should have_many(:shopping_lists).with_foreign_key('owner_id') }
+    end
 end

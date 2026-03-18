@@ -73,10 +73,13 @@ group :test do
   gem "selenium-webdriver"
   gem "vcr", "~> 6.4"
   gem "webmock", "~> 3.26"
+  gem "timecop"
 end
 
 gem "view_component", "~> 4.5"
 
-gem "devise", "~> 5.0"
+gem "devise", "~> 5.0.3"
 
 gem "rails_heroicon", "~> 2.3"
+
+gem "shoulda-matchers", "~> 7.0", group: :test
