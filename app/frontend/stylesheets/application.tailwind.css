@@ -7,25 +7,41 @@
     themes: bumblebee --default, synthwave --prefersdark;
 }
 
-@custom-variant screen-short (@media (max-height: 550px));
+@custom-variant screen-short (@media( max-height: 550px));
+
+@layer utilities {
+    .dock > .dock-active {
+        &::after {
+            @apply bg-secondary/50;
+        }
+    }
+}
+
 
 @utility dock-2xs {
-    height: theme(spacing.10);  /* odpowiednik @apply h-10 */
-    & > :where(button, a, label) {
-        gap: theme(spacing[0.5]);  /* @apply gap-0.5 */
-        & > :where(svg) {
-            width: 1em;
-            height: 1em;
+
+        height: theme(spacing.10); /* odpowiednik @apply h-10 */
+
+        & > :where(button, a, label) {
+            gap: theme(spacing[0.5]); /* @apply gap-0.5 */
+
+            & > :where(svg) {
+                width: 1em;
+                height: 1em;
+                display: none;
+            }
+
+            & > .dock-label {
+                /*display: none;*/
+            }
         }
-        & > .dock-label {
-            display: none;
+
+        & > .dock-active {
+            @apply bg-secondary/50;
+            color: theme(colors.secondary-content);
+
+            &::after {
+                display: none;
+            }
         }
-    }
-    & > .dock-active {
-        background-color: theme(colors.secondary);
-        color: theme(colors.secondary-content);
-        &::after {
-            display: none;
-        }
-    }
 }

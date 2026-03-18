@@ -1,8 +1,9 @@
 <div class="dock screen-short:dock-2xs">
-  <button class="">
+
+  <%= link_to folder_path, class: dock_item_active?(folder_path) do %>
     <%= heroicon "folder" %>
     <span class="dock-label">Folder</span>
-  </button>
+  <% end %>
 
   <%= link_to root_path, class: dock_item_active?(root_path)  do %>
     <%= heroicon "home", class: "" %>
