@@ -26,8 +26,7 @@
               <span class="badge">New</span>
             </a>
           </li>
-          <li><a>Settings</a></li>
-          <li><a>Logout</a></li>
+          <li><%= button_to "Logout", destroy_user_session_path, method: :delete, class: "text-error-content", form: {data: { turbo_confirm: "Logout?" }} %></li>
         <% else %>
           <li><%= link_to "Login", new_user_session_path %></li>
           <li><%= link_to "Register", new_user_registration_path %></li>
