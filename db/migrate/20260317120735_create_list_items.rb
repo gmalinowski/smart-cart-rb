@@ -1,7 +1,6 @@
 class CreateListItems < ActiveRecord::Migration[8.1]
   def change
     create_table :shopping_list_items, id: :uuid do |t|
-
       t.belongs_to :shopping_list, foreign_key: { on_delete: :cascade, on_update: :cascade }, null: false, type: :uuid
 
       t.text :name

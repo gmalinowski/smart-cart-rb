@@ -26,6 +26,5 @@ RSpec.describe CreateShoppingListWithItem do
         expect(shopping_list.name).to eq('2021-01-01')
         end
     end
-
   end
 end
