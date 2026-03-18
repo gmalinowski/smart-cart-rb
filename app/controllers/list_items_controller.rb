@@ -2,7 +2,6 @@
 class ListItemsController < ApplicationController
   before_action :authenticate_user!
   def create
-    puts "params: #{list_item_params}"
     owner_id = current_user.id
     item_name = list_item_params[:name]
     list = CreateShoppingListWithItem.new(item_name: item_name, owner_id: owner_id).call
