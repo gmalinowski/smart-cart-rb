@@ -2,8 +2,7 @@ Rails.application.routes.draw do
   root "pages#home"
   get "pages/home"
 
-  resources :shopping_lists, only: [ :show, :destroy ]
-  resources :list_items, only: [ :create ]
+  resources :shopping_lists, only: [ :show, :destroy, :create ]
   resource :folder, only: [ :show ]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
