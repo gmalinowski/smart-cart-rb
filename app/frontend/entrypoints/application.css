@@ -1,2 +1,4 @@
 @import '../stylesheets/application.tailwind.css';
-@plugin 'daisyui';
+@plugin "daisyui" {
+    themes: bumblebee --default, synthwave --prefersdark;
+}
