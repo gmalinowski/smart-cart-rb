@@ -15,6 +15,23 @@ RSpec.describe ShoppingList, type: :model do
     end
   end
 
+  describe 'helpers' do
+    it 'adds item to shopping list' do
+      list = create(:shopping_list)
+      expect {
+        list.add_item!('test')
+      }.to change(list.shopping_list_items, :count).by(1)
+    end
+
+    it 'removes item from shopping list' do
+      list = create(:shopping_list)
+      item = list.shopping_list_items.create!(name: 'test')
+      expect {
+        list.destroy_item(item)
+      }.to change(list.shopping_list_items, :count).by(-1)
+    end
+  end
+
   describe '.drafts' do
     it 'returns only drafts' do
       user = create(:user)

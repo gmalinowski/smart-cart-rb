@@ -1,2 +1,8 @@
 
-<h1>Edit Shopping List</h1>
+<turbo-frame id="shopping_list_items">
+  <%= render @shopping_list.shopping_list_items %>
+</turbo-frame>
+
+<turbo-frame id="shopping_list_items_form">
+  <%= render 'form' %>
+</turbo-frame>
