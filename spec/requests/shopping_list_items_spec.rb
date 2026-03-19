@@ -11,6 +11,19 @@ RSpec.describe "ShoppingListItems", type: :request do
         post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' } }
         expect(list.shopping_list_items.count).to eq(1)
       end
+
+      it 'returns turbo stream with form reset' do
+        list = create(:shopping_list)
+        post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' }, format: :turbo_stream }
+        expect(response.body).to include('turbo-stream')
+        expect(response.body).to include('replace')
+      end
+
+      it 'redirects to shopping list page' do
+        list = create(:shopping_list)
+        post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' } }
+        expect(response).to redirect_to(shopping_list_path(list))
+      end
     end
 
     context 'when user is not logged in' do

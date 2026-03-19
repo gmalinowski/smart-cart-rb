@@ -11,6 +11,11 @@ RSpec.describe "ShoppingLists", type: :request do
       get shopping_list_path(list)
       expect(assigns(:shopping_list)).to eq(list)
     end
+    it "assigns @shopping_list_item" do
+      list = create(:shopping_list)
+      get shopping_list_path(list)
+      expect(assigns(:shopping_list_item)).to be_a_new(ShoppingListItem)
+    end
   end
 
   describe "POST /list_items" do

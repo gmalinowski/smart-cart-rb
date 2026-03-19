@@ -5,9 +5,23 @@ RSpec.describe ShoppingListItem, type: :model do
     it { should validate_presence_of(:name) }
   end
 
-
-
   describe 'associations' do
     it { should belong_to(:shopping_list) }
+  end
+
+  describe 'broadcasts' do
+    let(:list) { create(:shopping_list) }
+    it 'broadcasts append after create' do
+      expect {
+        create(:shopping_list_item, shopping_list: list)
+      }.to have_broadcasted_to(list.to_gid_param)
+    end
+
+    it 'broadcasts remove after destroy' do
+      item = create(:shopping_list_item, shopping_list: list)
+      expect {
+        item.destroy
+      }.to have_broadcasted_to(list.to_gid_param)
+    end
   end
 end

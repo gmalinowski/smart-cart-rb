@@ -1,8 +1,8 @@
 
-<turbo-frame id="shopping_list_items">
-  <%= render @shopping_list.shopping_list_items %>
-</turbo-frame>
+<%= turbo_stream_from @shopping_list %>
 
-<turbo-frame id="shopping_list_items_form">
-  <%= render 'form' %>
-</turbo-frame>
+<div id="shopping_list_items">
+  <%= render @shopping_list.shopping_list_items %>
+</div>
+
+  <%= render 'shopping_list_items/form', shopping_list: @shopping_list, shopping_list_item: @shopping_list_item %>
