@@ -117,3 +117,12 @@ Added homepage with a single input form — user types a product name and hits "
 
 Database schema changes: Added shopping_lists and shopping_list_items tables with UUID primary keys. Items have cascade delete on shopping list removal. Dropped status column from shopping_lists in favor of dynamic state checking (draft = no groups and no public link).
 
+## 2026-03-18
+
+Added bottom dock navigation with responsive behavior — the dock adapts to the on-screen keyboard using `interactive-widget=resizes-content`. On short screens the dock switches to a compact mode via a custom Tailwind variant (`@custom-variant screen-short`).
+
+Restricted `shopping_lists` routes to only the required actions (`show`, `destroy`). Moved list creation logic from `ListItemsController` into `ShoppingListsController`, cleaning up the separation of responsibilities between controllers.
+
+Added a shopping lists index view with items grouped by category.
+
+
