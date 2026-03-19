@@ -4,4 +4,14 @@ class ShoppingList < ApplicationRecord
 
   validates :owner_id, presence: true
   validates :name, presence: true
+
+  scope :drafts, -> { all }
+
+  def add_item!(name)
+    shopping_list_items.create!(name: name)
+  end
+
+  def destroy_item(item)
+    shopping_list_items.destroy(item)
+  end
 end

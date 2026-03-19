@@ -14,4 +14,34 @@ RSpec.describe ShoppingList, type: :model do
       expect { list.destroy }.to change(ShoppingListItem, :count).by(-1)
     end
   end
+
+  describe 'helpers' do
+    it 'adds item to shopping list' do
+      list = create(:shopping_list)
+      expect {
+        list.add_item!('test')
+      }.to change(list.shopping_list_items, :count).by(1)
+    end
+
+    it 'removes item from shopping list' do
+      list = create(:shopping_list)
+      item = list.shopping_list_items.create!(name: 'test')
+      expect {
+        list.destroy_item(item)
+      }.to change(list.shopping_list_items, :count).by(-1)
+    end
+  end
+
+  describe '.drafts' do
+    it 'returns only drafts' do
+      user = create(:user)
+      CreateShoppingListWithItem.new(item_name: 'test', owner_id: user.id).call
+      CreateShoppingListWithItem.new(item_name: 'test', owner_id: user.id).call
+      expect(ShoppingList.drafts.count).to eq(2)
+    end
+
+    it 'excludes lists that belongs to groups'
+    it 'excludes shared with other users lists'
+    it 'excludes public lists'
+  end
 end
