@@ -40,7 +40,7 @@
 <body class="">
 
 <%= render "layouts/navigation" %>
-<main class="container bg-base-100 mx-auto overflow-y-auto h-lvh">
+<main class="container bg-base-100 mx-auto pb-32">
   <% if flash[:notice] %>
   <p class="text-blue-800"><%= notice %></p>
     <% end %>
@@ -48,7 +48,8 @@
   <p class="text-red-800"><%= alert %></p>
     <% end %>
   <%= yield %>
-  <%= render "layouts/dock" %>
 </main>
+
+<%= render "layouts/dock" %>
 </body>
 </html>

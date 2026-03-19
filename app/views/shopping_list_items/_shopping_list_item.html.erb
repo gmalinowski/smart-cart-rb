@@ -1,3 +1,13 @@
-<div>
-  <%= shopping_list_item.name %>
-</div>
+
+<li class="flex justify-between items-center rounded-xl shadow-sm p-4 bg-primary/10">
+  <div class="">
+    <div><%= shopping_list_item.name %></div>
+  </div>
+  <div class="dropdown dropdown-left dropdown-center">
+    <div tabindex="0" role="button" aria-label="lists item options" class="btn btn-soft btn-secondary btn-xs m-1">options</div>
+    <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+      <li><a>Item 1</a></li>
+      <li><a>Item 2</a></li>
+    </ul>
+  </div>
+</li>
