@@ -125,4 +125,8 @@ Restricted `shopping_lists` routes to only the required actions (`show`, `destro
 
 Added a shopping lists index view with items grouped by category.
 
+## 2026-03-19
+Added real-time item management to shopping list view — items append instantly via Turbo Streams broadcast (`after_create_commit`, `after_destroy_commit`) keeping all collaborators in sync without page reload. Form resets after submission via `create.turbo_stream.erb`. Fixed layout issue where dock was obscuring list items by removing fixed height from `<main>` and relying on native browser scroll with bottom padding instead.
+
+
 
