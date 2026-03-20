@@ -1,13 +1,22 @@
 
-<li class="flex justify-between items-center rounded-xl shadow-sm p-4 bg-primary/10">
+<li id="<%= dom_id(shopping_list_item) %>" class="flex justify-between items-center rounded-xl shadow-sm p-4 bg-primary/10">
   <div class="">
     <div><%= shopping_list_item.name %></div>
   </div>
   <div class="dropdown dropdown-left dropdown-center">
-    <div tabindex="0" role="button" aria-label="lists item options" class="btn btn-soft btn-secondary btn-xs m-1">options</div>
+    <div tabindex="0" role="button" aria-label="lists item options" class="m-1 active:bg-primary/20 focus:bg-primary/20 hover:bg-primary/20 btn btn-circle btn-ghost">
+      <%= heroicon "ellipsis-vertical", class: "size-4" %>
+    </div>
     <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-      <li><a>Item 1</a></li>
-      <li><a>Item 2</a></li>
+      <li><a></a></li>
+      <li class="">
+        <%= form_with model: [shopping_list_item.shopping_list, shopping_list_item], method: :delete, class: "inline-block flex gap-1" do |f| %>
+          <%= f.button type: :submit, class: "btn btn-xs btn-error" do %>
+            <%= heroicon "trash", class: "size-4" %>
+            Delete
+          <% end %>
+        <% end %>
+      </li>
     </ul>
   </div>
 </li>

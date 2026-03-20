@@ -14,7 +14,8 @@ class ShoppingListItemsController < ApplicationController
   end
 
   def destroy
-      @shopping_list.shopping_list_items.find(params[:id]).destroy
+    @shopping_list.shopping_list_items.find(params[:id]).destroy
+    head :ok
   end
 
   private
