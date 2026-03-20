@@ -84,3 +84,5 @@ gem "devise", "~> 5.0.3"
 gem "rails_heroicon", "~> 2.3"
 
 gem "shoulda-matchers", "~> 7.0", group: :test
+
+gem "pundit", "~> 2.5"
