@@ -14,14 +14,14 @@ RSpec.describe ShoppingListItem, type: :model do
     it 'broadcasts append after create' do
       expect {
         create(:shopping_list_item, shopping_list: list)
-      }.to have_broadcasted_to(list.to_gid_param)
+      }.to have_broadcasted_to(list.to_gid_param).with(a_string_including("prepend"))
     end
 
     it 'broadcasts remove after destroy' do
       item = create(:shopping_list_item, shopping_list: list)
       expect {
         item.destroy
-      }.to have_broadcasted_to(list.to_gid_param)
+      }.to have_broadcasted_to(list.to_gid_param).with(a_string_including("remove"))
     end
   end
 end

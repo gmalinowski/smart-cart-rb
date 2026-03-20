@@ -42,9 +42,10 @@ RSpec.describe "ShoppingListItems", type: :request do
       it 'deletes item from shopping list' do
         list = create(:shopping_list)
         item = list.shopping_list_items.create!(name: 'milk')
-        delete shopping_list_shopping_list_item_path(list, item)
+        expect {
+          delete shopping_list_shopping_list_item_path(list, item)
+        }.to change(list.shopping_list_items, :count).by(-1)
         expect(response).to have_http_status(:success)
-        expect(list.shopping_list_items.count).to eq(0)
       end
     end
     context 'when user is not logged in' do
