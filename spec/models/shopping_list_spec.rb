@@ -1,9 +1,45 @@
 require 'rails_helper'
 
 RSpec.describe ShoppingList, type: :model do
+  let(:shopping_list) { create(:shopping_list) }
+
+  let(:list_with_public_links) do
+    list = create(:shopping_list)
+    create(:shopping_list_public_link, shopping_list: list, created_by: create(:user))
+    list
+  end
+
+  let(:list_with_items) do
+    list = create(:shopping_list)
+    list.shopping_list_items.create!(name: 'test')
+    list.shopping_list_items.create!(name: 'test')
+    list
+  end
+
+  describe 'relationships' do
+    it { should belong_to(:owner) }
+    it { should have_many(:shopping_list_public_links) }
+  end
+
+  describe 'dependencies' do
+    it 'destroys associated shopping_list_public_links when destroyed' do
+      list = list_with_public_links
+      expect { list.destroy }.to change(ShoppingListPublicLink, :count).by(-1)
+    end
+
+    it 'destroys associated shopping_list_items when destroyed' do
+      list = list_with_items
+      expect { list.destroy }.to change(ShoppingListItem, :count).by(-2)
+    end
+  end
+
   describe 'validations' do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:owner_id) }
+  end
+
+  describe 'scopes' do
+    it 'returns only public lists'
   end
 
   describe 'associations' do

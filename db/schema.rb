@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_120735) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_20_155650) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -26,6 +26,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_120735) do
     t.integer "unit", default: 0
     t.datetime "updated_at", null: false
     t.index ["shopping_list_id"], name: "index_shopping_list_items_on_shopping_list_id"
+  end
+
+  create_table "shopping_list_public_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "created_by_id", null: false
+    t.datetime "expires_at"
+    t.integer "permission", default: 0, null: false
+    t.string "share_token", default: "f482ae40-3aab-4bb3-9889-d51ee8132a9c", null: false
+    t.uuid "shopping_list_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_shopping_list_public_links_on_created_by_id"
+    t.index ["share_token"], name: "index_shopping_list_public_links_on_share_token", unique: true
+    t.index ["shopping_list_id"], name: "index_shopping_list_public_links_on_shopping_list_id"
   end
 
   create_table "shopping_lists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -55,5 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_120735) do
   end
 
   add_foreign_key "shopping_list_items", "shopping_lists", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "shopping_list_public_links", "shopping_lists", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "shopping_list_public_links", "users", column: "created_by_id"
   add_foreign_key "shopping_lists", "users", column: "owner_id"
 end
