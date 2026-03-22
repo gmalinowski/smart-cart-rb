@@ -128,5 +128,22 @@ Added a shopping lists index view with items grouped by category.
 ## 2026-03-19
 Added real-time item management to shopping list view — items append instantly via Turbo Streams broadcast (`after_create_commit`, `after_destroy_commit`) keeping all collaborators in sync without page reload. Form resets after submission via `create.turbo_stream.erb`. Fixed layout issue where dock was obscuring list items by removing fixed height from `<main>` and relying on native browser scroll with bottom padding instead.
 
+## 2025-03-22 — Shopping List Items: Real-time, Inline Editing, Flash System
+### Co zostało zrobione
+Przez ostatnie dwa dni zaimplementowałem kilka kluczowych funkcji: dodawanie i usuwanie itemów przez Turbo Stream w czasie rzeczywistym, toggle checked/unchecked z automatycznym sortowaniem (unchecked na górze), inline editing nazwy itemu przez contenteditable oraz system flash messages.
+### Flash Messages System
+Zamiast standardowego podejścia z partial w layoucie, zbudowałem własny system oparty na Stimulus:
 
+flash_controller — odbiera eventy flash:add, wyświetla alerty z Auto Animate, automatycznie ukrywa po 8 sekundach lub po kliknięciu, obsługuje kolejkę (buffer) — alerty pojawiają się jeden po drugim
+flash_bridge_controller — mostek między Rails flash a Stimulus. Konwertuje flash[:notice] → success, flash[:alert] → error i dispatchu je do flash controllera. Dzięki temu w kontrolerze Rails piszesz standardowo flash[:notice] i wszystko trafia do jednego systemu
+
+### Decyzja: Schemat bazy dla udostępniania list
+Pierwotnie miałem jedną tabelę shopping_list_shares z kolumną share_type. Po analizie okazało się że public share i private share to fundamentalnie różne rzeczy — public share to link z tokenem który może wygasnąć, private share to zaproszenie konkretnego usera ze statusem pending/accepted.
+Rozbito na dwie tabele: shopping_list_shares (zaproszenia) i shopping_list_public_links (publiczne linki z tokenem).
+Problem: Scroll Jump po Toggle
+Po toggle itemu Turbo Stream podmieniał element w DOM, a przeglądarka scrollowała do niego. overflow-anchor: none nie pomogło.
+Rozwiązanie okazało się proste — tabindex="0" na <li> powodował że kliknięcie ustawiało focus na elemencie. Po broadcastcie Turbo remontował element i przeglądarka scrollowała do sfocusowanego elementu.
+Fix: event.currentTarget.blur() przed fetchem w Stimulus controllerze.
+### Największe wyzwanie
+Zarządzanie wieloma warstwami jednocześnie — autentykacja (Devise), autoryzacja (Pundit, na razie podstawowa), real-time (Turbo Stream + Action Cable), lokalny stan UI (Stimulus). Każda warstwa ma swoje zasady i punkty styku między nimi generują nieoczekiwane bugi.
 
