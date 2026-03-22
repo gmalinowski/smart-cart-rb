@@ -12,3 +12,9 @@ application.register('flash', Flash)
 
 import FlashBridge from './flash_bridge_controller.js'
 application.register('flash-bridge', FlashBridge)
+
+import ShoppingListItem from './shopping_list_item_controller.js'
+application.register('shopping-list-item', ShoppingListItem)
+
+import AutoAnimate from './auto_animate_controller.js'
+application.register('auto-animate', AutoAnimate)

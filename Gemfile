@@ -75,6 +75,7 @@ group :test do
   gem "webmock", "~> 3.26"
   gem "timecop"
   gem "rails-controller-testing"
+  gem "pundit-matchers"
 end
 
 gem "view_component", "~> 4.5"

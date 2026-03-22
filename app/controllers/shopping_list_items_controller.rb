@@ -13,6 +13,12 @@ class ShoppingListItemsController < ApplicationController
     end
   end
 
+  def toggle
+    item = ShoppingListItem.find(params[:id])
+    item.toggle!(:checked)
+    head :ok
+  end
+
   def destroy
     @shopping_list.shopping_list_items.find(params[:id]).destroy
     head :ok

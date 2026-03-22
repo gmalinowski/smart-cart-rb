@@ -39,6 +39,7 @@ RSpec.describe ShoppingList, type: :model do
   end
 
   describe 'scopes' do
+    let(:list) { create(:shopping_list) }
     it 'returns only public lists'
   end
 
