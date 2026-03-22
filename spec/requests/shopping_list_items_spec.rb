@@ -54,6 +54,27 @@ RSpec.describe "ShoppingListItems", type: :request do
     end
   end
 
+  describe "PUT /shopping_lists/:shopping_list_id/shopping_list_items/:id" do
+    context 'when user is logged in' do
+      let(:user) { create(:user) }
+      before { sign_in_with_session user }
+      it 'updates item name' do
+        list = create(:shopping_list)
+        item = list.shopping_list_items.create!(name: 'milk')
+        put shopping_list_shopping_list_item_path(list, item), params: { shopping_list_item: { name: 'eggs' } }
+        expect(item.reload.name).to eq('eggs')
+      end
+    end
+    context 'when user is not logged in' do
+      it 'redirects to sign in page' do
+        list = create(:shopping_list)
+        item = list.shopping_list_items.create!(name: 'milk')
+        put shopping_list_shopping_list_item_path(list, item), params: { shopping_list_item: { name: 'eggs' } }
+        expect(response).to redirect_to(new_user_session_path)
+        end
+      end
+  end
+
   describe "PATCH /shopping_lists/:shopping_list_id/shopping_list_items/:id/toggle" do
     let(:user) { create(:user) }
     let(:list) { create(:shopping_list, owner: user) }

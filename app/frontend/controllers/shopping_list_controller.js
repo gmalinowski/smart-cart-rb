@@ -4,18 +4,15 @@ export default class extends Controller {
     static values = {
         itemEditing: Boolean
     }
-
-    startItemEditing() {
+    static outlets = ['shopping-list-item']
+    lockAll(except) {
+        this.shoppingListItemOutlets.forEach((item) => {
+            if (item !== except) item.lock();
+        })
         this.itemEditingValue = true;
     }
-
-    stopItemEditing() {
+    unlockAll() {
+        this.shoppingListItemOutlets.forEach((item) => item.unlock());
         this.itemEditingValue = false;
-    }
-
-    connect() {
-    }
-
-    lockEditing(event) {
     }
 }

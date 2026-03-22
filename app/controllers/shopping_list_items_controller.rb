@@ -13,6 +13,12 @@ class ShoppingListItemsController < ApplicationController
     end
   end
 
+  def update
+    item = ShoppingListItem.find(params[:id])
+    item.update!(shopping_list_item_params)
+    head :ok
+  end
+
   def toggle
     item = ShoppingListItem.find(params[:id])
     item.toggle!(:checked)

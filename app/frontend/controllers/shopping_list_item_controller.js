@@ -2,9 +2,12 @@ import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
     static values = {
-        url: String,
+        toggleUrl: String,
+        updateUrl: String,
+        itemId: String,
         checked: Boolean
     }
+    static targets = ['itemName']
     static outlets = ['shopping-list']
     checkedValueChanged() {
         const classes = [
@@ -18,20 +21,73 @@ export default class extends Controller {
         classes.forEach((c) => this.element.classList.toggle(c, this.checkedValue))
     }
 
-    connect() {
+    lock() {
+        this.itemNameTarget.contentEditable = 'false'
+    }
+    unlock() {
+        this.itemNameTarget.contentEditable = 'true'
     }
 
-    edit(event) {
-        this.shoppingListOutlet.startItemEditing();
-        console.log(event)
+    startEditing() {
+        this.shoppingListOutlet.lockAll(this);
+    }
+
+    stopEditing() {
+        this.shoppingListOutlet.unlockAll();
+    }
+
+    edit(event){
+        this.startEditing();
     }
 
     save(event) {
-        const newValue = event.target.textContent.replace(/\r?\n|\r/g, "");
+        let newValue = event.target.textContent.replace(/\r?\n|\r/g, "");
+        if (newValue.length === 0) {
+            newValue = 'No name';
+            document.getElementById('flash').dispatchEvent(new CustomEvent('flash:add', {
+                detail: {
+                    type: 'warning',
+                    message: 'Empty item name!'
+                }
+            }))
+        }
         event.target.textContent = newValue;
+        this.updateItem(newValue);
         setTimeout(() => {
-            this.shoppingListOutlet.stopItemEditing();
+            this.stopEditing();
         }, 300)
+    }
+
+    async updateItem(newValue) {
+        const formData = new FormData();
+        formData.append('shopping_list_item[name]', newValue);
+        try {
+            const response = await fetch(this.updateUrlValue, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: formData
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            } else {
+                document.getElementById('flash').dispatchEvent(new CustomEvent('flash:add', {
+                    detail: {
+                        type: 'success',
+                        message: 'Item updated successfully!'
+                    }
+                }))
+            }
+        } catch (error) {
+            document.getElementById('flash').dispatchEvent(new CustomEvent('flash:add', {
+                detail: {
+                    type: 'error',
+                    message: 'Something went wrong! Cannot communicate with server!'
+                }
+            }))
+            console.error('Error:', error);
+        }
     }
 
     stopPropagation(event) {
@@ -41,7 +97,7 @@ export default class extends Controller {
     toggle(event) {
         if (this.shoppingListOutlet.itemEditingValue) return;
         event.target.blur();
-        fetch(this.urlValue, {
+        fetch(this.toggleUrlValue, {
             method: 'PATCH',
             headers: {
                 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,

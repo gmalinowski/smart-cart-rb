@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   get "pages/home"
 
   resources :shopping_lists, only: [ :show, :destroy, :create ] do
-    resources :shopping_list_items, only: [ :create, :destroy ] do
+    resources :shopping_list_items, only: [ :create, :destroy, :update ] do
       member do
         patch :toggle
       end
