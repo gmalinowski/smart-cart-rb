@@ -4,12 +4,30 @@ class ShoppingListItemsController < ApplicationController
   before_action :set_shopping_list
 
   def create
-    @shopping_list.add_item!(shopping_list_item_params[:name])
-    redirect_to @shopping_list
+    @shopping_list_item = @shopping_list.add_item!(shopping_list_item_params[:name])
+    @empty_shopping_list_item = @shopping_list.shopping_list_items.new
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @shopping_list }
+    end
+  end
+
+  def update
+    item = ShoppingListItem.find(params[:id])
+    item.update!(shopping_list_item_params)
+    head :ok
+  end
+
+  def toggle
+    item = ShoppingListItem.find(params[:id])
+    item.toggle!(:checked)
+    head :ok
   end
 
   def destroy
-      @shopping_list.shopping_list_items.find(params[:id]).destroy
+    @shopping_list.shopping_list_items.find(params[:id]).destroy
+    head :ok
   end
 
   private

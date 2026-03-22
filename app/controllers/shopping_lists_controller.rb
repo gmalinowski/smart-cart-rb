@@ -1,9 +1,10 @@
 
 class ShoppingListsController < ApplicationController
-  before_action :authenticate_user!, except: [ :show ]
+  before_action :authenticate_user!, except: []
 
   def show
     @shopping_list = ShoppingList.find(params[:id])
+    @empty_shopping_list_item = ShoppingListItem.new(shopping_list: @shopping_list)
   end
 
   def create

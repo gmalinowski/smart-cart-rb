@@ -3,6 +3,9 @@
 @source "../../../app/views/**/*.html.erb";
 @source "../../../app/views/**/*.rb";
 @source "../../../app/helpers/**/*.rb";
+
+@source "../controllers/*.js";
+
 @plugin "daisyui" {
     themes: bumblebee --default, synthwave --prefersdark;
 }

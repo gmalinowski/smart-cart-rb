@@ -37,18 +37,13 @@
 
 </head>
 
-<body class="">
-
+<body>
+<%= render "layouts/flash" %>
 <%= render "layouts/navigation" %>
-<main class="container bg-base-100 mx-auto">
-  <% if flash[:notice] %>
-  <p class="text-blue-800"><%= notice %></p>
-    <% end %>
-  <% if flash[:alert] %>
-  <p class="text-red-800"><%= alert %></p>
-    <% end %>
+<main class="container bg-base-100 mx-auto pb-32">
   <%= yield %>
-  <%= render "layouts/dock" %>
 </main>
+
+<%= render "layouts/dock" %>
 </body>
 </html>

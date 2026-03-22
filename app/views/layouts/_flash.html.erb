@@ -1,0 +1,8 @@
+
+<div id="flash"
+     class="fixed top-4 left-0 right-0 z-50 flex items-center justify-center"
+     data-controller="flash" data-action="click->flash#close">
+</div>
+
+<div id="flash-bridge" data-controller="flash-bridge" data-flash-bridge-messages-value="<%= flash.to_json %>">
+</div>

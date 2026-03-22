@@ -1,0 +1,11 @@
+
+
+<div id="shopping_list_item_form">
+<%= form_with(model: [shopping_list, shopping_list_item], class: "flex gap-2 items-center my-6 justify-center") do |f| %>
+  <%= f.label :name, class: "floating-label" do %>
+      <span>What's running low? 🛒</span>
+  <%= f.text_field :name, placeholder: "Add an item...", required: true, autocomplete: "off", class: "input input-sm input-secondary" %>
+  <% end %>
+  <%= f.submit "Add", class: "btn btn-xs btn-secondary" %>
+<% end %>
+</div>

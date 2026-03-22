@@ -10,9 +10,12 @@
     <tbody>
     <!-- row 1 -->
     <% shopping_lists.each_with_index do |draft_list, index| %>
-      <tr onclick="<%= "itemModal#{index}.showModal()" %>">
-        <td><%= draft_list.name %></td>
+      <tr class="">
+        <td><%= link_to draft_list.name, shopping_list_path(draft_list), class: "link link-info" %></td>
         <td><%= time_ago_in_words(draft_list.created_at) %></td>
+        <td>
+          <button onclick="<%= "itemModal#{index}.showModal()" %>" class="btn btn-primary btn-xs">actions</button>
+        </td>
       </tr>
     <% end %>
     </tbody>
