@@ -1,20 +1,32 @@
 require 'rails_helper'
 RSpec.describe "ShoppingLists", type: :request do
   describe "GET /shopping_lists/:id" do
-    it "returns http success" do
-      list = create(:shopping_list)
-      get shopping_list_path(list)
-      expect(response).to have_http_status(:success)
+    context 'when user is logged in' do
+      let (:user) { create(:user) }
+      before { sign_in_with_session user }
+      it "returns http success" do
+        list = create(:shopping_list)
+        get shopping_list_path(list)
+        expect(response).to have_http_status(:success)
+      end
+      it "assigns @list" do
+        list = create(:shopping_list)
+        get shopping_list_path(list)
+        expect(assigns(:shopping_list)).to eq(list)
+      end
+      it "assigns @shopping_list_item" do
+        list = create(:shopping_list)
+        get shopping_list_path(list)
+        expect(assigns(:empty_shopping_list_item)).to be_a_new(ShoppingListItem)
+      end
     end
-    it "assigns @list" do
-      list = create(:shopping_list)
-      get shopping_list_path(list)
-      expect(assigns(:shopping_list)).to eq(list)
-    end
-    it "assigns @shopping_list_item" do
-      list = create(:shopping_list)
-      get shopping_list_path(list)
-      expect(assigns(:empty_shopping_list_item)).to be_a_new(ShoppingListItem)
+
+    context 'when user is not logged in' do
+      it 'redirects to sign in page' do
+        list = create(:shopping_list)
+        get shopping_list_path(list)
+        expect(response).to redirect_to(new_user_session_path)
+        end
     end
   end
 
