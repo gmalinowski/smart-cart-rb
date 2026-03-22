@@ -18,3 +18,6 @@ application.register('shopping-list-item', ShoppingListItem)
 
 import AutoAnimate from './auto_animate_controller.js'
 application.register('auto-animate', AutoAnimate)
+
+import ShoppingList from './shopping_list_controller.js'
+application.register('shopping-list', ShoppingList)

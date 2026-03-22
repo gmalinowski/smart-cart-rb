@@ -1,6 +1,7 @@
 
 <li
   data-controller="shopping-list-item"
+  data-shopping-list-item-shopping-list-outlet="#shopping-list-items"
   data-shopping-list-item-url-value="<%= toggle_shopping_list_shopping_list_item_path(shopping_list_item.shopping_list, shopping_list_item) %>"
   data-shopping-list-item-checked-value="<%= shopping_list_item.checked %>"
   data-action="click->shopping-list-item#toggle"
@@ -8,15 +9,20 @@
   tabindex="0"
   class="flex justify-between items-center rounded-xl shadow-sm p-4 py-2 bg-primary/10 active:shadow-xs active:bg-primary/20 transition-all duration-200 ease-in-out"
 >
-  <div class="">
-    <div><%= shopping_list_item.name %></div>
+  <div id="item-title"
+       data-action="click->shopping-list-item#edit:stop"
+       class="">
+    <h1
+      data-action="blur->shopping-list-item#save:stop"
+      id="item-title-content" contenteditable="true" class="focus:px-2 focus:py-1 focus:outline-accent">
+      <%= shopping_list_item.name %>
+    </h1>
   </div>
-  <div class="dropdown dropdown-left dropdown-center">
+  <div data-action="click->shopping-list-item#stopPropagation:stop" class="dropdown dropdown-left dropdown-center">
     <div tabindex="-1" role="button" aria-label="lists item options" class="m-1 active:bg-primary/20 focus:bg-primary/20 hover:bg-primary/20 btn btn-circle btn-ghost">
       <%= heroicon "ellipsis-vertical", class: "size-4" %>
     </div>
     <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-      <li><a></a></li>
       <li class="">
         <%= form_with model: [shopping_list_item.shopping_list, shopping_list_item], method: :delete, class: "inline-block flex gap-1" do |f| %>
           <%= f.button type: :submit, class: "btn btn-xs btn-error" do %>
