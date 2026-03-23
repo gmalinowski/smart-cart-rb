@@ -1,6 +1,7 @@
 # SmartCart 🛒
 
-> ## For a more detailed look at the development process and decisions, see [DEVLOG.md](DEVLOG.md).
+> ### For a more detailed look at the development process and decisions, see [DEVLOG.md](DEVLOG.md).
+> ### Documentation: [docs](docs)
  
 A collaborative shopping list app where you can share lists with groups, selected friends, or publicly via a link — with real-time updates so multiple people can shop from the same list simultaneously.
  
