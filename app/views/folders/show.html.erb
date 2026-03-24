@@ -1,6 +1,8 @@
-<div class="tabs tabs-lift mt-4">
+<div data-controller="folder-tabs"
+     data-folder-tabs-default-tab-value="<%= FoldersHelper::DEFAULT_TAB %>"
+  class="tabs tabs-lift mt-4">
   <label class="tab">
-    <input type="radio" name="my_tabs_4"/>
+    <input data-action="change->folder-tabs#change" value="<%= FoldersHelper::TABS[:recent] %>" type="radio" name="folder_tabs" <%= is_active?(@active_tab, FoldersHelper::TABS[:recent]) %>/>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 me-2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"/>
     </svg>
@@ -9,7 +11,7 @@
   <div class="tab-content bg-base-100 border-base-300 p-6">Tab content 1</div>
 
   <label class="tab">
-    <input type="radio" name="my_tabs_4" checked="checked"/>
+    <input data-action="change->folder-tabs#change" value="<%= FoldersHelper::TABS[:lists] %>" type="radio" name="folder_tabs" <%= is_active?(@active_tab, FoldersHelper::TABS[:lists]) %>/>
     <%= heroicon "receipt-refund", class: "size-5 me-2" %>
     Lists
   </label>
@@ -18,7 +20,7 @@
   </div>
 
   <label class="tab">
-    <input type="radio" name="my_tabs_4"/>
+    <input data-action="change->folder-tabs#change" value="<%= FoldersHelper::TABS[:groups] %>" type="radio" name="folder_tabs" <%= is_active?(@active_tab, FoldersHelper::TABS[:groups]) %>/>
     <%= heroicon "rectangle-group", class: "size-5 me-2" %>
     Groups
   </label>
