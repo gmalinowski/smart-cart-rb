@@ -21,3 +21,6 @@ application.register('auto-animate', AutoAnimate)
 
 import ShoppingList from './shopping_list_controller.js'
 application.register('shopping-list', ShoppingList)
+
+import FolderTabs from './folder_tabs_controller.js'
+application.register('folder-tabs', FolderTabs)

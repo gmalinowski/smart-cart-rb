@@ -13,7 +13,7 @@
     <!-- row 1 -->
     <% groups.each_with_index do |group, index| %>
       <tr class="">
-        <td><%= link_to group.name, groups_path(group), class: "link link-info" %></td>
+        <td><%= link_to group.name, group_path(group), class: "link link-info" %></td>
         <td>
           <%= button_to "Delete", group_path(group.id), method: :delete, class: "btn btn-error btn-xs", form: {data: { turbo_confirm: "Delete?" }} %>
         </td>
