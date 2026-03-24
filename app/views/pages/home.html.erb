@@ -1,4 +1,4 @@
-<div class="text-center py-8 px-4">
+<div class="text-center pt-8 px-4">
   <h1 class="text-2xl font-bold">
     Smart Shopping List
   </h1>
@@ -10,8 +10,16 @@
 <%= form_with url: shopping_lists_path, method: :post, scope: :shopping_list_item, class: "flex gap-2 items-center mt-8 justify-center" do |f| %>
   <%= f.label :name, class: "floating-label" do %>
     <span>What's running low? 🛒</span>
-    <%= f.text_field :name, placeholder: "Add an item...", autofocus: false, required: true, autocomplete: "off", class: "input input-sm input-secondary" %>
+    <%= f.text_field :name, placeholder: "Add an item...", autofocus: false, required: true, autocomplete: "off",
+                     class: "m-2 border-b-2 border-secondary/50 outline-none px-2 py-1" %>
     <% end %>
     <%= f.submit "Add", class: "btn btn-xs btn-secondary" %>
 <% end %>
 </div>
+
+<%= render "widgets/ai_hints" %>
+
+<%= render "widgets/home_shortcuts", groups: @groups %>
+
+<%= render "fab" %>
+

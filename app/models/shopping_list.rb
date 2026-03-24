@@ -6,7 +6,7 @@ class ShoppingList < ApplicationRecord
   validates :owner_id, presence: true
   validates :name, presence: true
 
-  scope :drafts, -> { all }
+  scope :drafts, -> { all.order(updated_at: :desc) }
 
   def add_item!(name)
     shopping_list_items.create!(name: name)

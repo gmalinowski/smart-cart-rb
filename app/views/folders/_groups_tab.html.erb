@@ -1,0 +1,25 @@
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <!-- head -->
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>
+        Actions
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- row 1 -->
+    <% groups.each_with_index do |group, index| %>
+      <tr class="">
+        <td><%= link_to group.name, groups_path(group), class: "link link-info" %></td>
+        <td>
+          <%= button_to "Delete", group_path(group.id), method: :delete, class: "btn btn-error btn-xs", form: {data: { turbo_confirm: "Delete?" }} %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+</div>

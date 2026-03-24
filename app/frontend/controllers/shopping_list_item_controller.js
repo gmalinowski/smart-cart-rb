@@ -12,8 +12,8 @@ export default class extends Controller {
     checkedValueChanged() {
         const classes = [
             'order-last',
-            'bg-gray-600!',
-            'text-gray-200',
+            'bg-primary/20',
+            'text-primary-content',
             'opacity-80',
             'py-0!',
             'scale-90',

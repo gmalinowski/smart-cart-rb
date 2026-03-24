@@ -1,0 +1,19 @@
+<!-- name of each tab group should be unique -->
+<div class="tabs tabs-box m-2 mt-8">
+  <label class="tab">
+    <input checked type="radio" name="home_widget_tabs" />
+    <%= heroicon "clock", class: "size-5 me-2" %>
+    Recently visited
+  </label>
+  <div class="tab-content bg-base-100 border-base-300 p-6">Recently visited</div>
+
+
+  <% groups.each do |group| %>
+    <label class="tab">
+      <input type="radio" name="home_widget_tabs" />
+      <%= heroicon "rectangle-group", class: "size-5 me-2" %>
+      <%= group.name %>
+    </label>
+    <div class="tab-content bg-base-100 border-base-300 p-6"><% group.name %></div>
+  <% end %>
+</div>
