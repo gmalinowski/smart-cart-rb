@@ -1,6 +1,8 @@
 class ShoppingList < ApplicationRecord
   has_many :shopping_list_items, -> { unchecked_first }
   has_many :shopping_list_public_links
+  has_many :group_shopping_lists
+  has_many :groups, through: :group_shopping_lists
   belongs_to :owner, class_name: "User", foreign_key: "owner_id"
 
   validates :owner_id, presence: true

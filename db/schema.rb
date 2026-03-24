@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_23_103253) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_24_130620) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "group_shopping_lists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "group_id", null: false
+    t.uuid "shopping_list_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "shopping_list_id"], name: "index_group_shopping_lists_on_group_id_and_shopping_list_id", unique: true
+    t.index ["group_id"], name: "index_group_shopping_lists_on_group_id"
+    t.index ["shopping_list_id"], name: "index_group_shopping_lists_on_shopping_list_id"
+  end
 
   create_table "groups", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -75,6 +85,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_103253) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "group_shopping_lists", "groups"
+  add_foreign_key "group_shopping_lists", "shopping_lists"
   add_foreign_key "groups", "users", column: "owner_id"
   add_foreign_key "shopping_list_items", "shopping_lists", on_update: :cascade, on_delete: :cascade
   add_foreign_key "shopping_list_public_links", "shopping_lists", on_update: :cascade, on_delete: :cascade

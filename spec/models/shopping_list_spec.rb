@@ -19,6 +19,7 @@ RSpec.describe ShoppingList, type: :model do
   describe 'relationships' do
     it { should belong_to(:owner) }
     it { should have_many(:shopping_list_public_links) }
+    it { should have_many(:groups).through(:group_shopping_lists) }
   end
 
   describe 'dependencies' do
