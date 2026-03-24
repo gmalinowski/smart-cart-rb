@@ -7,6 +7,7 @@ class User < ApplicationRecord
   before_save :update_session_version, if: :will_save_change_to_encrypted_password?
 
   has_many :shopping_lists, foreign_key: "owner_id"
+  has_many :groups, foreign_key: "owner_id"
 
 
   private
