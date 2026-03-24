@@ -20,5 +20,6 @@ RSpec.describe User, type: :model do
   describe 'validations' do
     it { should validate_presence_of(:email) }
     it { should have_many(:shopping_lists).with_foreign_key('owner_id') }
-    end
+    it { should have_many(:groups).with_foreign_key('owner_id') }
+  end
 end
