@@ -9,19 +9,21 @@
   data-action="click->shopping-list-item#toggle"
   id="<%= dom_id(shopping_list_item) %>"
   tabindex="0"
-  class="shopping-list-item flex justify-between items-center rounded-xl shadow-sm p-4 py-2 bg-primary/10 active:shadow-xs active:bg-primary/20 transition-all duration-200 ease-in-out"
+  class="shopping-list-item grid grid-cols-12 justify-between items-center rounded-xl shadow-sm p-4 py-2 bg-primary text-primary-content font-medium active:bg-primary/80"
 >
   <div id="item-title"
        data-action="click->shopping-list-item#edit:stop"
-       class="">
+       class="col-span-6">
     <h1
       data-shopping-list-item-target="itemName"
       data-action="blur->shopping-list-item#save:stop"
-      id="item-title-content" contenteditable="true" class="focus:px-2 focus:py-1 focus:outline-accent">
+      id="item-title-content" contenteditable="true"
+      class="focus:px-2 focus:py-1 focus:outline-accent pr-2 border-r border-primary-content/50">
       <%= shopping_list_item.name %>
     </h1>
   </div>
-  <div data-action="click->shopping-list-item#stopPropagation:stop" class="dropdown dropdown-left dropdown-center">
+  <div data-action="click->shopping-list-item#stopPropagation:stop"
+       class="dropdown dropdown-left dropdown-center -col-end-1">
     <div tabindex="-1" role="button" aria-label="lists item options" class="m-1 active:bg-primary/20 focus:bg-primary/20 hover:bg-primary/20 btn btn-circle btn-ghost">
       <%= heroicon "ellipsis-vertical", class: "size-4" %>
     </div>

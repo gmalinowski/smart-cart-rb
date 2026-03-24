@@ -31,6 +31,14 @@ RSpec.describe "ShoppingListItems", type: :request do
         expect(list.shopping_list_items.count).to eq(1)
       end
 
+      it 'does not create item with invalid params' do
+        list = create(:shopping_list)
+        expect {
+          post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: '' } }
+        }.not_to change(list.shopping_list_items, :count)
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
       it 'returns turbo stream with form reset' do
         list = create(:shopping_list)
         post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' }, format: :turbo_stream }

@@ -15,6 +15,12 @@ RSpec.describe 'Folder', type: :request do
         get folder_path
         expect(assigns(:drafts)).to include(draft)
       end
+
+      it 'loads groups' do
+        group = create(:group, owner_id: user.id)
+        get folder_path
+        expect(assigns(:groups)).to include(group)
+      end
     end
 
     context 'when user is not logged in' do
