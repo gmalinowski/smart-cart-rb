@@ -4,6 +4,7 @@ RSpec.describe Group, type: :model do
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:owner_id) }
   it { should belong_to(:owner).class_name('User') }
+  it { should have_many(:shopping_lists).through(:group_shopping_lists) }
 
   it "should have many shopping lists"
   it "delete shopping lists when group is deleted"
