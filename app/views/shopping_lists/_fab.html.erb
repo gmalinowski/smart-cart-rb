@@ -1,0 +1,3 @@
+<%= render Fab::ContainerComponent.new(icon: "adjustments-horizontal") do |fab| %>
+  <% fab.with_item(icon: "rectangle-group", path: edit_shopping_list_group_shopping_lists_path(shopping_list), label: "Manage groups") %>
+<% end %>
