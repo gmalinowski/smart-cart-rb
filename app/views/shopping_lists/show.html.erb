@@ -5,4 +5,12 @@
 <%= render "fab", shopping_list: @shopping_list %>
 
 <div class="divider"></div>
+<section class="m-4">
+  <h1 class="text-lg font-medium">Details</h1>
+  <h2 class="">Shopping list: <%= @shopping_list.name %></h2>
+  <p>Created at: <%= @shopping_list.created_at %></p>
+  <p>Updated at: <%= @shopping_list.updated_at %></p>
+  <p>Groups: <%= @shopping_list.groups.count %></p>
+  <p>Public links: -</p>
+</section>
 <%= render 'shopping_list_actions' %>
