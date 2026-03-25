@@ -12,7 +12,6 @@ module FoldersHelper
   end
 
   def is_active?(active_tab, target_tab)
-    puts "active_tab: #{active_tab}, target_tab: #{target_tab}"
     "checked" if active_tab == target_tab
   end
 end

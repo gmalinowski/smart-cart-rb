@@ -2,6 +2,8 @@
 class GroupsController < ApplicationController
   before_action :authenticate_user!
 
+  def show
+  end
   def create
     @group = current_user.groups.new(group_params)
     if @group.save
@@ -10,7 +12,6 @@ class GroupsController < ApplicationController
       render :new, status: :unprocessable_content
     end
   end
-
   def destroy
     @group = Group.find(params[:id])
     if @group.destroy

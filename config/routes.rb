@@ -8,6 +8,7 @@ Rails.application.routes.draw do
         patch :toggle
       end
     end
+    resource :group_shopping_lists, only: [ :edit, :update ]
   end
   resource :folder, only: [ :show ]
   resources :groups, only: [ :create, :show, :new, :destroy ]
