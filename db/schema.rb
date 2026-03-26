@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_24_130620) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_26_143540) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -85,8 +85,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_130620) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "group_shopping_lists", "groups"
-  add_foreign_key "group_shopping_lists", "shopping_lists"
+  add_foreign_key "group_shopping_lists", "groups", on_delete: :cascade
+  add_foreign_key "group_shopping_lists", "shopping_lists", on_delete: :cascade
   add_foreign_key "groups", "users", column: "owner_id"
   add_foreign_key "shopping_list_items", "shopping_lists", on_update: :cascade, on_delete: :cascade
   add_foreign_key "shopping_list_public_links", "shopping_lists", on_update: :cascade, on_delete: :cascade
