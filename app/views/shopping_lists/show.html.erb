@@ -1,8 +1,8 @@
 
 <%= render 'shopping_list_items/form', shopping_list: @shopping_list, shopping_list_item: @empty_shopping_list_item %>
-<%= render 'shopping_list', shopping_list: @shopping_list %>
+<%= render 'shopping_lists/shopping_list', shopping_list: @shopping_list %>
 
-<%= render "fab", shopping_list: @shopping_list %>
+<%= render "shopping_lists/fab", shopping_list: @shopping_list %>
 
 <div class="divider"></div>
 <section class="m-4">
@@ -13,4 +13,4 @@
   <p>Groups: <%= @shopping_list.groups.count %></p>
   <p>Public links: -</p>
 </section>
-<%= render 'shopping_list_actions' %>
+<%= render 'shopping_lists/shopping_list_actions' %>

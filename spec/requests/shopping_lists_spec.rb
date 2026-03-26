@@ -2,10 +2,10 @@ require 'rails_helper'
 RSpec.describe "ShoppingLists", type: :request do
   describe "GET /shopping_lists/:id" do
     context 'when user is logged in' do
-      let (:user) { create(:user) }
+      let(:user) { create(:user) }
       before { sign_in_with_session user }
       it "returns http success" do
-        list = create(:shopping_list)
+        list = create(:shopping_list, owner: user)
         get shopping_list_path(list)
         expect(response).to have_http_status(:success)
       end
@@ -15,7 +15,7 @@ RSpec.describe "ShoppingLists", type: :request do
         expect(assigns(:shopping_list)).to eq(list)
       end
       it "assigns @shopping_list_item" do
-        list = create(:shopping_list)
+        list = create(:shopping_list, owner: user)
         get shopping_list_path(list)
         expect(assigns(:empty_shopping_list_item)).to be_a_new(ShoppingListItem)
       end
