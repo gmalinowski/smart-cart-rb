@@ -4,7 +4,9 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   before_action :check_session_version
 
-  # after_action :verify_authorized
+  after_action :verify_authorized, unless: :devise_controller?
+  after_action :verify_policy_scoped, unless: :devise_controller?
+
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
 
@@ -20,6 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_not_authorized
-    render plain: "You are not authorized to perform this action.", status: :forbidden
+    flash[:alert] = "You are not authorized to perform this action."
+    redirect_to(request.referrer || root_path)
   end
 end
