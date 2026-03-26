@@ -8,7 +8,9 @@ export default class extends Controller {
     connect() {
         const typeMap = {
             notice: 'success',
+            success: 'success',
             alert: 'error',
+            error: 'error',
             warning: 'warning',
             info: 'info'
         }
