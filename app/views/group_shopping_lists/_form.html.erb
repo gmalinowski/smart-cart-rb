@@ -1,0 +1,42 @@
+
+<%= form_with model: shopping_list, url: shopping_list_group_shopping_lists_path(shopping_list), method: :patch do |form| %>
+  <% shopping_list.errors.full_messages.each do |message| %>
+    <div class="alert alert-error"><%= message %></div>
+  <% end %>
+<table class="table">
+  <!-- head -->
+  <thead>
+  <tr>
+    <th>
+      <label>
+        <input type="checkbox" class="checkbox"/>
+      </label>
+    </th>
+    <th>Name</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- row 1 -->
+  <%= form.collection_check_boxes :group_ids, groups, :id, :name do |b| %>
+    <tr>
+      <th>
+        <label>
+          <%= b.check_box class: "checkbox" %>
+        </label>
+      </th>
+      <td>
+        <%= link_to b.text, group_path(b.object), class: "link link-info" %>
+      </td>
+    </tr>
+  </tbody>
+    <% end %>
+  <!-- foot -->
+  <tfoot>
+  <tr>
+    <th></th>
+    <th>Name</th>
+  </tr>
+  </tfoot>
+</table>
+  <%= form.submit "Add", class: "btn btn-success" %>
+<% end %>

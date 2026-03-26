@@ -1,2 +1,6 @@
 
-<h1>group_shopping_lists</h1>
+<h1 class="text-xl p-4 font-medium">Groups for <%= @shopping_list.name %></h1>
+<div class="overflow-x-auto">
+  <%= render 'form', groups: @groups, shopping_list: @shopping_list %>
+</div>
+
