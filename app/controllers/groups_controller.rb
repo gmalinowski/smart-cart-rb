@@ -1,11 +1,15 @@
 
 class GroupsController < ApplicationController
   before_action :authenticate_user!
+  skip_after_action :verify_policy_scoped, only: [ :show, :new, :create, :destroy ]
 
   def show
+    @group = Group.find(params[:id])
+    authorize @group
   end
   def create
     @group = current_user.groups.new(group_params)
+    authorize @group
     if @group.save
       redirect_to @group
     else
@@ -14,6 +18,7 @@ class GroupsController < ApplicationController
   end
   def destroy
     @group = Group.find(params[:id])
+    authorize @group
     if @group.destroy
       flash[:info] = "Group deleted"
       redirect_back(fallback_location: root_path)
@@ -25,6 +30,7 @@ class GroupsController < ApplicationController
 
   def new
     @group = current_user.groups.new
+    authorize @group
   end
 
   private
