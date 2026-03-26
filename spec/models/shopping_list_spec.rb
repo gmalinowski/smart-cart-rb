@@ -32,6 +32,12 @@ RSpec.describe ShoppingList, type: :model do
       list = list_with_items
       expect { list.destroy }.to change(ShoppingListItem, :count).by(-2)
     end
+
+    it 'destroys associated group_shopping_lists when destroyed' do
+      list = list_with_items
+      list.groups << create(:group)
+      expect { list.destroy }.to change(GroupShoppingList, :count).by(-1)
+    end
   end
 
   describe 'validations' do

@@ -23,16 +23,15 @@ RSpec.describe "ShoppingListItems", type: :request do
   describe "POST /shopping_lists/:shopping_list_id/shopping_list_items" do
     context 'when user is logged in' do
       let(:user) { create(:user) }
+      let(:list) { create(:shopping_list, owner: user) }
       before { sign_in_with_session user }
 
       it 'adds item to shopping list' do
-        list = create(:shopping_list)
         post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' } }
-        expect(list.shopping_list_items.count).to eq(1)
+        expect(list.reload.shopping_list_items.count).to eq(1)
       end
 
       it 'does not create item with invalid params' do
-        list = create(:shopping_list)
         expect {
           post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: '' } }
         }.not_to change(list.shopping_list_items, :count)
@@ -40,15 +39,16 @@ RSpec.describe "ShoppingListItems", type: :request do
       end
 
       it 'returns turbo stream with form reset' do
-        list = create(:shopping_list)
         post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' }, format: :turbo_stream }
         expect(response.body).to include('turbo-stream')
         expect(response.body).to include('replace')
       end
 
       it 'redirects to shopping list page' do
-        list = create(:shopping_list)
-        post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' } }
+        list = create(:shopping_list, owner: user)
+        expect {
+          post shopping_list_shopping_list_items_path(list), params: { shopping_list_item: { name: 'milk' } }
+        }.to change(list.shopping_list_items, :count).by(1)
         expect(response).to redirect_to(shopping_list_path(list))
       end
     end
@@ -67,7 +67,7 @@ RSpec.describe "ShoppingListItems", type: :request do
       let(:user) { create(:user) }
       before { sign_in_with_session user }
       it 'updates item name' do
-        list = create(:shopping_list)
+        list = create(:shopping_list, owner: user)
         item = list.shopping_list_items.create!(name: 'milk')
         put shopping_list_shopping_list_item_path(list, item), params: { shopping_list_item: { name: 'eggs' } }
         expect(item.reload.name).to eq('eggs')
@@ -112,7 +112,7 @@ RSpec.describe "ShoppingListItems", type: :request do
       let(:user) { create(:user) }
       before { sign_in_with_session user }
       it 'deletes item from shopping list' do
-        list = create(:shopping_list)
+        list = create(:shopping_list, owner: user)
         item = list.shopping_list_items.create!(name: 'milk')
         expect {
           delete shopping_list_shopping_list_item_path(list, item)
