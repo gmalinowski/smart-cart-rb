@@ -7,7 +7,7 @@ RSpec.describe Fab::ContainerComponent, type: :component do
       component.with_item(icon: 'minus', path: '/search', label: 'Search for shopping lists')
     end
 
-    expect(page).to have_css('a', count: 2)
+    expect(page).to have_css('form', count: 2)
   end
   it 'renders no items when none provided' do
     render_inline(described_class.new)
@@ -19,7 +19,18 @@ RSpec.describe Fab::ContainerComponent, type: :component do
       component.with_item(icon: 'plus', path: '/lists/new', label: 'Add')
     end
 
-    expect(page).to have_css('a[href="/lists/new"]')
+    expect(page).to have_css('form[action="/lists/new"]')
+  end
+
+  it 'supports http methods' do
+    render_inline(described_class.new) do |component|
+      component.with_item(icon: 'plus', path: '/lists/new', label: 'Add', method: :delete)
+      component.with_item(icon: 'minus', path: '/lists/1', label: 'Delete', method: :patch)
+      component.with_item(icon: 'minus', path: '/lists/1', label: 'Delete', method: :get)
+    end
+    expect(page).to have_css('form > input[name="_method"][value="delete"]', visible: :hidden)
+    expect(page).to have_css('form > input[name="_method"][value="patch"]', visible: :hidden)
+    expect(page).to have_css('form[method="get"]')
   end
 
   it 'renders labels and aria labels' do
