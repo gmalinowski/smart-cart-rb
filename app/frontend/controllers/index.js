@@ -24,3 +24,6 @@ application.register('shopping-list', ShoppingList)
 
 import FolderTabs from './folder_tabs_controller.js'
 application.register('folder-tabs', FolderTabs)
+
+import SelectAll from './select_all_controller.js'
+application.register('select-all', SelectAll)

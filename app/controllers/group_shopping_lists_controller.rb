@@ -7,6 +7,7 @@ class GroupShoppingListsController < ApplicationController
     authorize @shopping_list
     @group_shopping_lists = @shopping_list.group_shopping_lists
     @groups = policy_scope(Group)
+    @all_selected = @shopping_list.group_ids.sort == @groups.pluck(:id).sort
   end
 
   def update
@@ -14,7 +15,7 @@ class GroupShoppingListsController < ApplicationController
     allowed_params = permitted_attributes(@shopping_list)
     allowed_params[:group_ids] = filter_group_ids(allowed_params[:group_ids])
     if @shopping_list.update(allowed_params)
-      flash[:info] = "Shopping list updated"
+      flash[:success] = "Shopping list updated"
       redirect_to @shopping_list
     else
       @groups = policy_scope(Group)
