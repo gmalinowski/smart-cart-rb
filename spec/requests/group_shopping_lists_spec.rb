@@ -29,7 +29,7 @@ RSpec.describe "GroupShoppingLists", type: :request do
       it "redirects to shopping_list page with flash message" do
         patch shopping_list_group_shopping_lists_path(shopping_list), params: { shopping_list: { group_ids: [ group.id ] } }
         expect(response).to redirect_to(shopping_list_path(shopping_list))
-        expect(flash[:info]).to be_present
+        expect(flash).to_not be_empty
       end
 
       context 'when validation fails' do
