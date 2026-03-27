@@ -6,7 +6,7 @@
     <%= helpers.heroicon @icon, class: "size-6" %>
   </div>
   <!-- buttons that show up when FAB is open -->
-  <div x-show="open" @click.outside="open = false" x-transition >
+  <div x-show="open" @click.outside="open = false" x-transition class="flex flex-col items-end">
 
   <% items.each do |item| %>
     <%= render item %>

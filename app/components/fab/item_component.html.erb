@@ -1,7 +1,9 @@
 
 <div class="font-medium">
-  <label class="bg-success text-success-content p-1 px-2 rounded shadow-md"><%= @label %></label>
-<%= link_to @path, class: "btn btn-lg btn-circle btn-success shadow-md", aria: { label: @aria_label } do %>
+  <div class="inline <%= @label_classes %> p-1 px-2 rounded shadow-md"><%= @label %></div>
+<%= button_to @path,
+              form: { data: { turbo_confirm: @confirm_msg }},
+              method: @method, form_class: "inline", class: "btn #{@btn_classes} btn-lg btn-circle shadow-md", aria: { label: @aria_label } do %>
   <%= helpers.heroicon @icon, class: "size-6" %>
 <% end %>
 </div>
