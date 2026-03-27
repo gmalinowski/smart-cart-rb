@@ -1,7 +1,9 @@
 
 <div class="font-medium">
   <div class="inline <%= @label_classes %> p-1 px-2 rounded shadow-md"><%= @label %></div>
-<%= button_to @path, method: @method, form_class: "inline", class: "btn #{@btn_classes} btn-lg btn-circle shadow-md", aria: { label: @aria_label } do %>
+<%= button_to @path,
+              form: { data: { turbo_confirm: @confirm_msg }},
+              method: @method, form_class: "inline", class: "btn #{@btn_classes} btn-lg btn-circle shadow-md", aria: { label: @aria_label } do %>
   <%= helpers.heroicon @icon, class: "size-6" %>
 <% end %>
 </div>

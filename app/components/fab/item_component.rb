@@ -1,6 +1,7 @@
 module Fab
   class ItemComponent < ViewComponent::Base
-    def initialize(icon:, path:, label:, type: nil, method: :get)
+    def initialize(icon:, path:, label:, confirm_msg: nil, type: nil, method: :get)
+      @confirm_msg = confirm_msg
       @icon = icon
       @path = path
       @label = label
