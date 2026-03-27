@@ -16,11 +16,11 @@
     </label>
     <div class="tab-content bg-base-100 border-base-300 p-3 min-h-[50dvh]">
       <% group.shopping_lists.each do |shopping_list| %>
-        <details class="bg-primary/20 p-2 rounded-lg shadow-sm mb-2">
-          <summary class="font-medium">
+        <details class="bg-primary/50 rounded-lg shadow-sm mb-2">
+          <summary class="font-medium p-2 cursor-pointer">
             <%= shopping_list.name %>
           </summary>
-          <div class="shadow-sm rounded-lg p-2">
+          <div class="shadow-xs rounded-lg p-2 bg-[color-mix(in_oklab,var(--color-primary)_20%,white)]">
             <ul class="flex flex-col gap-1 p-1">
               <li>
                 items: <%= shopping_list.shopping_list_items.size %>
