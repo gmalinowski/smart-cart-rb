@@ -1,42 +1,33 @@
 
-<%= form_with model: shopping_list, url: shopping_list_group_shopping_lists_path(shopping_list), method: :patch do |form| %>
+<div data-controller="select-all">
+  <menu class="px-4 m-4" >
+    <label class="label cursor-pointer">
+      Select All
+      <input type="checkbox" <%= "checked" if @all_selected %> data-action="change->select-all#toggleAll" data-select-all-target="selectAllBtn" class="toggle toggle-success" />
+    </label>
+  </menu>
+
+<%= form_with model: shopping_list,
+              id: "group_shopping_lists_form",
+              class: "m-4 p-4",
+              url: shopping_list_group_shopping_lists_path(shopping_list), method: :patch do |form| %>
   <% shopping_list.errors.full_messages.each do |message| %>
     <div class="alert alert-error"><%= message %></div>
   <% end %>
-<table class="table">
-  <!-- head -->
-  <thead>
-  <tr>
-    <th>
-      <label>
-        <input type="checkbox" class="checkbox"/>
-      </label>
-    </th>
-    <th>Name</th>
-  </tr>
-  </thead>
-  <tbody>
   <!-- row 1 -->
+  <div class="grid grid-cols-3 gap-4">
+
   <%= form.collection_check_boxes :group_ids, groups, :id, :name do |b| %>
-    <tr>
-      <th>
+      <div class="flex flex-col items-center gap-6 border-success border-2 shadow-sm p-4 rounded-lg">
+        <%= link_to b.text, group_path(b.object), class: "link font-medium" %>
         <label>
-          <%= b.check_box class: "checkbox" %>
+          <%= b.check_box class: "checkbox checkbox-success checkbox-lg", data: { select_all_target: "itemBtn", action: "change->select-all#toggleItem" } %>
         </label>
-      </th>
-      <td>
-        <%= link_to b.text, group_path(b.object), class: "link link-info" %>
-      </td>
-    </tr>
-  </tbody>
+      </div>
     <% end %>
+  </div>
   <!-- foot -->
-  <tfoot>
-  <tr>
-    <th></th>
-    <th>Name</th>
-  </tr>
-  </tfoot>
-</table>
-  <%= form.submit "Add", class: "btn btn-success" %>
+  <%= form.submit "Save", class: "btn w-full mt-8 btn-success" %>
 <% end %>
+
+</div>
