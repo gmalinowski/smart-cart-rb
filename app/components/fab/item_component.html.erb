@@ -1,7 +1,7 @@
 
 <div class="font-medium">
   <label class="bg-success text-success-content p-1 px-2 rounded shadow-md"><%= @label %></label>
-<%= link_to @path, class: "btn btn-lg btn-circle btn-success shadow-md", aria: { label: @aria_label } do %>
+<%= link_to @path, class: "btn btn-lg btn-circle btn-#{@btn_type} shadow-md", aria: { label: @aria_label } do %>
   <%= helpers.heroicon @icon, class: "size-6" %>
 <% end %>
 </div>
