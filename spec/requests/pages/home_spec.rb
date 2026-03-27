@@ -9,10 +9,20 @@ RSpec.describe 'Home', type: :request do
         get root_path
         expect(response).to have_http_status(:success)
       end
-      it 'has asigned groups' do
-        create(:group, owner: user)
+      it 'has assigned owned groups with preloaded shopping lists and items' do
+        group = create(:group, owner: user)
+        shopping_list1 = create(:shopping_list, owner: user)
+        shopping_list2 = create(:shopping_list, owner: user)
+        create(:group_shopping_list, group: group, shopping_list: shopping_list1)
+        create(:group_shopping_list, group: group, shopping_list: shopping_list2)
+        create(:shopping_list_item, shopping_list: shopping_list1)
+        create(:shopping_list_item, shopping_list: shopping_list2)
         get root_path
         expect(assigns(:groups)).to eq(user.groups)
+        groups = assigns(:groups)
+        expect(groups.first.association(:shopping_lists).loaded?).to be true
+        shopping_lists = groups.first.shopping_lists
+        expect(shopping_lists.first.association(:shopping_list_items).loaded?).to be true
       end
     end
 

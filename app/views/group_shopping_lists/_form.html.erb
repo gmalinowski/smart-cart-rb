@@ -15,7 +15,7 @@
     <div class="alert alert-error"><%= message %></div>
   <% end %>
   <!-- row 1 -->
-  <div class="grid grid-cols-3 gap-4">
+  <div class="grid grid-cols-3 md:grid-cols-5 gap-4">
 
   <%= form.collection_check_boxes :group_ids, groups, :id, :name do |b| %>
       <div class="flex flex-col items-center gap-6 border-success border-2 shadow-sm p-4 rounded-lg">
