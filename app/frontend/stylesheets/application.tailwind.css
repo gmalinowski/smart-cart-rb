@@ -4,6 +4,7 @@
 @source "../../../app/views/**/*.rb";
 @source "../../../app/helpers/**/*.rb";
 @source "../../../app/components/**/*.erb";
+@source "../../../app/components/**/*.rb";
 
 
 @source "../controllers/*.js";
