@@ -1,3 +1,5 @@
 <%= render Fab::ContainerComponent.new(icon: "adjustments-horizontal") do |fab| %>
   <% fab.with_item(icon: "rectangle-group", path: edit_shopping_list_group_shopping_lists_path(shopping_list), label: "Manage groups") %>
+  <% fab.with_item(icon: "trash", path: shopping_list_path(shopping_list), method: :delete, type: :error, label: "Delete",
+  confirm_msg: "Are you sure you want to delete this shopping list and all its items?")%>
 <% end %>

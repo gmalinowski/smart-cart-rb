@@ -1,6 +1,6 @@
 class ShoppingListsController < ApplicationController
   before_action :authenticate_user!, except: []
-  skip_after_action :verify_policy_scoped, only: [ :show, :create ]
+  skip_after_action :verify_policy_scoped, only: [ :show, :create, :destroy ]
 
   def show
     @shopping_list = ShoppingList.find(params[:id])
@@ -8,6 +8,11 @@ class ShoppingListsController < ApplicationController
     @empty_shopping_list_item = ShoppingListItem.new(shopping_list: @shopping_list)
   end
 
+  def destroy
+    authorize ShoppingList.find(params[:id])
+    ShoppingList.find(params[:id]).destroy
+    redirect_to root_path
+  end
   def create
     new_shopping_list = ShoppingList.new
     authorize new_shopping_list
