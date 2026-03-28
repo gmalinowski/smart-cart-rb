@@ -30,6 +30,41 @@ RSpec.describe "ShoppingLists", type: :request do
     end
   end
 
+  describe "DELETE /shopping_lists/:id" do
+    context 'when user is logged out' do
+      it 'redirects to sign in page' do
+        list = create(:shopping_list)
+        expect {
+          delete shopping_list_path(list)
+        }.to change(ShoppingList, :count).by(0)
+        expect(response).to redirect_to(new_user_session_path)
+        end
+    end
+
+    context 'when user is logged in' do
+      let(:user) { create(:user) }
+      before { sign_in_with_session user }
+      let(:shopping_list) { create(:shopping_list, owner: user) }
+      let(:shopping_list_item) { create(:shopping_list_item, shopping_list: shopping_list) }
+
+      it 'deletes the shopping list' do
+        shopping_list
+        shopping_list_item
+        expect {
+          delete shopping_list_path(shopping_list)
+        }.to change(ShoppingList, :count).by(-1).and change(ShoppingListItem, :count).by(-1)
+      end
+      it 'redirects to shopping lists page' do
+        delete shopping_list_path(shopping_list)
+        expect(response).to redirect_to(root_path)
+      end
+      it 'user can not delete other users shopping list'
+      it 'user can delete other user shopping list from owned group'
+
+      it 'user can delete  other user shopping list if it is in group which he is member of'
+    end
+  end
+
   describe "POST /list_items" do
     context 'when user is logged in' do
       let(:user) { create(:user) }

@@ -21,6 +21,10 @@ class ShoppingListPolicy < ApplicationPolicy
   def create?
     user.present?
   end
+
+  def destroy?
+    owner? || member_of_assigned_group?
+  end
   def show?
     owner? || member_of_assigned_group? || shared_with_me?
   end
