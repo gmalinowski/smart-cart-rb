@@ -26,5 +26,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" unless Rails.env.production?
+
   devise_for :users, controllers: { sessions: "users/sessions" }
 end

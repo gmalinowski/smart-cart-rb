@@ -58,13 +58,13 @@ group :development, :test do
 
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.6"
+  gem "letter_opener_web"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
-  gem "letter_opener"
 end
 
 group :test do
@@ -76,6 +76,7 @@ group :test do
   gem "timecop"
   gem "rails-controller-testing"
   gem "pundit-matchers"
+  gem "shoulda-matchers", "~> 7.0"
 end
 
 gem "view_component", "~> 4.5"
@@ -84,6 +85,5 @@ gem "devise", "~> 5.0.3"
 
 gem "rails_heroicon", "~> 2.3"
 
-gem "shoulda-matchers", "~> 7.0", group: :test
 
 gem "pundit", "~> 2.5"
