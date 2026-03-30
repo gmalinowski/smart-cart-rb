@@ -5,13 +5,13 @@
     <span class="dock-label">Folder</span>
   <% end %>
 
-  <%= link_to root_path, class: dock_item_active?(root_path)  do %>
+  <%= link_to root_path, class: dock_item_active?(root_path) do %>
     <%= heroicon "home", class: "" %>
     <span class="dock-label">Home</span>
   <% end %>
 
-  <button>
-    <%= heroicon "users", class: "" %>
+  <%= link_to friends_path, class: dock_item_active?(friends_path) do %>
+    <%= heroicon "users" %>
     <span class="dock-label">Friends</span>
-  </button>
+  <% end %>
 </div>

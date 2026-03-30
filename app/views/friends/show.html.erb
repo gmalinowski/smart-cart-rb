@@ -1,0 +1,20 @@
+<div class="tabs tabs-lift mt-4">
+  <label class="tab">
+    <input type="radio" name="folder_tabs" checked />
+    <%= heroicon "user-group", class: "size-5 me-2" %>
+    Friends
+  </label>
+  <div class="tab-content bg-base-100 border-base-300 p-6">
+    <%= render "friends/friends_tab", friends: @friends %>
+  </div>
+
+  <label class="tab">
+    <input data-action="change->folder-tabs#change" value="<%= FoldersHelper::TABS[:groups] %>" type="radio" name="folder_tabs" <%= is_active?(@active_tab, FoldersHelper::TABS[:groups]) %>/>
+    <%= heroicon "rectangle-group", class: "size-5 me-2" %>
+    Groups
+  </label>
+  <div class="tab-content bg-base-100 border-base-300 p-6">
+  </div>
+</div>
+
+
