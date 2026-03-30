@@ -8,6 +8,8 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+exit unless Rails.env.development?
+
 user_1 = User.create!(email: "user_1@example.com", password: "password", password_confirmation: "password", confirmed_at: Time.zone.now)
 user_2 = User.create!(email: "user_2@example.com", password: "password", password_confirmation: "password", confirmed_at: Time.zone.now)
 user_3 = User.create!(email: "user_3@example.com", password: "password", password_confirmation: "password", confirmed_at: Time.zone.now)
