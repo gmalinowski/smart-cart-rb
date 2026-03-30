@@ -9,6 +9,16 @@ class User < ApplicationRecord
   has_many :shopping_lists, foreign_key: "owner_id"
   has_many :groups, foreign_key: "owner_id"
 
+  has_many :invitation_links
+
+  has_many :user_friend_views, foreign_key: :user_id, class_name: "UserFriendView"
+  has_many :friends, through: :user_friend_views, source: :friend
+
+  has_many :friendships, foreign_key: :user_id
+  has_many :received_friendships, foreign_key: :friend_id, class_name: "Friendship"
+  has_many :pending_friendships, -> { where(status: :pending) }, foreign_key: :user_id, class_name: "Friendship"
+  has_many :pending_received_friendships, -> { where(status: :pending) }, foreign_key: :friend_id, class_name: "Friendship"
+
 
   private
   def update_session_version

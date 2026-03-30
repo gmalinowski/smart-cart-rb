@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_26_143540) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_28_113010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -31,6 +31,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_143540) do
     t.uuid "owner_id", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_groups_on_owner_id"
+  end
+
+  create_table "invitation_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", precision: nil, default: -> { "(CURRENT_TIMESTAMP + 'P30D'::interval)" }, null: false
+    t.integer "invitation_type", default: 0, null: false
+    t.integer "max_uses", default: 1, null: false
+    t.uuid "token", default: "53a6b171-73e6-4a3f-9f25-35ea3d0ae78b", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "user_id", null: false
+    t.integer "uses_count", default: 0, null: false
+    t.index ["token"], name: "index_invitation_links_on_token", unique: true
+    t.index ["user_id"], name: "index_invitation_links_on_user_id"
   end
 
   create_table "shopping_list_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -88,6 +101,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_143540) do
   add_foreign_key "group_shopping_lists", "groups", on_delete: :cascade
   add_foreign_key "group_shopping_lists", "shopping_lists", on_delete: :cascade
   add_foreign_key "groups", "users", column: "owner_id"
+  add_foreign_key "invitation_links", "users", on_delete: :cascade
   add_foreign_key "shopping_list_items", "shopping_lists", on_update: :cascade, on_delete: :cascade
   add_foreign_key "shopping_list_public_links", "shopping_lists", on_update: :cascade, on_delete: :cascade
   add_foreign_key "shopping_list_public_links", "users", column: "created_by_id"

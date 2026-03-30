@@ -19,7 +19,21 @@ RSpec.describe User, type: :model do
 
   describe 'validations' do
     it { should validate_presence_of(:email) }
+  end
+
+  describe 'dependencies' do
+    it 'destroys associated shopping_lists when destroyed'
+  end
+
+  describe 'associations' do
     it { should have_many(:shopping_lists).with_foreign_key('owner_id') }
     it { should have_many(:groups).with_foreign_key('owner_id') }
+
+    it { should have_many(:friendships) }
+    it { should have_many(:friends).through(:user_friend_views) }
+    it { should have_many(:pending_friendships).with_foreign_key('user_id').class_name('Friendship').conditions(status: :pending) }
+    it { should have_many(:pending_received_friendships).with_foreign_key('friend_id').class_name('Friendship').conditions(status: :pending) }
+
+    it { should have_many(:invitation_links) }
   end
 end
