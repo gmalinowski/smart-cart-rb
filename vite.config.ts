@@ -6,7 +6,12 @@ export default defineConfig({
   plugins: [
       RailsPlugin({
           fullReload: {
-              additionalPaths: ['app/components/**/*'],
+              additionalPaths: [
+                  'app/components/**/*',
+                  'app/views/**/*.erb',
+                  'app/controllers/**/*.rb',
+                  'app/helpers/**/*.rb',
+              ],
           }
       }),
       tailwindcss(),
