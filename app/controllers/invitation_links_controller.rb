@@ -1,6 +1,6 @@
 class InvitationLinksController < ApplicationController
   before_action :authenticate_user!
-  skip_after_action :verify_policy_scoped, only: [:create, :destroy]
+  skip_after_action :verify_policy_scoped, only: [ :create, :destroy ]
 
   def create
     @invitation_link = InvitationLink.new(user: current_user)

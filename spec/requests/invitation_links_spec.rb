@@ -24,7 +24,7 @@ RSpec.describe "InvitationLinks", type: :request do
 
       context 'turbo stream' do
         it "renders turbo stream" do
-          post invitation_links_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html'}
+          post invitation_links_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
           expect(response.body).to include("turbo-stream")
         end
         it "has assigned invitation link" do
