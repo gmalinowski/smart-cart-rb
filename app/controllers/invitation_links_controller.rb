@@ -1,6 +1,8 @@
 class InvitationLinksController < ApplicationController
   before_action :authenticate_user!
-  skip_after_action :verify_policy_scoped, only: [ :create, :destroy ]
+  before_action :find_active_invitation_link, only: [ :accept ]
+  skip_after_action :verify_policy_scoped, only: [ :create, :destroy, :accept ]
+  skip_after_action :verify_authorized, only: [ :accept ]
 
   def create
     @invitation_link = InvitationLink.new(user: current_user)
@@ -18,6 +20,32 @@ class InvitationLinksController < ApplicationController
       flash[:notice] = "Invitation link deleted"
     else
       flash[:alert] = "Invitation link could not be deleted"
+    end
+  end
+
+  def accept
+    @inviter = @invitation_link.user
+    @invitee = current_user
+    @friendship = Friendship.new(user: @inviter, friend: @invitee, status: :accepted)
+
+    unless @friendship.valid?
+      flash[:alert] = @friendship.errors.full_messages.to_sentence
+      redirect_to root_path and return
+    end
+  end
+
+  private
+  def find_active_invitation_link
+    @invitation_link = InvitationLink.includes(:user).find_by(token: params[:token])
+
+    unless @invitation_link
+      flash[:alert] = "Invalid invitation link"
+      redirect_to root_path and return
+    end
+
+    unless @invitation_link.active?
+      flash[:info] = "Invitation link has expired, ask the inviter to send you a new one"
+      redirect_to root_path and return
     end
   end
 end

@@ -25,6 +25,64 @@ RSpec.describe User, type: :model do
     it 'destroys associated shopping_lists when destroyed'
   end
 
+  describe 'helpers' do
+    describe 'friends_with?' do
+      it 'returns true if user is friends with friend' do
+        user = create(:user)
+        friend = create(:user)
+        create(:friendship, user: user, friend: friend, status: :accepted)
+        expect(user.friends_with?(friend)).to be_truthy
+      end
+      it 'returns false if user is not friends with friend' do
+        user = create(:user)
+        friend = create(:user)
+        expect(user.friends_with?(friend)).to be_falsey
+      end
+      it 'returns false if friend is nil' do
+        user = create(:user)
+        expect(user.friends_with?(nil)).to be_falsey
+      end
+      it 'returns false if user is nil' do
+        friend = create(:user)
+        expect(User.new.friends_with?(friend)).to be_falsey
+      end
+      it 'returns false if friendship is not accepted' do
+        user = create(:user)
+        friend = create(:user)
+        create(:friendship, user: user, friend: friend)
+        expect(user.friends_with?(friend)).to be_falsey
+      end
+    end
+
+    describe 'pending_friends_with?' do
+      it 'returns true if user is pending friend with friend' do
+          user = create(:user)
+          friend = create(:user)
+          create(:friendship, user: user, friend: friend, status: :pending)
+          expect(user.pending_friendship_with?(friend)).to be_truthy
+      end
+      it 'returns false if user is not friend with friend' do
+          user = create(:user)
+          friend = create(:user)
+          expect(user.pending_friendship_with?(friend)).to be_falsey
+      end
+      it 'returns false if friend is nil' do
+        user = create(:user)
+        expect(user.pending_friendship_with?(nil)).to be_falsey
+      end
+      it 'returns false if user is nil' do
+        friend = create(:user)
+        expect(User.new.pending_friendship_with?(friend)).to be_falsey
+      end
+      it 'returns false if users are accepted friends' do
+        user = create(:user)
+        friend = create(:user)
+        create(:friendship, user: user, friend: friend, status: :accepted)
+        expect(user.pending_friendship_with?(friend)).to be_falsey
+      end
+    end
+  end
+
   describe 'associations' do
     it { should have_many(:shopping_lists).with_foreign_key('owner_id') }
     it { should have_many(:groups).with_foreign_key('owner_id') }

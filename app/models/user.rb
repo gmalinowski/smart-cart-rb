@@ -19,6 +19,16 @@ class User < ApplicationRecord
   has_many :pending_friendships, -> { where(status: :pending) }, foreign_key: :user_id, class_name: "Friendship"
   has_many :pending_received_friendships, -> { where(status: :pending) }, foreign_key: :friend_id, class_name: "Friendship"
 
+  def friends_with?(other_user)
+    return false if other_user.nil?
+    friends.exists?(id: other_user.id)
+  end
+
+  def pending_friendship_with?(other_user)
+    return false if other_user.nil?
+    pending_friendships.exists?(friend_id: other_user.id) ||
+      pending_received_friendships.exists?(user_id: other_user.id)
+  end
 
   private
   def update_session_version

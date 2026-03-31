@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   resource :folder, only: [ :show ]
   resources :groups, only: [ :create, :show, :new, :destroy ]
   resources :invitation_links, only: [ :create, :destroy ]
+  get "invitation_links/:token/accept" => "invitation_links#accept", as: :accept_invitation_link
 
   resource :friends, only: [ :show ]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
