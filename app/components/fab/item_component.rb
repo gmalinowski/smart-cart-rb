@@ -1,6 +1,7 @@
 module Fab
   class ItemComponent < ViewComponent::Base
-    def initialize(icon:, path:, label:, confirm_msg: nil, type: nil, method: :get)
+    def initialize(icon:, label:, path: nil, data: nil, confirm_msg: nil, type: nil, method: :get)
+      @data = data
       @confirm_msg = confirm_msg
       @icon = icon
       @path = path
@@ -9,6 +10,9 @@ module Fab
       @method = method
 
       case type
+      when :info
+        @btn_classes = "btn-info"
+        @label_classes = "bg-info text-info-content"
       when :secondary
         @btn_classes = "btn-secondary"
         @label_classes = "bg-secondary text-secondary-content"

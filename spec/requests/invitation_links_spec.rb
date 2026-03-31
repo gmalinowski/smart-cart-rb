@@ -5,10 +5,6 @@ RSpec.describe "InvitationLinks", type: :request do
   describe "POST /invitation_links" do
     context 'when user is logged in' do
       before { sign_in_with_session user }
-      it "returns http success" do
-        post invitation_links_path
-        expect(response).to have_http_status(:success)
-      end
       it "creates a new invitation link" do
         expect {
           post invitation_links_path
@@ -24,6 +20,17 @@ RSpec.describe "InvitationLinks", type: :request do
         allow_any_instance_of(InvitationLink).to receive(:save).and_return(false)
         post invitation_links_path
         expect(flash[:alert]).to be_present
+      end
+
+      context 'turbo stream' do
+        it "renders turbo stream" do
+          post invitation_links_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html'}
+          expect(response.body).to include("turbo-stream")
+        end
+        it "has assigned invitation link" do
+          post invitation_links_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+          expect(assigns(:invitation_link)).to eq(InvitationLink.last)
+        end
       end
     end
 

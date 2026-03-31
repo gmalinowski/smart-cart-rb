@@ -88,7 +88,7 @@ CREATE TABLE public.groups (
 CREATE TABLE public.invitation_links (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     user_id uuid NOT NULL,
-    token uuid DEFAULT '428e81a8-8869-4413-9be8-ac4538b1d7a0'::uuid NOT NULL,
+    token uuid DEFAULT gen_random_uuid() NOT NULL,
     max_uses integer DEFAULT 1 NOT NULL,
     uses_count integer DEFAULT 0 NOT NULL,
     expires_at timestamp without time zone DEFAULT (CURRENT_TIMESTAMP + '30 days'::interval) NOT NULL,
@@ -482,6 +482,7 @@ ALTER TABLE ONLY public.friendships
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260331091351'),
 ('20260329211344'),
 ('20260329200453'),
 ('20260328155409'),
