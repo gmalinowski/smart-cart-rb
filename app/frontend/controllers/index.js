@@ -27,3 +27,6 @@ application.register('folder-tabs', FolderTabs)
 
 import SelectAll from './select_all_controller.js'
 application.register('select-all', SelectAll)
+
+import Clipboard from '@stimulus-components/clipboard'
+application.register('clipboard', Clipboard)

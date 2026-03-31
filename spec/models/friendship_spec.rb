@@ -36,13 +36,27 @@ RSpec.describe Friendship, type: :model do
     it "shouldn't allow duplicate friendships" do
       user = create(:user)
       friend = create(:user)
+      create(:friendship, user: user, friend: friend, status: :accepted)
+
+      duplicate = build(:friendship, user: user, friend: friend)
+      expect(duplicate).not_to be_valid
+
+      reverse = build(:friendship, user: friend, friend: user)
+      expect(reverse).not_to be_valid
+    end
+
+    it "should be invalid if friendships is duplicated" do
+      user = create(:user)
+      friend = create(:user)
+      create(:friendship, user: user, friend: friend, status: :accepted)
+      expect(build(:friendship, user: friend, friend: user)).to_not be_valid
+    end
+
+    it "should be invalid if friendship exists and is not accepted" do
+      user = create(:user)
+      friend = create(:user)
       create(:friendship, user: user, friend: friend)
-      expect {
-        create(:friendship, user: user, friend: friend)
-      }.to raise_error(ActiveRecord::RecordNotUnique)
-      expect {
-        create(:friendship, user: friend, friend: user)
-      }.to raise_error(ActiveRecord::RecordNotUnique)
+      expect(build(:friendship, user: friend, friend: user)).to be_invalid
     end
   end
 
