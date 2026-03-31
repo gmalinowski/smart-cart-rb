@@ -1,14 +1,13 @@
 class InvitationLinksController < ApplicationController
   before_action :authenticate_user!
-  skip_after_action :verify_policy_scoped, only: [ :create, :destroy ]
+  skip_after_action :verify_policy_scoped, only: [:create, :destroy]
 
   def create
     @invitation_link = InvitationLink.new(user: current_user)
     authorize @invitation_link
-    if @invitation_link.save
-      flash.now[:notice] = "Invitation link created"
-    else
-      flash.now[:alert] = "Invitation link could not be created"
+    unless @invitation_link.save
+      flash[:alert] = "Invitation link could not be created"
+      redirect_back(fallback_location: root_path, status: :unprocessable_content)
     end
   end
 

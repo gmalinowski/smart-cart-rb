@@ -7,6 +7,25 @@ RSpec.describe InvitationLink, type: :model do
     it { should validate_presence_of(:user_id) }
   end
 
+  describe 'validations' do
+    it "should not allow duplicate tokens" do
+      user = create(:user)
+      link = create(:invitation_link, user: user)
+      expect {
+        create(:invitation_link, user: user, token: link.token)
+      }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it "should allow create many links for one user" do
+      user = create(:user)
+      create(:invitation_link, user: user)
+      expect {
+        create(:invitation_link, user: user)
+      }.not_to raise_error
+      expect(user.invitation_links.count).to eq(2)
+    end
+  end
+
   describe 'database defaults' do
     let(:user) { create(:user) }
     subject { create(:invitation_link, user: user) }

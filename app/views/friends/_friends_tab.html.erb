@@ -14,3 +14,9 @@
   <% end %>
 
 </ul>
+
+
+<%= render Fab::ContainerComponent.new(icon: "user-plus", type: :success) do |fab| %>
+  <% fab.with_item(icon: "link", type: :success, path: invitation_links_path, method: :post, label: "Invite by link") %>
+  <% fab.with_item(icon: "at-symbol", path: invitation_links_path, method: :post, label: "Invite by email") %>
+<% end %>
