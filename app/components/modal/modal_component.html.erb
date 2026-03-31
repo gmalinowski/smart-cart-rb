@@ -1,0 +1,13 @@
+<dialog id="<%= @id %>" class="modal" open>
+  <div class="modal-box">
+    <h3 class="font-bold text-lg"><%= @title %></h3>
+    <%= body %>
+    <div class="modal-action">
+      <%= actions %>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
