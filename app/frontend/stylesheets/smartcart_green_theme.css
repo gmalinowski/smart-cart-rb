@@ -1,0 +1,35 @@
+
+@plugin "daisyui/theme" {
+    name: "smartcart-green";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(100% 0 0);
+    --color-base-200: oklch(97% 0 0);
+    --color-base-300: oklch(92% 0 0);
+    --color-base-content: oklch(20% 0 0);
+    --color-primary: oklch(76% 0.177 163.223);
+    --color-primary-content: oklch(37% 0.077 168.94);
+    --color-secondary: oklch(84% 0.238 128.85);
+    --color-secondary-content: oklch(40% 0.101 131.063);
+    --color-accent: oklch(70% 0.183 293.541);
+    --color-accent-content: oklch(38% 0.189 293.745);
+    --color-neutral: oklch(37% 0.01 67.558);
+    --color-neutral-content: oklch(92% 0.003 48.717);
+    --color-info: oklch(82% 0.111 230.318);
+    --color-info-content: oklch(39% 0.09 240.876);
+    --color-success: oklch(79% 0.209 151.711);
+    --color-success-content: oklch(39% 0.095 152.535);
+    --color-warning: oklch(87% 0.169 91.605);
+    --color-warning-content: oklch(41% 0.112 45.904);
+    --color-error: oklch(80% 0.114 19.571);
+    --color-error-content: oklch(39% 0.141 25.723);
+    --radius-selector: 1rem;
+    --radius-field: 0rem;
+    --radius-box: 0.5rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 1;
+}

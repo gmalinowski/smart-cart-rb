@@ -5,5 +5,6 @@
     def show
       authorize :friend, :index?
       @friends = current_user.friends
+      @pending_received_friendships = current_user.pending_received_friendships.includes(:friend)
     end
   end

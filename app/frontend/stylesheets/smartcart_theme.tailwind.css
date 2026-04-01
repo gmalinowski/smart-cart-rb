@@ -1,3 +1,4 @@
+@import "./smartcart_green_theme.css";
 @plugin "daisyui" {
     themes: bumblebee --default, dark --prefersdark;
 }
