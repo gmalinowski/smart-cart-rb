@@ -1,7 +1,6 @@
-<ul class="list bg-base-100 rounded-box shadow-md">
-
+<ul class="list rounded-box gap-1 shadow-md">
   <% friends.each do |friend| %>
-    <li class="list-row">
+    <li class="list-row font-bold">
       <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/3@94.webp"/></div>
       <div>
         <div><%= friend.email %></div>
@@ -15,6 +14,7 @@
 
 </ul>
 
+<%= render "friends/friend_requests", friend_requests: friend_requests if friend_requests %>
 
 <%= render Fab::ContainerComponent.new(icon: "user-plus", type: :success) do |fab| %>
   <% fab.with_item(icon: "link", type: :success, path: invitation_links_path, method: :post, label: "Invite by link") %>
