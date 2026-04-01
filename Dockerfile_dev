@@ -12,6 +12,7 @@ RUN apt-get update -qq && \
     pkg-config \
     nodejs \
     npm \
+    procps \
     postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
