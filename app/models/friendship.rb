@@ -3,11 +3,13 @@ class Friendship < ApplicationRecord
   belongs_to :user
   belongs_to :friend, class_name: "User"
 
+  attr_readonly :user_id, :friend_id
+
   validates :user_id, presence: true
   validates :friend_id, presence: true
   validate :users_must_be_confirmed
-  validate :cannot_be_friends_with_self
-  validate :friendship_already_exists
+  validate :cannot_be_friends_with_self , on: :create
+  validate :friendship_already_exists, on: :create
 
   private
 
