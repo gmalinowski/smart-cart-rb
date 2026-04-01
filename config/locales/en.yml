@@ -28,4 +28,14 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  pundit:
+    user_not_authorized: "You are not authorized to perform this action"
+  friendships:
+    confirm:
+      error: "Something went wrong with the confirmation"
+      success: "You are now friends!"
+      already_accepted: "Friendship already accepted"
+      forbidden: "Friendship forbidden"
+  invitation_links:
+    create:
+      error: "Error creating invitation link"

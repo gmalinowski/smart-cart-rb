@@ -1,13 +1,12 @@
 
-<%= render Modal::ModalComponent.new(title: "Accept Invitation") do |modal| %>
+<%= render Modal::ModalComponent.new(title: "Accept Invitation", closable: false) do |modal| %>
   <% modal.with_body do %>
-    <h1>Invitation from <%= @inviter.email %></h1>
     <p>Are you sure you want to become a friend with <%= @inviter.email %>??</p>
   <% end %>
   <% modal.with_actions do %>
     <div class="flex items-end justify-between w-full">
-      <%= link_to "Not now", root_path, class: "btn btn-sm btn-warning" %>
-      <%= button_to "Accept", "", method: :post, class: "btn btn-lg btn-success" %>
+      <%= link_to "Maybe later", friends_path, class: "btn btn-sm btn-warning" %>
+      <%= button_to "Accept", confirm_friendship_path(@friendship), method: :patch, class: "btn btn-lg btn-success" %>
     </div>
   <% end %>
 <% end %>

@@ -8,7 +8,7 @@ class InvitationLinksController < ApplicationController
     @invitation_link = InvitationLink.new(user: current_user)
     authorize @invitation_link
     unless @invitation_link.save
-      flash[:alert] = "Invitation link could not be created"
+      flash[:alert] = I18n.t("invitation_links.create.error")
       redirect_back(fallback_location: root_path, status: :unprocessable_content)
     end
   end
@@ -26,11 +26,13 @@ class InvitationLinksController < ApplicationController
   def accept
     @inviter = @invitation_link.user
     @invitee = current_user
-    @friendship = Friendship.new(user: @inviter, friend: @invitee, status: :accepted)
+    @friendship = Friendship.new(user: @inviter, friend: @invitee, status: :pending)
 
-    unless @friendship.valid?
-      flash[:alert] = @friendship.errors.full_messages.to_sentence
-      redirect_to root_path and return
+    if @friendship.invalid?
+      flash[:warning] = @friendship.errors.full_messages.to_sentence
+      redirect_to root_path
+    elsif @friendship.save
+      @invitation_link.increment!(:uses_count)
     end
   end
 
