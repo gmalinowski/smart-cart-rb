@@ -11,15 +11,10 @@ RSpec.describe "InvitationLinks", type: :request do
         }.to change(InvitationLink, :count).by(1)
       end
 
-      it "set flash message after created" do
-        post invitation_links_path
-        expect(flash).to_not be_empty
-      end
-
       it "set errored flash message if link could not be created" do
         allow_any_instance_of(InvitationLink).to receive(:save).and_return(false)
         post invitation_links_path
-        expect(flash[:alert]).to be_present
+        expect(flash[:alert]).to eq(I18n.t("invitation_links.create.error"))
       end
 
       context 'turbo stream' do
@@ -73,6 +68,21 @@ RSpec.describe "InvitationLinks", type: :request do
         link = create(:invitation_link, user: inviter_user)
         get accept_invitation_link_path(link.token)
         expect(response).to render_template(:accept)
+      end
+
+      it "increases invitation link uses count" do
+        link = create(:invitation_link, user: inviter_user)
+        expect {
+          get accept_invitation_link_path(link.token)
+        }.to change { link.reload.uses_count }.by(1)
+      end
+
+      it "creates pending friendship" do
+        link = create(:invitation_link, user: inviter_user)
+        expect {
+          get accept_invitation_link_path(link.token)
+        }.to change(Friendship, :count).by(1)
+        expect(Friendship.last.status).to eq("pending")
       end
 
       it "has assigned user which has created invitation" do

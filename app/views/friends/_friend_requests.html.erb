@@ -15,9 +15,7 @@
             <div class="text-xs uppercase font-semibold opacity-60"></div>
           </div>
         </div>
-        <button class="btn btn-xs btn-success w-full">
-          Accept
-        </button>
+        <%= button_to "Accept friend request", confirm_friendship_path(friend_request), method: :patch, class: "btn btn-xs btn-success w-full" %>
       </div>
       <div class="col-span-2 grid-start-10 md:col-span-1 md:grid-start-11">
         <div class="dropdown dropdown-left dropdown-center">
