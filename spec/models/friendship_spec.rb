@@ -58,6 +58,36 @@ RSpec.describe Friendship, type: :model do
       create(:friendship, user: user, friend: friend)
       expect(build(:friendship, user: friend, friend: user)).to be_invalid
     end
+
+    describe 'update' do
+
+      it 'updates status to accepted when friendship is accepted' do
+        friendship = create(:friendship, status: :pending)
+        friendship.accepted!
+        friendship.reload
+        expect(friendship.status).to eq('accepted')
+      end
+
+      it 'cannot update user_id' do
+        user = create(:user)
+        other_user = create(:user)
+        friend = create(:user)
+        friendship = create(:friendship, user: user, friend: friend)
+        expect {
+        friendship.update(user_id: other_user.id)
+        }.to raise_error(ActiveRecord::ReadonlyAttributeError)
+      end
+
+      it 'cannot update friend_id' do
+        user = create(:user)
+        other_user = create(:user)
+        friend = create(:user)
+        friendship = create(:friendship, user: user, friend: friend)
+        expect {
+          friendship.update(friend_id: other_user.id)
+        }.to raise_error(ActiveRecord::ReadonlyAttributeError)
+      end
+    end
   end
 
   describe 'dependencies' do
