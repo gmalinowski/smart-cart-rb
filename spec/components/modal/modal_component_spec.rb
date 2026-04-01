@@ -10,6 +10,16 @@ RSpec.describe Modal::ModalComponent, type: :component do
     expect(page).to have_text("tttt")
   end
 
+  it "renders close form button" do
+    render_inline(described_class.new(id: "tttt", title: "tttt"))
+    expect(page).to have_css("form[method='dialog']")
+  end
+
+  it "does not render close form button when closable is false" do
+    render_inline(described_class.new(id: "tttt", title: "tttt", closable: false))
+    expect(page).not_to have_css("form")
+  end
+
   it "renders id" do
     render_inline(described_class.new(id: "tttt", title: "tttt"))
     expect(page).to have_css("#tttt")
