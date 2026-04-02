@@ -1,20 +1,14 @@
-<div class="text-center pt-8 px-4">
-  <h1 class="text-2xl font-bold">
-    Smart Shopping List
-  </h1>
-  <p>
-    Shopping made simple for the people you love. Share lists, shop together, and let AI handle the rest.
-  </p>
-
-
-<%= form_with url: shopping_lists_path, method: :post, scope: :shopping_list_item, class: "flex gap-2 items-center mt-8 justify-center" do |f| %>
-  <%= f.label :name, class: "floating-label" do %>
-    <span>What's running low? 🛒</span>
-    <%= f.text_field :name, placeholder: "Add an item...", autofocus: false, required: true, autocomplete: "off",
-                     class: "m-2 border-b-2 border-secondary/50 outline-none px-2 py-1" %>
+<div class="text-center pt-6 px-4">
+  <h1 class="text-2xl font-bold text-primary">Create a new shopping list</h1>
+  <h2 class="text-xl font-semibold mt-3 text-secondary">What's running low? 🛒</h2>
+  <%= form_with url: shopping_lists_path, method: :post, scope: :shopping_list_item, class: "flex gap-2 items-center mt-8 justify-center" do |f| %>
+    <%= f.label :name, class: "floating-label" do %>
+      <span></span>
+      <%= f.text_field :name, placeholder: "Add a product...", autofocus: false, required: true, autocomplete: "off",
+                       class: "m-2 border-b-2 text-lg border-secondary outline-none px-2 py-1" %>
     <% end %>
-    <%= f.submit "Add", class: "btn btn-xs btn-secondary" %>
-<% end %>
+    <%= f.submit "Add", class: "btn btn-outline btn-sm btn-secondary" %>
+  <% end %>
 </div>
 
 <%= render "widgets/ai_hints" %>

@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Friendships", type: :request do
-
   describe "PATCH /friendships/:id/confirm" do
     let(:user) { create(:user) }
     let(:friend) { create(:user) }
@@ -60,5 +59,4 @@ RSpec.describe "Friendships", type: :request do
       end
     end
   end
-
 end

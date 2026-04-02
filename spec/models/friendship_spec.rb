@@ -60,7 +60,6 @@ RSpec.describe Friendship, type: :model do
     end
 
     describe 'update' do
-
       it 'updates status to accepted when friendship is accepted' do
         friendship = create(:friendship, status: :pending)
         friendship.accepted!

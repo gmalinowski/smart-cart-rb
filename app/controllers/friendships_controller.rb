@@ -12,5 +12,4 @@ class FriendshipsController < ApplicationController
       flash[:alert] = I18n.t("friendships.confirm.error")
     end
   end
-
 end
