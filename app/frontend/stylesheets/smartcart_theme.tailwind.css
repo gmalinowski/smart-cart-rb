@@ -1,6 +1,6 @@
 @import "./smartcart_green_theme.css";
 @plugin "daisyui" {
-    themes: bumblebee --default, dark --prefersdark;
+    themes: bumblebee --default, bumblebee --prefersdark;
 }
 
 @custom-variant screen-short (@media( max-height: 550px));

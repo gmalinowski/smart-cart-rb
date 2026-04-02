@@ -78,7 +78,7 @@ group :test do
   gem "pundit-matchers"
   gem "shoulda-matchers", "~> 7.0"
   gem "spring"
-  gem 'spring-commands-rspec'
+  gem "spring-commands-rspec"
 end
 
 gem "view_component", "~> 4.5"

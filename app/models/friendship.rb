@@ -8,7 +8,7 @@ class Friendship < ApplicationRecord
   validates :user_id, presence: true
   validates :friend_id, presence: true
   validate :users_must_be_confirmed
-  validate :cannot_be_friends_with_self , on: :create
+  validate :cannot_be_friends_with_self, on: :create
   validate :friendship_already_exists, on: :create
 
   private
