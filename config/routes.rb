@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   resources :invitation_links, only: [ :create, :destroy ]
   get "invitation_links/:token" => "invitation_links#accept", as: :accept_invitation_link
 
-  resources :friendships, only: [] do
+  resources :friendships, only: [:destroy] do
     member do
       patch :confirm
     end

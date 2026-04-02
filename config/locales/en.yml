@@ -28,9 +28,22 @@
 #       enabled: "ON"
 
 en:
+  errors:
+    messages:
+      not_found: "Sorry, we couldn't find what you were looking for"
   pundit:
     user_not_authorized: "You are not authorized to perform this action"
   friendships:
+    destroy:
+      error: "Something went wrong with the deletion"
+      success: "You are no longer friends"
+      request:
+        error: "Something went wrong with the deletion"
+        success: "Friend request canceled"
+    actions:
+      accept: "Accept friend request"
+      reject: "Decline Request"
+      cancel: "Cancel"
     confirm:
       error: "Something went wrong with the confirmation"
       success: "You are now friends!"

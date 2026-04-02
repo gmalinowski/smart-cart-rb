@@ -15,18 +15,16 @@
             <div class="text-xs uppercase font-semibold opacity-60"></div>
           </div>
         </div>
-        <%= button_to "Accept friend request", confirm_friendship_path(friend_request), method: :patch, class: "btn btn-xs btn-success w-full" %>
+        <%= button_to t('friendships.actions.accept'), confirm_friendship_path(friend_request), method: :patch, class: "btn btn-xs btn-success w-full" %>
       </div>
       <div class="col-span-2 grid-start-10 md:col-span-1 md:grid-start-11">
         <div class="dropdown dropdown-left dropdown-center">
           <div tabindex="0" role="button" class="btn btn-ghost">
             <%= heroicon "ellipsis-vertical", class: "size-5" %>
           </div>
-          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box w-32 gap-6  z-1 p-4 shadow-md">
+          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box gap-6 z-1 p-4 shadow-md">
             <li>
-              <button class="btn btn-xs btn-warning">
-                Reject
-              </button>
+              <%= button_to t('friendships.actions.reject'), friendship_path(friend_request), method: :delete, class: "btn whitespace-nowrap btn-xs btn-warning" %>
             </li>
           </ul>
         </div>
