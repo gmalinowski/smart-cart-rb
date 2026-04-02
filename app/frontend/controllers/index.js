@@ -30,3 +30,6 @@ application.register('select-all', SelectAll)
 
 import Clipboard from '@stimulus-components/clipboard'
 application.register('clipboard', Clipboard)
+
+import Home from './home_controller.js'
+application.register('home', Home)
