@@ -14,7 +14,9 @@
 
 </ul>
 
-<%= render "friends/friend_requests", friend_requests: friend_requests if friend_requests %>
+<%= render "friends/friend_requests", friend_requests: friend_requests if friend_requests.any? %>
+
+<%= render "friends/friend_sent_requests", sent_requests: sent_requests if sent_requests.any? %>
 
 <%= render Fab::ContainerComponent.new(icon: "user-plus", type: :success) do |fab| %>
   <% fab.with_item(icon: "link", type: :success, path: invitation_links_path, method: :post, label: "Invite by link") %>

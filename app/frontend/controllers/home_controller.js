@@ -5,9 +5,13 @@ export default class extends Controller {
     connect() {
         autoAnimate(this.element)
         autoAnimate(this.bannerContainerTarget)
-        this.bannerNode = this.bannerTarget.cloneNode(true)
-        this.hintNode = this.hintTarget.cloneNode(true)
-        this.hintNode.classList.remove('hidden')
+        if (this.hasBannerTarget) {
+            this.bannerNode = this.bannerTarget.cloneNode(true)
+        }
+        if (this.hasHintTarget) {
+            this.hintNode = this.hintTarget.cloneNode(true)
+            this.hintNode.classList.remove('hidden')
+        }
     }
 
     hideBanner() {

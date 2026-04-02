@@ -27,9 +27,20 @@ RSpec.describe "Friends", type: :request do
         create(:friendship, user: user, friend: friend, status: :pending)
         create(:friendship, user: user, friend: create(:user), status: :accepted)
         create(:friendship, user: create(:user), friend: user, status: :pending)
+        create(:friendship, user: create(:user), friend: user, status: :pending)
         get friends_path
         expect(assigns(:pending_received_friendships)).to eq(user.pending_received_friendships)
-        expect(assigns(:pending_received_friendships).size).to eq(1)
+        expect(assigns(:pending_received_friendships).size).to eq(2)
+      end
+
+      it "assigns @pending_friendships" do
+        create(:friendship, user: friend, friend: user, status: :pending)
+        create(:friendship, user: create(:user), friend: user, status: :accepted)
+        create(:friendship, user: user, friend: create(:user), status: :pending)
+        create(:friendship, user: user, friend: create(:user), status: :pending)
+        get friends_path
+        expect(assigns(:pending_friendships)).to eq(user.pending_friendships)
+        expect(assigns(:pending_friendships).size).to eq(2)
       end
     end
     context 'when user is not logged in' do
