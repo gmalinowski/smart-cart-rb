@@ -8,10 +8,15 @@ class ApplicationController < ActionController::Base
   after_action :verify_policy_scoped, unless: :devise_controller?
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
 
   private
 
+  def record_not_found
+    flash[:alert] = I18n.t("errors.messages.not_found")
+    redirect_back(fallback_location: root_path)
+  end
   def check_session_version
     return unless current_user
     return if session[:session_version].blank?

@@ -1,9 +1,45 @@
 require 'rails_helper'
 
+RSpec.shared_examples "allow friendship destruction" do |status|
+  describe 'user is the inviter' do
+    context "when status is #{status}" do
+      let(:friendship) { create(:friendship, status, user: user, friend: friend) }
+      subject { described_class.new(user, friendship) }
+      it { is_expected.to permit_action(:destroy) }
+    end
+  end
+
+  describe 'user is the invitee' do
+    context "when status is #{status}" do
+      let(:friendship) { create(:friendship, status, user: friend, friend: user) }
+      subject { described_class.new(user, friendship) }
+      it { is_expected.to permit_action(:destroy) }
+    end
+  end
+end
+
 RSpec.describe FriendshipPolicy, type: :policy do
   let(:user) { create(:user) }
   let(:friend) { create(:user) }
   let(:stranger) { create(:user) }
+
+  describe 'destroy?' do
+    Friendship.statuses.keys.each do |status|
+      it_behaves_like "allow friendship destruction", status
+    end
+
+    context 'when user is the stranger' do
+      let(:friendship) { create(:friendship, user: friend, friend: user) }
+      subject { described_class.new(stranger, friendship) }
+      it { is_expected.to forbid_action(:destroy) }
+    end
+
+    context 'when there is no user' do
+      let(:friendship) { create(:friendship, user: friend, friend: user) }
+      subject { described_class.new(nil, friendship) }
+      it { is_expected.to forbid_action(:destroy) }
+    end
+  end
 
   describe 'confirm?' do
     context 'invitee can confirm pending friendship' do
