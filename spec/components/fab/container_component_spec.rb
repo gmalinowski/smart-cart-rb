@@ -22,6 +22,16 @@ RSpec.describe Fab::ContainerComponent, type: :component do
     expect(page).to have_css('form[action="/lists/new"]')
   end
 
+  it "does not have hide classes by default" do
+    render_inline(described_class.new)
+    expect(page).not_to have_css(".screen-short\\:hidden")
+  end
+
+  it "applies hiding classes when hide_on_short_screen is true" do
+    render_inline(described_class.new(hide_on_short_screen: true))
+    expect(page).to have_css(".screen-short\\:hidden")
+  end
+
   it 'supports http methods' do
     render_inline(described_class.new) do |component|
       component.with_item(icon: 'plus', path: '/lists/new', label: 'Add', method: :delete)
