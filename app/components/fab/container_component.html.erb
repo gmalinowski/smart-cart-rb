@@ -1,4 +1,4 @@
-<div x-data="{open: false}" class="fab bottom-20 right-6">
+<div x-data="{open: false}" class="fab bottom-20 right-6 <%= @hide_on_short_screen ? 'screen-short:hidden' : '' %>">
   <!-- a focusable div with tabindex is necessary to work on all browsers. role="button" is necessary for accessibility -->
   <div @click.stop="open = !open" tabindex="0" role="button"
        class="btn btn-lg shadow-xl btn-circle <%= @btn_classes %> pointer-events-auto active:scale-95 transition-transform">

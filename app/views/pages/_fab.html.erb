@@ -1,4 +1,4 @@
 
-<%= render Fab::ContainerComponent.new do |fab| %>
+<%= render Fab::ContainerComponent.new(hide_on_short_screen: true) do |fab| %>
   <% fab.with_item(icon: "rectangle-group", path: new_group_path, label: "New Group") %>
 <% end %>

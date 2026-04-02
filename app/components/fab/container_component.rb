@@ -2,7 +2,8 @@
 module Fab
 class ContainerComponent < ViewComponent::Base
   renders_many :items, ItemComponent
-  def initialize(icon: "plus", type: :secondary)
+  def initialize(icon: "plus", type: :secondary, hide_on_short_screen: false)
+    @hide_on_short_screen = hide_on_short_screen
     @icon = icon
     case type
     when :primary
