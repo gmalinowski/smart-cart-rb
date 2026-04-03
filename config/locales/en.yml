@@ -28,6 +28,20 @@
 #       enabled: "ON"
 
 en:
+  activerecord:
+    models:
+      invitation_link: "Invitation"
+    attributes:
+      invitation_link:
+        recipient_email: "Recipient email"
+    errors:
+      models:
+        invitation_link:
+          attributes:
+            recipient_email:
+              blank: "cannot be empty"
+              invalid: "is not a valid email address"
+              taken: "has already received an invitation"
   errors:
     messages:
       not_found: "Sorry, we couldn't find what you were looking for"
