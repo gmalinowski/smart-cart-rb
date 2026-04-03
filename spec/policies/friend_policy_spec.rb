@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe FriendPolicy, type: :policy do
-
   describe 'show?' do
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }

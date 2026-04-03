@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Friendships", type: :request do
-
   describe "DELETE /friendships/destroy_by_friend/:friend_id" do
     let(:user) { create(:user) }
     let(:friend) { create(:user) }
