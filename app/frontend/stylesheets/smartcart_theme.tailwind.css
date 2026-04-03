@@ -13,6 +13,12 @@
     }
 }
 
+@layer components {
+    .dock > a {
+        @apply active:bg-secondary/20!;
+        transition: background-color 0s !important
+    }
+}
 
 @utility dock-2xs {
 
