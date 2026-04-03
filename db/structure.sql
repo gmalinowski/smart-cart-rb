@@ -94,7 +94,8 @@ CREATE TABLE public.invitation_links (
     expires_at timestamp without time zone DEFAULT (CURRENT_TIMESTAMP + '30 days'::interval) NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    invitation_type integer DEFAULT 0 NOT NULL
+    invitation_type integer DEFAULT 0 NOT NULL,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -340,6 +341,13 @@ CREATE INDEX index_invitation_links_on_user_id ON public.invitation_links USING 
 
 
 --
+-- Name: index_invitation_links_on_user_id_and_recipient_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_invitation_links_on_user_id_and_recipient_email ON public.invitation_links USING btree (user_id, ((metadata ->> 'recipient_email'::text))) WHERE (((metadata ->> 'recipient_email'::text) IS NOT NULL) AND (invitation_type = 1));
+
+
+--
 -- Name: index_shopping_list_items_on_shopping_list_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -482,6 +490,7 @@ ALTER TABLE ONLY public.friendships
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260403175316'),
 ('20260331091351'),
 ('20260329211344'),
 ('20260329200453'),
