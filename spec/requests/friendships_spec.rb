@@ -2,6 +2,78 @@ require 'rails_helper'
 
 RSpec.describe "Friendships", type: :request do
 
+  describe "DELETE /friendships/destroy_by_friend/:friend_id" do
+    let(:user) { create(:user) }
+    let(:friend) { create(:user) }
+    let!(:friendship) { create(:friendship, user: friend, friend: user, status: :accepted) }
+    context 'when user is logged in' do
+      before { sign_in_with_session user }
+
+      it "successfully deletes the friendship by finding it through friend_id" do
+        expect {
+          delete destroy_by_friend_friendships_path(friend_id: friend.id)
+        }.to change(Friendship, :count).by(-1)
+        expect(response).to redirect_to(friends_path)
+        expect(flash[:warning]).to eq(I18n.t("friendships.destroy.success"))
+      end
+
+      it "returns 404/redirect when users exist but have no friendship" do
+        stranger = create(:user)
+        expect {
+          delete destroy_by_friend_friendships_path(friend_id: stranger.id)
+        }.not_to change(Friendship, :count)
+
+        expect(response).to have_http_status(:redirect).or have_http_status(:not_found)
+        expect(flash[:alert]).to be_present
+      end
+
+      it "delegates to destroy and sets the correct flash for pending status" do
+        friendship.update(status: :pending)
+
+        delete destroy_by_friend_friendships_path(friend_id: friend.id)
+
+        expect(response).to redirect_to(friends_path)
+        expect(flash[:warning]).to eq(I18n.t("friendships.destroy.request.success"))
+      end
+
+      it "raises redirect when friend_id is invalid" do
+        expect {
+          delete destroy_by_friend_friendships_path(friend_id: 999_999)
+        }.not_to change(Friendship, :count)
+        expect(response).to have_http_status(:not_found).or have_http_status(:redirect)
+        expect(flash[:alert]).to be_present
+      end
+
+      it "returns 404/redirect when trying to delete a non-existent friendship" do
+        other_user = create(:user)
+        expect {
+          delete destroy_by_friend_friendships_path(friend_id: other_user.id)
+        }.not_to change(Friendship, :count)
+
+        expect(response).to have_http_status(:redirect)
+        expect(flash[:alert]).to eq(I18n.t("errors.messages.not_found"))
+      end
+
+      it "prevents deleting a friendship of two other users (security check)" do
+        user_a = create(:user)
+        user_b = create(:user)
+        create(:friendship, user: user_a, friend: user_b, status: :accepted)
+        expect {
+          delete destroy_by_friend_friendships_path(friend_id: user_a.id)
+        }.not_to change(Friendship, :count)
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+    context 'when user is not logged in' do
+      it "redirects to sign in page" do
+        expect {
+          delete destroy_by_friend_friendships_path(friend)
+        }.not_to change(Friendship, :count)
+        expect(response).to have_http_status(:found) # 302 redirect
+        end
+      end
+  end
+
   describe "DELETE /friendships/:id" do
     let(:user) { create(:user) }
     let(:friend) { create(:user) }

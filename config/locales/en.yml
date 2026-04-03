@@ -44,6 +44,7 @@ en:
       accept: "Accept friend request"
       reject: "Decline Request"
       cancel: "Cancel"
+      remove_friend?: "Remove friend"
     confirm:
       error: "Something went wrong with the confirmation"
       success: "You are now friends!"

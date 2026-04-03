@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   get "invitation_links/:token" => "invitation_links#accept", as: :accept_invitation_link
 
   resources :friendships, only: [:destroy] do
+    collection do
+      delete "destroy_by_friend/:friend_id", action: :destroy_by_friend, as: :destroy_by_friend
+    end
     member do
       patch :confirm
     end

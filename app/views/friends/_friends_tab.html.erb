@@ -6,9 +6,12 @@
         <div><%= friend.email %></div>
         <div class="text-xs uppercase font-semibold opacity-60"></div>
       </div>
-      <button class="btn btn-square btn-ghost">
+      <%= button_to destroy_by_friend_friendships_path(friend),
+                    method: :delete,
+                    form: {data: {turbo_confirm: t("friendships.actions.remove_friend?")}},
+                    class: "btn btn-square btn-ghost" do %>
         <%= heroicon "user-minus", class: "size-5 text-error" %>
-      </button>
+      <% end %>
     </li>
   <% end %>
 

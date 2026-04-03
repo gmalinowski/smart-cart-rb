@@ -1,6 +1,7 @@
 class FriendshipsController < ApplicationController
   before_action :authenticate_user!
-  skip_after_action :verify_policy_scoped, only: [ :confirm, :destroy ]
+  skip_after_action :verify_policy_scoped, only: [:confirm, :destroy, :destroy_by_friend]
+  skip_after_action :verify_authorized, only: [:destroy_by_friend]
 
   def confirm
     @friendship = Friendship.find(params[:id])
@@ -13,8 +14,15 @@ class FriendshipsController < ApplicationController
     redirect_to friends_path
   end
 
+  def destroy_by_friend
+    u = current_user
+    f = User.find(params[:friend_id])
+    @friendship = Friendship.find_by!(user_id: [u, f], friend_id: [f, u])
+    destroy
+  end
+
   def destroy
-    @friendship = Friendship.find(params[:id])
+    @friendship ||= Friendship.find(params[:id])
     authorize @friendship, :destroy?
     is_accepted = @friendship.accepted?
     is_pending = @friendship.pending?
