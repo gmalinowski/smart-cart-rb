@@ -86,7 +86,7 @@ group :test do
   gem "spring-commands-rspec"
 end
 
-gem "view_component", "~> 4.5"
+gem "view_component", "~> 4.6"
 
 gem "devise", "~> 5.0.3"
 
