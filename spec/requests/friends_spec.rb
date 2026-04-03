@@ -4,7 +4,6 @@ RSpec.describe "Friends", type: :request do
   let(:user) { create(:user) }
   let(:friend) { create(:user) }
 
-
   describe "GET /friends" do
     context 'when user is logged in' do
       before { sign_in_with_session user }
@@ -50,4 +49,5 @@ RSpec.describe "Friends", type: :request do
         end
       end
   end
+
 end

@@ -1,6 +1,7 @@
 
 class FriendPolicy < ApplicationPolicy
-  def index?
+  def show?
     user.present?
   end
+
 end
