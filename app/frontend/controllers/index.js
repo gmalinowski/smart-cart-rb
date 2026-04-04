@@ -1,6 +1,8 @@
 // Import and register all your controllers from the importmap via controllers/**/*_controller
 import { application } from "./application.js"
 
+import "./turbo_progress_bar.js"
+
 import HelloController from "./hello_controller.js"
 application.register("hello", HelloController)
 
