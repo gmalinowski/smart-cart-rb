@@ -4,6 +4,10 @@ class InvitationLinkPolicy < ApplicationPolicy
     owner?
   end
 
+  def accept?
+    user.present? && record.active?
+  end
+
   def destroy?
     owner?
   end
