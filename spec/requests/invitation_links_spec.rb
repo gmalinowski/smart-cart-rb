@@ -1,7 +1,43 @@
-
 require 'rails_helper'
 RSpec.describe "InvitationLinks", type: :request do
   let(:user) { create(:user) }
+
+  describe "authorization check" do
+    describe 'accept action' do
+      before { sign_in_with_session user }
+      context 'when there is no pending request' do
+        let!(:invitation_link) { create(:invitation_link, user: user) }
+        it 'calls pundit auth for InvitationLink:accept' do
+          expect_any_instance_of(InvitationLinksController).to receive(:authorize)
+                                                                 .with(instance_of(InvitationLink), :accept?)
+                                                                 .and_call_original
+          get accept_invitation_link_path(invitation_link.token)
+        end
+      end
+
+      context 'when there is a pending request and user is inviter' do
+        let!(:friend) { create(:user) }
+        let!(:invitation_link) { create(:invitation_link, user: friend) }
+        let!(:friendship) { create(:friendship, user: user, friend: friend, status: :pending) }
+
+        it 'authorizes both the link and the auto-confirmation' do
+          expect_any_instance_of(InvitationLinksController).to receive(:authorize)
+                                                                 .with(instance_of(InvitationLink), :accept?)
+                                                                 .and_call_original
+
+          expect_any_instance_of(InvitationLinksController).to receive(:authorize)
+                                                                 .with(instance_of(Friendship), :auto_confirm?)
+                                                                 .and_call_original
+
+          get accept_invitation_link_path(invitation_link.token)
+
+          expect(friendship.reload.status).to eq("accepted")
+        end
+      end
+
+    end
+  end
+
   describe "POST /invitation_links" do
     context 'when user is logged in' do
       before { sign_in_with_session user }
@@ -47,7 +83,7 @@ RSpec.describe "InvitationLinks", type: :request do
         expect {
           delete invitation_link_path(link)
         }.to change(InvitationLink, :count).by(-1)
-        end
+      end
     end
     context 'when user is not logged in' do
       it "redirects to sign in page" do
@@ -55,14 +91,47 @@ RSpec.describe "InvitationLinks", type: :request do
         expect {
           delete invitation_link_path(link)
         }.to change(InvitationLink, :count).by(0)
-        end
       end
+    end
   end
 
   describe "[Accept invitation] GET /invitation_links/:id/accept" do
     context 'when user is logged in' do
       let(:inviter_user) { create(:user) }
       before { sign_in_with_session user }
+
+      describe "auto-accepting" do
+        context 'when pending friendship already created by invitee' do
+          let!(:friendship) { create(:friendship, user: user, friend: inviter_user, status: :pending) }
+
+          it "accepts invitation" do
+            link = create(:invitation_link, user: inviter_user)
+            expect {
+              get accept_invitation_link_path(link.token)
+            }.to change(Friendship, :count).by(0)
+            expect(friendship.reload.status).to eq("accepted")
+          end
+
+          it "redirects with success" do
+            link = create(:invitation_link, user: inviter_user)
+            get accept_invitation_link_path(link.token)
+            expect(response).to redirect_to(friends_path)
+            expect(flash[:success]).to eq(I18n.t("friendships.confirm.success"))
+
+          end
+        end
+        context 'when pending friendship already created by inviter' do
+          let!(:friendship) { create(:friendship, user: inviter_user, friend: user, status: :pending) }
+
+          it "does not accept invitation" do
+            link = create(:invitation_link, user: inviter_user)
+            expect {
+              get accept_invitation_link_path(link.token)
+            }.to change(Friendship, :count).by(0)
+            expect(friendship.reload.status).to eq("pending")
+          end
+        end
+      end
 
       it "renders accept view" do
         link = create(:invitation_link, user: inviter_user)
@@ -95,14 +164,6 @@ RSpec.describe "InvitationLinks", type: :request do
         link = create(:invitation_link, user: inviter_user)
         get accept_invitation_link_path(link.token)
         expect(assigns(:invitee)).to eq(user)
-      end
-
-      it "redirects with flash msg if friendship is pending" do
-        link = create(:invitation_link, user: inviter_user)
-        create(:friendship, user: user, friend: inviter_user, status: :pending)
-        get accept_invitation_link_path(link.token)
-        expect(flash).not_to be_empty
-        expect(response).to redirect_to(root_path)
       end
 
       it "has assigned friendship" do
@@ -159,13 +220,14 @@ RSpec.describe "InvitationLinks", type: :request do
         expect(response).to redirect_to(root_path)
       end
 
-      it "redirects with flash msg if users are already connected" do
+      it "redirects with flash msg if friendship is pending by inviter_user" do
         link = create(:invitation_link, user: inviter_user)
-        create(:friendship, user: user, friend: inviter_user)
+        create(:friendship, user: inviter_user, friend: user, status: :pending)
         get accept_invitation_link_path(link.token)
         expect(flash).not_to be_empty
         expect(response).to redirect_to(root_path)
       end
+
     end
     context 'when user is not logged in' do
       it "redirects to sign in page" do

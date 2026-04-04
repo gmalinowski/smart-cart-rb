@@ -72,4 +72,45 @@ RSpec.describe FriendshipPolicy, type: :policy do
       it { is_expected.to forbid_action(:confirm) }
     end
   end
+
+  describe 'auto_confirm?' do
+    context 'when invitee started accepting request' do
+      let(:friendship) { create(:friendship, user: user, friend: friend, status: :pending) }
+      subject { described_class.new(user, friendship) }
+      it { is_expected.to permit_action(:auto_confirm) }
+    end
+    context 'when inviter started accepting request' do
+      let(:friendship) { create(:friendship, user: friend, friend: user, status: :pending) }
+      subject { described_class.new(user, friendship) }
+      it { is_expected.to forbid_action(:auto_confirm) }
+    end
+    context 'when request is already accepted' do
+      let(:friendship) { create(:friendship, user: friend, friend: user, status: :accepted) }
+      subject { described_class.new(user, friendship) }
+      it { is_expected.to forbid_action(:auto_confirm) }
+    end
+    context 'when request does not exist' do
+      let(:friendship) { nil }
+      subject { described_class.new(user, friendship) }
+      it { is_expected.to forbid_action(:auto_confirm) }
+    end
+    context 'when stranger accepting request' do
+      let(:friendship) { create(:friendship, user: user, friend: friend, status: :pending) }
+      subject { described_class.new(stranger, friendship) }
+      it { is_expected.to forbid_action(:auto_confirm) }
+    end
+  end
+
+  describe 'create?' do
+    context 'when user is not logged in' do
+      let(:friendship) { create(:friendship, user: friend, friend: user) }
+      subject { described_class.new(nil, friendship) }
+      it { is_expected.to forbid_action(:create) }
+    end
+    context 'when user is logged in' do
+      let(:friendship) { create(:friendship, user: friend, friend: user) }
+      subject { described_class.new(user, friendship) }
+      it { is_expected.to permit_action(:create) }
+    end
+  end
 end

@@ -1,6 +1,85 @@
 require 'rails_helper'
 
 RSpec.describe "Friendships", type: :request do
+
+  describe "POST /friendships" do
+
+    let(:user) { create(:user) }
+    let(:friend) { create(:user) }
+
+    context 'when user is logged in' do
+      before { sign_in_with_session user }
+      context 'when friend is signed up' do
+
+        it "creates a new friendship" do
+          expect {
+            post friendships_path, params: { friend_email: friend.email }
+          }.to change(Friendship, :count).by(1)
+          friendship = Friendship.last
+          expect(friendship.pending?).to be true
+        end
+
+        it "redirects to friends page" do
+          post friendships_path, params: { friend_email: friend.email }
+          expect(response).to redirect_to(friends_path)
+        end
+
+        it "shows flash message" do
+          post friendships_path, params: { friend_email: friend.email }
+          expect(flash[:success]).to eq(I18n.t("friendships.create.success"))
+        end
+
+        it 'finds the friend even with upcase letters in email' do
+          expect {
+            post friendships_path, params: { friend_email: friend.email.upcase }
+          }.to change(Friendship, :count).by(1)
+
+        end
+
+        it 'does not create friendship if user is already friends' do
+          create(:friendship, user: user, friend: friend)
+          expect {
+            post friendships_path, params: { friend_email: friend.email }
+          }.not_to change(Friendship, :count)
+          expect(response).to redirect_to(friends_path)
+        end
+
+        it 'does not duplicate if friendship is pending' do
+          create(:friendship, user: user, friend: friend, status: :pending)
+          expect {
+            post friendships_path, params: { friend_email: friend.email }
+          }.not_to change(Friendship, :count)
+          expect(response).to redirect_to(friends_path)
+        end
+
+
+        it "shows flash message when friendship already exists" do
+          create(:friendship, user: user, friend: friend)
+          post friendships_path, params: { friend_email: friend.email }
+          expect(flash[:alert]).not_to be_empty
+        end
+
+        it "shows flash message when cannot create friendship" do
+          allow_any_instance_of(Friendship).to receive(:save).and_return(false)
+          post friendships_path, params: { friend_email: friend.email }
+          expect(flash[:alert]).to eq(I18n.t("friendships.create.error"))
+          expect(response).to redirect_to(friends_path)
+          expect(Friendship.count).to eq(0)
+        end
+
+      end
+    end
+
+    context 'when user is not logged in' do
+      it "redirects to sign in page" do
+        expect {
+          post friendships_path, params: { friend_id: friend.id }
+        }.not_to change(Friendship, :count)
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+
   describe "DELETE /friendships/destroy_by_friend/:friend_id" do
     let(:user) { create(:user) }
     let(:friend) { create(:user) }
@@ -69,8 +148,8 @@ RSpec.describe "Friendships", type: :request do
           delete destroy_by_friend_friendships_path(friend)
         }.not_to change(Friendship, :count)
         expect(response).to have_http_status(:found) # 302 redirect
-        end
       end
+    end
   end
 
   describe "DELETE /friendships/:id" do
