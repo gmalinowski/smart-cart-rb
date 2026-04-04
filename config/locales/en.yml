@@ -48,6 +48,10 @@ en:
   pundit:
     user_not_authorized: "You are not authorized to perform this action"
   friendships:
+    create:
+      error: "Something went wrong with the friendship"
+      success: "Friend request sent"
+      already_exists: "Friendship already exists"
     destroy:
       error: "Something went wrong with the deletion"
       success: "You are no longer friends"
