@@ -11,27 +11,35 @@ RSpec.describe "Friendships", type: :request do
       before { sign_in_with_session user }
       context 'when friend is signed up' do
 
+        it "calls Pundit authorization for Friendship" do
+          expect_any_instance_of(FriendshipsController).to receive(:authorize)
+                                                             .with(instance_of(Friendship), :create?)
+                                                             .and_call_original
+
+          post friendships_path, params: { email: friend.email }
+        end
+
         it "creates a new friendship" do
           expect {
-            post friendships_path, params: { friend_email: friend.email }
+            post friendships_path, params: { email: friend.email }
           }.to change(Friendship, :count).by(1)
           friendship = Friendship.last
           expect(friendship.pending?).to be true
         end
 
         it "redirects to friends page" do
-          post friendships_path, params: { friend_email: friend.email }
+          post friendships_path, params: { email: friend.email }
           expect(response).to redirect_to(friends_path)
         end
 
         it "shows flash message" do
-          post friendships_path, params: { friend_email: friend.email }
+          post friendships_path, params: { email: friend.email }
           expect(flash[:success]).to eq(I18n.t("friendships.create.success"))
         end
 
         it 'finds the friend even with upcase letters in email' do
           expect {
-            post friendships_path, params: { friend_email: friend.email.upcase }
+            post friendships_path, params: { email: friend.email.upcase }
           }.to change(Friendship, :count).by(1)
 
         end
@@ -39,7 +47,7 @@ RSpec.describe "Friendships", type: :request do
         it 'does not create friendship if user is already friends' do
           create(:friendship, user: user, friend: friend)
           expect {
-            post friendships_path, params: { friend_email: friend.email }
+            post friendships_path, params: { email: friend.email }
           }.not_to change(Friendship, :count)
           expect(response).to redirect_to(friends_path)
         end
@@ -47,21 +55,20 @@ RSpec.describe "Friendships", type: :request do
         it 'does not duplicate if friendship is pending' do
           create(:friendship, user: user, friend: friend, status: :pending)
           expect {
-            post friendships_path, params: { friend_email: friend.email }
+            post friendships_path, params: { email: friend.email }
           }.not_to change(Friendship, :count)
           expect(response).to redirect_to(friends_path)
         end
 
-
         it "shows flash message when friendship already exists" do
           create(:friendship, user: user, friend: friend)
-          post friendships_path, params: { friend_email: friend.email }
-          expect(flash[:alert]).not_to be_empty
+          post friendships_path, params: { email: friend.email }
+          expect(flash[:warning]).not_to be_empty
         end
 
         it "shows flash message when cannot create friendship" do
           allow_any_instance_of(Friendship).to receive(:save).and_return(false)
-          post friendships_path, params: { friend_email: friend.email }
+          post friendships_path, params: { email: friend.email }
           expect(flash[:alert]).to eq(I18n.t("friendships.create.error"))
           expect(response).to redirect_to(friends_path)
           expect(Friendship.count).to eq(0)
@@ -280,4 +287,39 @@ RSpec.describe "Friendships", type: :request do
       end
     end
   end
+
+  describe "GET /friendships/new" do
+    context 'when user is logged in' do
+      let(:user) { create(:user) }
+      before { sign_in_with_session user }
+
+      context 'turbo stream' do
+        it "renders new friendship form" do
+          get new_friendship_path(format: :turbo_stream)
+          expect(response.content_type).to include("text/vnd.turbo-stream.html")
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include("form")
+        end
+
+        it "has assigned new FriendshipInvitation object" do
+          get new_friendship_path(format: :turbo_stream)
+          expect(assigns(:friendship_invitation)).to be_present
+        end
+
+        it "has email field" do
+          get new_friendship_path(format: :turbo_stream)
+          expect(response.body).to include('type="email"')
+          expect(response.body).to include('name="email"')
+        end
+      end
+    end
+
+    context 'when user is not logged in' do
+      it "redirects to sign in page" do
+        get new_friendship_path
+        expect(response).to redirect_to(new_user_session_path)
+        end
+      end
+  end
+
 end

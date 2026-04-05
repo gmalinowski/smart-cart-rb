@@ -28,6 +28,15 @@
 #       enabled: "ON"
 
 en:
+  helpers:
+    submit:
+      friendship_invitation:
+        create: "Send invitation"
+        update: "Update invitation"
+  activemodel:
+    attributes:
+      friendship_invitation:
+        email: "Friend's email"
   activerecord:
     models:
       invitation_link: "Invitation"
@@ -48,6 +57,8 @@ en:
   pundit:
     user_not_authorized: "You are not authorized to perform this action"
   friendships:
+    new:
+      title: "Send friend request"
     create:
       error: "Something went wrong with the friendship"
       success: "Friend request sent"
@@ -59,6 +70,7 @@ en:
         error: "Something went wrong with the deletion"
         success: "Friend request canceled"
     actions:
+      send_request: "Send friend request"
       accept: "Accept friend request"
       reject: "Decline Request"
       cancel: "Cancel"

@@ -43,7 +43,9 @@
 <main class="container bg-base-100 mx-auto pb-32">
   <%= yield %>
 </main>
-<div id="modals"></div>
+
+<%= render "layouts/modal" %>
+
 <%= render "layouts/dock" %>
 </body>
 </html>

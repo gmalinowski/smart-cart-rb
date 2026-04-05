@@ -1,0 +1,17 @@
+<%= turbo_stream.update "modal_content" do %>
+  <div data-controller="clipboard" x-data data-clipboard-success-content-value="Copied!">
+    <%= render Modal::ModalComponent.new(id: "invitation_link_modal", title: "Share this link with friend") do |modal| %>
+      <% modal.with_body do %>
+      <label>
+        Invitation link
+        <input @focus="$el.select()" type="text" class="input input-success" value="<%= accept_invitation_link_url(@invitation_link.token) %>" data-clipboard-target="source" />
+
+      </label>
+        <div class="text-center mt-4">
+          <button type="button" class="btn btn-success m-auto" data-action="clipboard#copy" data-clipboard-target="button">Copy to clipboard</button>
+        </div>
+      <% end %>
+
+    <% end %>
+  </div>
+<% end %>
