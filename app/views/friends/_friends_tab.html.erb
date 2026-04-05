@@ -22,6 +22,6 @@
 <%= render "friends/friend_sent_requests", sent_requests: sent_requests if sent_requests.any? %>
 
 <%= render Fab::ContainerComponent.new(icon: "user-plus", type: :success) do |fab| %>
-  <% fab.with_item(icon: "link", type: :success, path: invitation_links_path, method: :post, label: "Invite by link") %>
-  <% fab.with_item(icon: "at-symbol", path: invitation_links_path, method: :post, label: "Invite by email") %>
+  <% fab.with_item(icon: "link", path: invitation_links_path, method: :post, label: "Invite by link") %>
+  <% fab.with_item(icon: "at-symbol", type: :secondary, path: new_friendship_path(format: :turbo_stream), method: :get, label: "Invite by email") %>
 <% end %>

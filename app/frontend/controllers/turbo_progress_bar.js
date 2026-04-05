@@ -1,3 +1,3 @@
 import * as Turbo from "@hotwired/turbo"
 
-Turbo.setProgressBarDelay(300);
+Turbo.config.drive.progressBarDelay = 300

@@ -10,6 +10,9 @@ class InvitationLinksController < ApplicationController
       flash[:alert] = I18n.t("invitation_links.create.error")
       redirect_back(fallback_location: root_path, status: :unprocessable_content)
     end
+    respond_to do |format|
+      format.turbo_stream { render :invitation_link_modal }
+    end
   end
 
   def destroy
