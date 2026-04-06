@@ -17,6 +17,14 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'email' do
+    it 'downcase and stripe' do
+      user = create(:user, email: " JAN@EXAMPLE.COM    ")
+
+      expect(user.email).to eq("jan@example.com")
+    end
+  end
+
   describe 'validations' do
     it { should validate_presence_of(:email) }
   end

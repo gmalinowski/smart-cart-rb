@@ -1,13 +1,141 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <style>
-      /* Email styles need to be inline */
-    </style>
-  </head>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style>
+      :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+      }
 
-  <body>
+      body {
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          width: 100% !important;
+          -webkit-text-size-adjust: none;
+          -ms-text-size-adjust: none;
+      }
+
+      .container {
+          max-width: 600px;
+          margin: 20px auto;
+          background-color: #ffffff;
+          border: 1px solid #fef3c7;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(251, 191, 36, 0.08);
+      }
+
+      .header {
+          background-color: #facc15;
+          padding: 35px 20px;
+          text-align: center;
+          border-bottom: 3px solid #f59e0b;
+      }
+
+      .header h1 {
+          color: #1f2937;
+          margin: 0;
+          font-size: 26px;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          letter-spacing: -0.5px;
+      }
+
+      .content {
+          padding: 45px 35px;
+          font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          font-size: 16px;
+          line-height: 1.7;
+          color: #374151;
+      }
+
+      /* --- Typografia i Pomocnicze --- */
+      .text-center { text-align: center; }
+      .text-small { font-size: 14px; color: #9ca3af; }
+      .font-bold { font-weight: bold; }
+      h2 { color: #b45e09; font-size: 22px; margin-top: 0; }
+
+      /* --- Przyciski CTA (Dominacja żółci) --- */
+      .btn {
+          display: inline-block;
+          padding: 15px 30px;
+          text-decoration: none !important;
+          border-radius: 8px;
+          font-weight: bold;
+          font-size: 16px;
+          margin: 10px 5px;
+          text-align: center;
+      }
+
+      /* Primary - Teraz to ciepły, głęboki żółty */
+      .btn-primary {
+          background-color: #fbbf24;
+          color: #1f2937 !important;
+      }
+
+      /* Success - Jasny żółty (Dla akceptacji) */
+      .btn-success {
+          background-color: #fef08a;
+          color: #1f2937 !important;
+          border: 1px solid #facc15;
+      }
+
+      /* Alert - Tutaj zostawiłem pomarańcz, by ostrzeżenie było widoczne */
+      .btn-alert {
+          background-color: #f97316;
+          color: #ffffff !important;
+      }
+
+      .divider {
+          height: 2px;
+          background-color: #fef3c7;
+          margin: 30px 0;
+      }
+
+      .footer {
+          padding: 30px;
+          text-align: center;
+          font-size: 12px;
+          color: #6b7280;
+          background-color: #fffbeb;
+          border-top: 1px solid #fef3c7;
+      }
+
+      /* --- Obsługa Ciemnego Motywu (Dark Mode) --- */
+      @media (prefers-color-scheme: dark) {
+          body { background-color: #0f172a !important; }
+          .container {
+              background-color: #1e293b !important;
+              border-color: #334155 !important;
+          }
+          .content, h2 { color: #f1f5f9 !important; }
+          .header { background-color: #eab308 !important; border-bottom-color: #ca8a04 !important; }
+          .header h1 { color: #0f172a !important; }
+          .footer {
+              background-color: #0f172a !important;
+              color: #94a3b8 !important;
+              border-top-color: #334155 !important;
+          }
+          .btn-primary { background-color: #facc15 !important; }
+      }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <div class="header">
+    <h1><%= t('app_name') %></h1>
+  </div>
+
+  <div class="content">
     <%= yield %>
-  </body>
+  </div>
+
+  <div class="footer">
+    <p>&copy; <%= Time.current.year %> <%= t('app_name') %></p>
+    <p><%= t('friendship_mailer.invitation_email.footer_note') %></p>
+  </div>
+</div>
+</body>
 </html>
