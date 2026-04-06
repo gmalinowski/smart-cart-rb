@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe FriendshipMailer, type: :mailer do
-
   describe "invitation_email" do
     let(:sender) { create(:user) }
 
@@ -28,8 +27,5 @@ RSpec.describe FriendshipMailer, type: :mailer do
     it "renders link to friends page" do
       expect(mail.body).to include(friends_url)
     end
-
   end
-
-
 end
