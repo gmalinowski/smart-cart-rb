@@ -22,6 +22,7 @@ class FriendshipsController < ApplicationController
         end
         if friendship.save
           flash[:success] = I18n.t("friendships.create.success")
+          FriendshipMailer.invitation_email(inviter: current_user, invitee_email: @friendship_invitation.email).deliver_later()
         else
           flash[:alert] = I18n.t("friendships.create.error")
         end
