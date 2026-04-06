@@ -1,0 +1,9 @@
+<h2><%= t('.greeting') %></h2>
+
+<p>
+  <%= t('.body', sender: @sender.email).html_safe %>
+</p>
+
+<div style="text-align: center; margin-top: 30px;">
+  <%= link_to t('.cta_button'), friendships_url, class: "btn btn-primary" %>
+</div>

@@ -28,6 +28,7 @@
 #       enabled: "ON"
 
 en:
+  app_name: "Shopping List Live"
   helpers:
     submit:
       friendship_invitation:
@@ -83,3 +84,10 @@ en:
   invitation_links:
     create:
       error: "Error creating invitation link"
+  friendship_mailer:
+    invitation_email:
+      subject: "New friendship invitation on Shopping List Live"
+      greeting: "Hello!"
+      body: "User <b>%{sender}</b> has just sent you a friendship invitation."
+      cta_button: "View Invitation"
+      footer_note: "This is an automated message. Please do not reply."
