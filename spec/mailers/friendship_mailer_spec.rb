@@ -7,7 +7,7 @@ RSpec.describe FriendshipMailer, type: :mailer do
 
     let(:invitation) { FriendshipInvitation.new(email: "odbiorca@example.com") }
 
-    let!(:mail) { FriendshipMailer.with(invitation: invitation, sender: sender).invitation_email }
+    let!(:mail) { FriendshipMailer.invitation_email(inviter: sender, invitee_email: invitation.email) }
 
     it "is successfully instantiated" do
       expect(mail).to be_a(ActionMailer::MessageDelivery)

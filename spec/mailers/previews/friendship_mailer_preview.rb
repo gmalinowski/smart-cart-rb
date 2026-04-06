@@ -2,7 +2,7 @@
 class FriendshipMailerPreview < ActionMailer::Preview
 
   def invitation_email
-    FriendshipMailer.with(invitation: FriendshipInvitation.new(email: "joe@example.com"), sender: User.first).invitation_email
+    FriendshipMailer.invitation_email(inviter: User.first, invitee_email: "john@example.com")
   end
 
 end
