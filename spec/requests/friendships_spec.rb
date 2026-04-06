@@ -1,16 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe "Friendships", type: :request do
-
   describe "POST /friendships" do
-
     let(:user) { create(:user) }
     let(:friend) { create(:user) }
 
     context 'when user is logged in' do
       before { sign_in_with_session user }
       context 'when friend is signed up' do
-
         it "calls Pundit authorization for Friendship" do
           expect_any_instance_of(FriendshipsController).to receive(:authorize)
                                                              .with(:friendship, :create?)
@@ -20,7 +17,6 @@ RSpec.describe "Friendships", type: :request do
         end
 
         describe 'success path' do
-
           it "creates a new friendship" do
             expect {
               post friendships_path, params: { friendship_invitation: { email: friend.email } }
@@ -50,7 +46,6 @@ RSpec.describe "Friendships", type: :request do
             expect {
               post friendships_path, params: { friendship_invitation: { email: friend.email.upcase } }
             }.to change(Friendship, :count).by(1)
-
           end
         end
 
@@ -85,7 +80,6 @@ RSpec.describe "Friendships", type: :request do
             expect(Friendship.count).to eq(0)
           end
         end
-
       end
     end
 
@@ -332,5 +326,4 @@ RSpec.describe "Friendships", type: :request do
       end
     end
   end
-
 end

@@ -41,8 +41,8 @@ gem "image_processing", "~> 1.2"
 
 # Email styling and auto-generating txt emails
 
-gem 'premailer-rails'
-gem 'nokogiri'
+gem "premailer-rails"
+gem "nokogiri"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

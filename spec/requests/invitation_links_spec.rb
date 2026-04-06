@@ -34,7 +34,6 @@ RSpec.describe "InvitationLinks", type: :request do
           expect(friendship.reload.status).to eq("accepted")
         end
       end
-
     end
   end
 
@@ -117,7 +116,6 @@ RSpec.describe "InvitationLinks", type: :request do
             get accept_invitation_link_path(link.token)
             expect(response).to redirect_to(friends_path)
             expect(flash[:success]).to eq(I18n.t("friendships.confirm.success"))
-
           end
         end
         context 'when pending friendship already created by inviter' do
@@ -227,7 +225,6 @@ RSpec.describe "InvitationLinks", type: :request do
         expect(flash).not_to be_empty
         expect(response).to redirect_to(root_path)
       end
-
     end
     context 'when user is not logged in' do
       it "redirects to sign in page" do
