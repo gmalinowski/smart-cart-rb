@@ -25,13 +25,13 @@ RSpec.describe "Friendships", type: :request do
         end
 
         context 'when service returns failure' do
-          it "renders the new template with error flash" do
+          it "redirects to friends page with error flash" do
             allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
                                                                                               success: false,
                                                                                               errors: ["Email is invalid", "Already invited"]
                                                                                             })
             post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
-            expect(response).to have_http_status(:unprocessable_content)
+            expect(response).to redirect_to(friends_path)
             expect(flash[:alert]).to eq("Email is invalid and Already invited")
           end
         end

@@ -18,7 +18,7 @@ class FriendshipsController < ApplicationController
         redirect_to friends_path
       in { success: false, errors: errs }
         flash[:alert] = errs.to_sentence
-        render :new, status: :unprocessable_content
+        redirect_to friends_path
       end
     else
       render :new, status: :unprocessable_content
