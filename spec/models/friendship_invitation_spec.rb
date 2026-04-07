@@ -16,4 +16,30 @@ RSpec.describe FriendshipInvitation, type: :model do
       expect(invitation).not_to be_valid
     end
   end
+
+  describe 'helpers' do
+    describe 'invitee_exists?' do
+      it 'returns true if the invitee exists' do
+        user = create(:user)
+        invitation = FriendshipInvitation.new(email: user.email)
+        expect(invitation.invitee_exists?).to be true
+      end
+
+      it 'ignores case when checking for existing invitee' do
+        user = create(:user, email: "one@wp.pl")
+        invitation = FriendshipInvitation.new(email: "  ONe@wp.PL   ")
+        expect(invitation.invitee_exists?).to be true
+      end
+
+      it 'returns false if the invitee does not exist' do
+        invitation = FriendshipInvitation.new(email: 'nonexistent@example.com')
+        expect(invitation.invitee_exists?).to be false
+      end
+
+      it 'returns false if the invitee is nil' do
+        invitation = FriendshipInvitation.new(email: nil)
+        expect(invitation.invitee_exists?).to be false
+      end
+    end
+  end
 end
