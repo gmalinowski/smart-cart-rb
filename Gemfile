@@ -84,6 +84,7 @@ group :test do
   gem "shoulda-matchers", "~> 7.0"
   gem "spring"
   gem "spring-commands-rspec"
+  gem "simplecov", require: false
 end
 
 gem "view_component", "~> 4.6"

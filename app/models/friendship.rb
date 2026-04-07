@@ -22,12 +22,6 @@ class Friendship < ApplicationRecord
     end
   end
 
-  def friendship_must_be_unique
-    if UserFriendView.exists?(user_id: user_id, friend_id: friend_id)
-      errors.add(:friend, "is already friends")
-    end
-  end
-
   def cannot_be_friends_with_self
     errors.add(:friend, "cannot be friends with self") if user == friend
   end

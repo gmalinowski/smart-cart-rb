@@ -1,3 +1,15 @@
+
+<% unless friend_requests.empty? && sent_requests.empty? %>
+
+<div class="m-4">
+
+<%= render "friends/friend_requests", friend_requests: friend_requests if friend_requests.any? %>
+
+<%= render "friends/friend_sent_requests", sent_requests: sent_requests if sent_requests.any? %>
+
+</div>
+<% end %>
+
 <ul class="list rounded-box gap-1 shadow-md">
   <% friends.each do |friend| %>
     <li class="list-row font-bold">
@@ -16,10 +28,6 @@
   <% end %>
 
 </ul>
-
-<%= render "friends/friend_requests", friend_requests: friend_requests if friend_requests.any? %>
-
-<%= render "friends/friend_sent_requests", sent_requests: sent_requests if sent_requests.any? %>
 
 <%= render Fab::ContainerComponent.new(icon: "user-plus", type: :success) do |fab| %>
   <% fab.with_item(icon: "link", path: invitation_links_path, method: :post, label: "Invite by link") %>
