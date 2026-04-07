@@ -88,10 +88,16 @@ en:
     create:
       error: "Error creating invitation link"
       already_exists: "Invitation link already exists"
+  mailer:
+    footer_note: "This is an automated message. Please do not reply."
+    greeting: "Hello!"
   friendship_mailer:
     invitation_email:
       subject: "New friendship invitation on Shopping List Live"
-      greeting: "Hello!"
       body: "User <b>%{sender}</b> has just sent you a friendship invitation."
       cta_button: "View Invitation"
-      footer_note: "This is an automated message. Please do not reply."
+  invitation_mailer:
+    friend_invitation_to_signup:
+      subject: "You have been invited to join Shopping List Live"
+      body: "You have been invited to join Shopping List Live by <b>%{sender}</b>.<br>Sign up and accept the invitation to see your friend's shopping list."
+      cta_button: "Sign up to see your friend's shopping list"
