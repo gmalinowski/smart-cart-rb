@@ -129,12 +129,13 @@
   </div>
 
   <div class="content">
+    <h2><%= t('mailer.greeting') %></h2>
     <%= yield %>
   </div>
 
   <div class="footer">
     <p>&copy; <%= Time.current.year %> <%= t('app_name') %></p>
-    <p><%= t('friendship_mailer.invitation_email.footer_note') %></p>
+    <p><%= t('mailer.footer_note') %></p>
   </div>
 </div>
 </body>

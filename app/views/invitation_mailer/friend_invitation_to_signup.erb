@@ -1,0 +1,8 @@
+
+<p>
+  <%= t('.body', sender: @inviter.email).html_safe %>
+</p>
+
+<div class="text-center">
+  <%= link_to t('.cta_button'), new_user_registration_url, target: '_blank', class: "btn btn-primary" %>
+</div>
