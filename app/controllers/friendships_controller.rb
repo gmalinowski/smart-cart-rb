@@ -1,7 +1,7 @@
 class FriendshipsController < ApplicationController
   before_action :authenticate_user!
-  skip_after_action :verify_policy_scoped, only: [ :create, :confirm, :destroy, :destroy_by_friend, :new ]
-  skip_after_action :verify_authorized, only: [ :destroy_by_friend, :new ]
+  skip_after_action :verify_policy_scoped, only: [:create, :confirm, :destroy, :destroy_by_friend, :new]
+  skip_after_action :verify_authorized, only: [:destroy_by_friend, :new]
 
   def new
     @friendship_invitation = FriendshipInvitation.new
@@ -12,26 +12,35 @@ class FriendshipsController < ApplicationController
     authorize :friendship, :create?
 
     if @friendship_invitation.valid?
-      friend = User.find_by(email: @friendship_invitation.email)
-
-      if friend
-        friendship = Friendship.new(user: current_user, friend: friend, status: :pending)
-        if friendship.invalid?
-          flash[:warning] = friendship.errors.full_messages.to_sentence
-          redirect_to friends_path and return
-        end
-        if friendship.save
-          flash[:success] = I18n.t("friendships.create.success")
-          FriendshipMailer.invitation_email(inviter: current_user, invitee_email: @friendship_invitation.email).deliver_later()
-        else
-          flash[:alert] = I18n.t("friendships.create.error")
-        end
+      case InviteFriendService.new(user: current_user, invitee_email: @friendship_invitation.email).call
+      in { success: true, message: msg }
+        flash[:success] = I18n.t("friendships.create.#{msg}")
         redirect_to friends_path
+      in { success: false, errors: errs }
+        flash[:alert] = errs.to_sentence
+        render :new, status: :unprocessable_content
       end
-
     else
-      render :new, status: :unprocessable_content, friendship_invitation: @friendship_invitation
+      render :new, status: :unprocessable_content
     end
+
+    #   if friend
+    #     friendship = Friendship.new(user: current_user, friend: friend, status: :pending)
+    #     if friendship.invalid?
+    #       flash[:warning] = friendship.errors.full_messages.to_sentence
+    #       redirect_to friends_path and return
+    #     end
+    #     if friendship.save
+    #       flash[:success] = I18n.t("friendships.create.success")
+    #       FriendshipMailer.invitation_email(inviter: current_user, invitee_email: @invitation.email).deliver_later()
+    #     else
+    #       flash[:alert] = I18n.t("friendships.create.error")
+    #     end
+    #     redirect_to friends_path
+    #   end
+    #
+    # else
+    # end
   end
 
   def confirm
@@ -48,7 +57,7 @@ class FriendshipsController < ApplicationController
   def destroy_by_friend
     u = current_user
     f = User.find(params[:friend_id])
-    @friendship = Friendship.find_by!(user_id: [ u, f ], friend_id: [ f, u ])
+    @friendship = Friendship.find_by!(user_id: [u, f], friend_id: [f, u])
     destroy
   end
 

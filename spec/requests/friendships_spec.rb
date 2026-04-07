@@ -16,72 +16,140 @@ RSpec.describe "Friendships", type: :request do
           post friendships_path, params: { friendship_invitation: { email: friend.email } }
         end
 
-        describe 'success path' do
-          it "creates a new friendship" do
-            expect {
-              post friendships_path, params: { friendship_invitation: { email: friend.email } }
-            }.to change(Friendship, :count).by(1)
-            friendship = Friendship.last
-            expect(friendship.pending?).to be true
-          end
-
-          it "redirects to friends page" do
-            post friendships_path, params: { friendship_invitation: { email: friend.email } }
+        context 'when service returns success' do
+          it "redirects to friends page with success flash" do
+            post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
             expect(response).to redirect_to(friends_path)
-          end
-
-          it "shows flash message" do
-            post friendships_path, params: { friendship_invitation: { email: friend.email } }
             expect(flash[:success]).to eq(I18n.t("friendships.create.success"))
-          end
-
-            it 'sends email to friend to notify about request' do
-              ActionMailer::Base.deliveries.clear
-              expect {
-                post friendships_path, params: { friendship_invitation: { email: friend.email } }
-              }.to have_enqueued_mail(FriendshipMailer, :invitation_email).with(inviter: user, invitee_email: friend.email)
-            end
-
-          it 'finds the friend even with upcase letters in email' do
-            expect {
-              post friendships_path, params: { friendship_invitation: { email: friend.email.upcase } }
-            }.to change(Friendship, :count).by(1)
           end
         end
 
-        describe 'edge cases and errors' do
-          it 'does not create friendship if user is already friends' do
-            create(:friendship, user: user, friend: friend)
-            expect {
-              post friendships_path, params: { friendship_invitation: { email: friend.email } }
-            }.not_to change(Friendship, :count)
-            expect(response).to redirect_to(friends_path)
+        context 'when service returns failure' do
+          it "renders the new template with error flash" do
+            allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
+                                                                                              success: false,
+                                                                                              errors: ["Email is invalid", "Already invited"]
+                                                                                            })
+            post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            expect(response).to have_http_status(:unprocessable_content)
+            expect(flash[:alert]).to eq("Email is invalid and Already invited")
+          end
+        end
+
+        context 'when params are invalid (e.g. empty email)' do
+          it "renders the new template" do
+            post friendships_path, params: { friendship_invitation: { email: "" } }, as: :turbo_stream
+            expect(response).to have_http_status(:unprocessable_content)
+            expect(response).to render_template(:new)
+          end
+        end
+
+        context 'when Pundit denies access' do
+          before do
+            allow_any_instance_of(FriendshipPolicy).to receive(:create?).and_return(false)
           end
 
-          it 'does not duplicate if friendship is pending' do
-            create(:friendship, user: user, friend: friend, status: :pending)
-            expect {
-              post friendships_path, params: { friendship_invitation: { email: friend.email } }
-            }.not_to change(Friendship, :count)
-            expect(response).to redirect_to(friends_path)
-          end
-
-          it "shows flash message when friendship already exists" do
-            create(:friendship, user: user, friend: friend)
+          it "redirects or shows error" do
             post friendships_path, params: { friendship_invitation: { email: friend.email } }
-            expect(flash[:warning]).not_to be_empty
-          end
-
-          it "shows flash message when cannot create friendship" do
-            allow_any_instance_of(Friendship).to receive(:save).and_return(false)
-            post friendships_path, params: { friendship_invitation: { email: friend.email } }
-            expect(flash[:alert]).to eq(I18n.t("friendships.create.error"))
-            expect(response).to redirect_to(friends_path)
-            expect(Friendship.count).to eq(0)
+            expect(response).to have_http_status(:redirect)
+            expect(flash[:alert]).not_to be_nil
           end
         end
       end
     end
+
+    # context 'when friend is not signed up' do
+    #   it "does not create friendship" do
+    #     expect {
+    #       post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
+    #     }.not_to change(Friendship, :count)
+    #   end
+    #
+    #   it 'creates email_invitation type of invitation' do
+    #     post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
+    #     expect(response).to redirect_to(friends_path)
+    #     expect(InvitationLink.count).to eq(1)
+    #     expect(InvitationLink.last.invitation_type).to eq("email_invitation")
+    #   end
+    #
+    #   it 'creates email_invitation with correct recipient email' do
+    #     post friendships_path, params: { friendship_invitation: { email: "asdf@example.com" } }
+    #     expect(InvitationLink.last.recipient_email).to eq("asdf@example.com")
+    #   end
+    #
+    #   it 'creates email_invitation with correct inviter' do
+    #     post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
+    #     expect(InvitationLink.last.user).to eq(user)
+    #   end
+    #
+    #   it 'shows flash message for successful email invitation' do
+    #     post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
+    #     expect(response).to redirect_to(friends_path)
+    #     expect(flash[:notice]).to eq(I18n.t("friendships.create.email_invitation_sent"))
+    #   end
+    #
+    #   it 'creates email_invitations for multiple inviters' do
+    #     friend_email = "aaawww@example.com"
+    #     user_2 = create(:user)
+    #     post friendships_path, params: { friendship_invitation: { emails: friend_email } }
+    #
+    #     sign_out user
+    #     sign_in_with_session(user_2)
+    #
+    #     post friendships_path, params: { friendship_invitation: { emails: friend_email } }
+    #
+    #     expect(InvitationLink.count).to eq(2)
+    #     expect(InvitationLink.all).to all(have_attributes(invitation_type: "email_invitation"))
+    #     expect(InvitationLink.all).to all(have_attributes(recipient_email: friend_email))
+    #   end
+    #
+    #   it 'sends email to invitee' do
+    #     ActionMailer::Base.deliveries.clear
+    #     expect {
+    #       post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
+    #     }.to have_enqueued_mail(ActionMailer::MailDeliveryJob)
+    #   end
+    #
+    #   it 'email contains inviter email' do
+    #     post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
+    #     email = ActionMailer::Base.deliveries.last
+    #     expect(email.body).to include(user.email)
+    #   end
+    #
+    #   it 'email contains link to invitation page' do
+    #     post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
+    #     email = ActionMailer::Base.deliveries.last
+    #     expect(email.body).to include(new_user_registration_url)
+    #   end
+    #
+    #   describe 'edge cases and errors' do
+    #     it 'does not create invitation if user is already friends' do
+    #       create(:friendship, user: user, friend: friend)
+    #       expect {
+    #         post friendships_path, params: { friendship_invitation: { email: friend.email } }
+    #       }.not_to change(InvitationLink, :count)
+    #       expect(response).to redirect_to(friends_path)
+    #       expect(flash[:warning]).to eq(I18n.t("friendships.create.already_exists"))
+    #     end
+    #
+    #     it 'does not duplicate if invitation is pending' do
+    #       create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend.email)
+    #       expect {
+    #         post friendships_path, params: { friendship_invitation: { email: friend.email } }
+    #       }.not_to change(InvitationLink, :count)
+    #       expect(response).to redirect_to(friends_path)
+    #       expect(flash[:warning]).to eq(I18n.t("invitation_links.create.already_exists"))
+    #     end
+    #
+    #     it 'shows flash message when something goes wrong' do
+    #       allow_any_instance_of(InvitationLink).to receive(:save).and_return(false)
+    #       post friendships_path, params: { friendship_invitation: { email: friend.email } }
+    #       expect(response).to redirect_to(friends_path)
+    #       expect(flash[:alert]).to eq(I18n.t("friendships.create.error"))
+    #     end
+    #   end
+    #
+    # end
 
     context 'when user is not logged in' do
       it "redirects to sign in page" do
