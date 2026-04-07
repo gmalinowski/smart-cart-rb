@@ -23,6 +23,47 @@ RSpec.describe InvitationLink, type: :model do
   end
 
   describe 'scopes' do
+    describe '.for_recipient (all email invitations)' do
+      let(:user) { create(:user) }
+      let(:friend) { create(:user) }
+      it "returns email invitations for the given user" do
+        create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email)
+
+        expect(InvitationLink.for_recipient(friend).count).to eq(1)
+      end
+
+      it "does not return email invitations for other users" do
+        create(:invitation_link, invitation_type: :email_invitation, user: friend, recipient_email: user.email)
+        expect(InvitationLink.for_recipient(friend).count).to eq(0)
+      end
+
+      it "does not return link invitations" do
+        create(:invitation_link, invitation_type: :link_invitation, user: user, recipient_email: friend.email)
+        expect(InvitationLink.for_recipient(friend).count).to eq(0)
+      end
+
+      it "does not return invitations for other users" do
+        create(:invitation_link, user: friend, invitation_type: :email_invitation, recipient_email: "testeee@example.com")
+        expect(InvitationLink.for_recipient(user).count).to eq(0)
+      end
+
+      describe 'only active' do
+        it "returns email invitations for the given user" do
+          create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email)
+          expect(InvitationLink.active_for_recipient(friend).count).to eq(1)
+        end
+
+        it "does not return email invitations that are expired" do
+          create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email, expires_at: 3.days.ago)
+          expect(InvitationLink.active_for_recipient(friend).count).to eq(0)
+        end
+
+        it "does not return email invitations that have reached max uses" do
+          create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email, max_uses: 1, uses_count: 1)
+          expect(InvitationLink.active_for_recipient(friend).count).to eq(0)
+        end
+      end
+    end
     describe '.active' do
       let(:user) { create(:user) }
       it "returns invitations that are not expired and have uses left" do
@@ -85,6 +126,12 @@ RSpec.describe InvitationLink, type: :model do
         create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: "jan@example.com")
       }.to raise_error(ActiveRecord::RecordNotUnique)
     end
+
+    it "max_uses must be eql 1 if invitation type is email_invitation" do
+      link = build(:invitation_link, invitation_type: :email_invitation, max_uses: 2)
+      expect(link).not_to be_valid
+      expect(link.errors[:max_uses]).to include(link.errors.generate_message(:max_uses, :inclusion))
+    end
   end
 
   describe 'recipient_email (metadata accessor)' do
@@ -116,14 +163,25 @@ RSpec.describe InvitationLink, type: :model do
           invitation.recipient_email = "test@example.com"
           expect(invitation).to be_valid
         end
+
+        it "is valid with a valid uppercase email format" do
+          invitation.recipient_email = "TEST@EXAMPLE.COM"
+          expect(invitation).to be_valid
+        end
+
+        it "email is normalized before validation" do
+          invitation.recipient_email = "TEST@EXAMPLE.COM    "
+          invitation.valid?
+          expect(invitation.recipient_email).to eq("test@example.com")
+        end
       end
       context 'when invitation type is link_invitation' do
         it 'is valid without recipient_email' do
           invitation.invitation_type = :link_invitation
           invitation.recipient_email = nil
           expect(invitation).to be_valid
-          end
         end
+      end
     end
   end
 

@@ -52,6 +52,9 @@ en:
               blank: "cannot be empty"
               invalid: "is not a valid email address"
               taken: "has already received an invitation"
+            max_uses:
+              inclusion: "must be 1 for email invitations"
+              equal_to: "must be 1 for email invitations"
   errors:
     messages:
       not_found: "Sorry, we couldn't find what you were looking for"
