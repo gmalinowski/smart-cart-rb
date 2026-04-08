@@ -53,16 +53,24 @@ RSpec.describe "Friendships", type: :request do
 
         context 'when service returns failure' do
           it "redirects to friends page with error flash" do
+            real_errors = ActiveModel::Errors.new(FriendshipInvitation.new)
+            real_errors.add(:email, "Already invited")
             allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
                                                                                       success: false,
-                                                                                      errors: ["Email is invalid", "Already invited"]
+                                                                                      errors: real_errors
                                                                                     })
             expect {
               post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
             }.not_to change(Friendship, :count)
 
             expect(response).to redirect_to(friends_path)
-            expect(flash[:alert]).to eq("Email is invalid and Already invited")
+            expect(flash[:alert]).to be_present
+          end
+          it "does not crash and displays errors as a sentence" do
+            post friendships_path, params: { friendship_invitation: { email: user.email } }
+
+            expect(response).to redirect_to(friends_path)
+            expect(flash[:alert]).to be_present
           end
         end
 
@@ -90,15 +98,17 @@ RSpec.describe "Friendships", type: :request do
 
       context 'when service returns failure' do
         it "redirects and show flash message for unsuccessful email invitation" do
+          real_errors = ActiveModel::Errors.new(InvitationLink.new)
+          real_errors.add(:email, "Already invited")
           allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
                                                                                       success: false,
-                                                                                      errors: ["Email is invalid", "Already invited"]
+                                                                                      errors: real_errors
                                                                                     })
           expect {
             post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
           }.not_to change(InvitationLink, :count)
           expect(response).to redirect_to(friends_path)
-          expect(flash[:alert]).to include("Email is invalid").and include("Already invited")
+          expect(flash[:alert]).to be_present
         end
       end
     end

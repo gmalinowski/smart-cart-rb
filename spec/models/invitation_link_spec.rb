@@ -24,7 +24,7 @@ RSpec.describe InvitationLink, type: :model do
 
   describe '#renew!' do
     let(:user) { create(:user) }
-    let(:friend) { create(:user) }
+    let(:friend) { create(:user, confirmed_at: nil) }
 
     let(:expired_email_link) { create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email, expires_at: 1.day.ago) }
 
@@ -54,7 +54,7 @@ RSpec.describe InvitationLink, type: :model do
 
     describe '.for_recipient (all email invitations)' do
       let(:user) { create(:user) }
-      let(:friend) { create(:user) }
+      let(:friend) { create(:user, confirmed_at: nil) }
 
       it "returns email invitations for the given user" do
         create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email)
@@ -63,8 +63,10 @@ RSpec.describe InvitationLink, type: :model do
       end
 
       it "does not return email invitations for other users" do
-        create(:invitation_link, invitation_type: :email_invitation, user: friend, recipient_email: user.email)
-        expect(InvitationLink.for_recipient(friend).count).to eq(0)
+        user_2 = create(:user)
+        friend_2 = create(:user, confirmed_at: nil)
+        create(:invitation_link, invitation_type: :email_invitation, user: user_2, recipient_email: friend.email)
+        expect(InvitationLink.for_recipient(friend_2).count).to eq(0)
       end
 
       it "does not return link invitations" do
@@ -73,7 +75,8 @@ RSpec.describe InvitationLink, type: :model do
       end
 
       it "does not return invitations for other users" do
-        create(:invitation_link, user: friend, invitation_type: :email_invitation, recipient_email: "testeee@example.com")
+        other_user = create(:user)
+        create(:invitation_link, user: other_user, invitation_type: :email_invitation, recipient_email: "testeee@example.com")
         expect(InvitationLink.for_recipient(user).count).to eq(0)
       end
 
@@ -217,6 +220,41 @@ RSpec.describe InvitationLink, type: :model do
       expect {
         create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: "jan@example.com")
       }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it 'does not allow create email_links for confirmed users' do
+      inviter = create(:user)
+      confirmed_user = create(:user, confirmed_at: Time.zone.now)
+
+      link = build(:invitation_link,
+                   user: inviter,
+                   invitation_type: :email_invitation,
+                   recipient_email: confirmed_user.email)
+
+      expect(link).not_to be_valid
+      expect(link.errors.added?(:recipient_email, :already_registered)).to be_truthy
+    end
+
+    it 'does not allow create email_links by not confirmed users' do
+      unconfirmed_user = create(:user, confirmed_at: nil)
+      expect {
+        create(:invitation_link,
+               user: unconfirmed_user,
+               invitation_type: :email_invitation,
+               recipient_email: "fjsldafjksa@example.com")
+      }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it 'allows creating email_links for signed up but not confirmed users' do
+      inviter = create(:user)
+      unconfirmed_user = create(:user, confirmed_at: nil)
+
+      expect {
+        create(:invitation_link,
+               user: inviter,
+               invitation_type: :email_invitation,
+               recipient_email: unconfirmed_user.email)
+      }.to change(InvitationLink, :count).by(1)
     end
 
     it "max_uses must be eql 1 if invitation type is email_invitation" do

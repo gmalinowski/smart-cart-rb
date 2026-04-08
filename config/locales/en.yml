@@ -56,10 +56,13 @@ en:
               pending: "is already pending friendship"
         invitation_link:
           attributes:
+            user:
+              not_confirmed: "is not confirmed"
             recipient_email:
               blank: "cannot be empty"
               invalid: "is not a valid email address"
               taken: "has already received an invitation"
+              already_registered: "is already registered"
             max_uses:
               inclusion: "must be 1 for email invitations"
               equal_to: "must be 1 for email invitations"

@@ -18,7 +18,7 @@ class FriendshipsController < ApplicationController
       in { success: true, message: :email_invitation_sent }
         flash[:notice] = I18n.t("friendships.create.email_invitation_sent")
       in { success: false, errors: errs }
-        flash[:alert] = errs.to_sentence
+        flash[:alert] = errs.full_messages.to_sentence
       end
       redirect_to friends_path
     else

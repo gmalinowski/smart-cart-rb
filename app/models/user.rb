@@ -5,8 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable
   before_save :update_session_version, if: :will_save_change_to_encrypted_password?
-
-  after_create_commit :claim_pending_friendships
+  after_create_commit :try_to_claim_pending_friendships
 
   has_many :shopping_lists, foreign_key: "owner_id"
   has_many :groups, foreign_key: "owner_id"
@@ -21,6 +20,10 @@ class User < ApplicationRecord
   has_many :pending_friendships, -> { where(status: :pending) }, foreign_key: :user_id, class_name: "Friendship"
   has_many :pending_received_friendships, -> { where(status: :pending) }, foreign_key: :friend_id, class_name: "Friendship"
 
+  def after_confirmation
+    claim_pending_friendships
+  end
+
   def friends_with?(other_user)
     return false if other_user.nil?
     friends.exists?(id: other_user.id)
@@ -32,19 +35,20 @@ class User < ApplicationRecord
       pending_received_friendships.exists?(user_id: other_user.id)
   end
 
-  def pending_invitations_received
-    InvitationLink.active_for_recipient(self)
-  end
-
   private
 
   def update_session_version
     self.session_version += 1
   end
 
+  def try_to_claim_pending_friendships
+    if confirmed?
+      claim_pending_friendships
+    end
+  end
   def claim_pending_friendships
     ActiveRecord::Base.transaction do
-      pending_invitations_received.each do |invitation|
+      InvitationLink.active_for_recipient(self).each do |invitation|
         Friendship.create(user: invitation.user, friend: self, status: :pending)
         invitation.increment!(:uses_count)
       end
