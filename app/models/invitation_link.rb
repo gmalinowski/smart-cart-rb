@@ -11,15 +11,35 @@ class InvitationLink < ApplicationRecord
 
   scope :active, -> { where("expires_at > ?", Time.current).where("max_uses > uses_count") }
 
+  scope :active_for_recipient, ->(recipient) { for_recipient(recipient).active }
+  scope :active_for_recipient_email, ->(email) { for_recipient_email(email).active }
   scope :for_recipient, ->(recipient) do
-    where("LOWER(metadata->>'recipient_email') = ?", recipient.email.downcase)
-      .where(invitation_type: :email_invitation)
+    self.for_recipient_email(recipient.email)
   end
 
-  scope :active_for_recipient, ->(recipient) { for_recipient(recipient).active }
+  scope :for_recipient_email, ->(email) do
+    where("LOWER(metadata->>'recipient_email') = ?", email.downcase)
+    .where(invitation_type: :email_invitation)
+  end
 
   def active?
+    return false if expires_at.nil? || max_uses.nil?
     Time.current < expires_at && max_uses > uses_count
+  end
+
+  def renew!
+    unless email_invitation?
+      raise "Cannot renew a link that is not an email invitation"
+    end
+    update!(expires_at: 30.day.from_now, token: SecureRandom.uuid)
+  end
+
+  def self.find_or_initialize_email_invitation(inviter:, recipient_email:)
+    inviter.invitation_links.for_recipient_email(recipient_email).first ||
+    inviter.invitation_links.build(
+      recipient_email: recipient_email,
+      invitation_type: :email_invitation
+    )
   end
 
   private

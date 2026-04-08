@@ -13,9 +13,11 @@ class FriendshipsController < ApplicationController
 
     if @friendship_invitation.valid?
       case InviteFriendService.new(user: current_user, invitee_email: @friendship_invitation.email).call
-      in { success: true, message: msg }
-        flash[:success] = I18n.t("friendships.create.#{msg}")
+      in { success: true, message: :friendship_requested }
+        flash[:success] = I18n.t("friendships.create.success")
         redirect_to friends_path
+      in { success: true, message: :email_invitation_sent }
+
       in { success: false, errors: errs }
         flash[:alert] = errs.to_sentence
         redirect_to friends_path
@@ -24,23 +26,6 @@ class FriendshipsController < ApplicationController
       render :new, status: :unprocessable_content
     end
 
-    #   if friend
-    #     friendship = Friendship.new(user: current_user, friend: friend, status: :pending)
-    #     if friendship.invalid?
-    #       flash[:warning] = friendship.errors.full_messages.to_sentence
-    #       redirect_to friends_path and return
-    #     end
-    #     if friendship.save
-    #       flash[:success] = I18n.t("friendships.create.success")
-    #       FriendshipMailer.invitation_email(inviter: current_user, invitee_email: @invitation.email).deliver_later()
-    #     else
-    #       flash[:alert] = I18n.t("friendships.create.error")
-    #     end
-    #     redirect_to friends_path
-    #   end
-    #
-    # else
-    # end
   end
 
   def confirm
