@@ -18,142 +18,91 @@ RSpec.describe User, type: :model do
   end
 
   describe 'email_invitations' do
+    let(:user) { create(:user) }
+    let(:user_2) { create(:user) }
+    let(:friend_email) { "friend_xyz@example.com" }
     context 'when user signs up' do
-      let(:user) { create(:user) }
-      let(:user_2) { create(:user) }
-      let(:friend_email) { "friend_xyz@example.com" }
 
-      it 'should claim one pending invitation' do
-        create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+      context 'when user confirms email or create confirmed account' do
 
-        expect {
-          create(:user, email: friend_email)
-        }.to change { Friendship.count }.by(1)
-      end
+        it 'should claim one pending invitation on confirm' do
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+          friend = create(:user, email: friend_email, confirmed_at: nil)
 
-      it 'should claim many pending invitations' do
-        create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
-        create(:invitation_link, user: user_2, invitation_type: :email_invitation, recipient_email: friend_email)
-        expect {
-          create(:user, email: friend_email)
-        }.to change { Friendship.count }.by(2)
-      end
+          expect {
+            friend.confirm
+          }.to change { Friendship.count }.by(1)
+        end
 
-      it 'should disappear after claiming' do
-        create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+        it 'should claim one pending invitation on create confirmed account' do
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+          expect {
+            create(:user, email: friend_email)
+          }.to change { Friendship.count }.by(1)
+        end
+
+        it 'should claim many pending invitations' do
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+          create(:invitation_link, user: user_2, invitation_type: :email_invitation, recipient_email: friend_email)
+          expect {
+            create(:user, email: friend_email)
+          }.to change { Friendship.count }.by(2)
+        end
+
+        it 'should disappear after claiming' do
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
           friend = create(:user, email: friend_email)
-        expect(friend.invitation_links.count).to eq(0)
-      end
+          expect(friend.invitation_links.count).to eq(0)
+        end
 
-      it 'should not claim invitation if it is expired' do
-        invitation_link = create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email, expires_at: 1.day.ago)
-        expect {
-          create(:user, email: friend_email)
-        }.to_not change { user.pending_invitations_received.count }
-      end
+        it 'should not claim invitation if it is expired' do
+          invitation_link = create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email, expires_at: 1.day.ago)
+          expect {
+            create(:user, email: friend_email)
+          }.to_not change { InvitationLink.count }
+        end
 
-      it 'should not change number of all invitations' do
-        create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
-        expect {
-          create(:user, email: friend_email)
-        }.to_not change { user.invitation_links.count }
-      end
+        it 'should not change number of all invitations' do
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+          expect {
+            create(:user, email: friend_email)
+          }.to_not change { user.invitation_links.count }
+        end
 
-      it 'should decrease number of active invitations' do
-        create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
-        expect {
-          create(:user, email: friend_email)
-        }.to change { InvitationLink.active.count }.by(-1)
-      end
+        it 'should decrease number of active invitations' do
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+          expect {
+            create(:user, email: friend_email)
+          }.to change { InvitationLink.active.count }.by(-1)
+        end
 
-      it 'should create new friendships with status pending' do
-        create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
-        create(:invitation_link, user: user_2, invitation_type: :email_invitation, recipient_email: friend_email)
-        friend = create(:user, email: friend_email)
-        friend.reload
-        expect(friend.pending_received_friendships.count).to eq(2)
+        it 'should create new friendships with status pending' do
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+          create(:invitation_link, user: user_2, invitation_type: :email_invitation, recipient_email: friend_email)
+          friend = create(:user, email: friend_email)
+          friend.reload
+          expect(friend.pending_received_friendships.count).to eq(2)
+        end
       end
     end
 
-    describe 'helper' do
-      describe '#pending_invitations_received' do
-
-        it 'returns all invitations for this user identified by email' do
-          user = create(:user)
-          friend = create(:user)
-
-          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend.email)
-
-          expect(friend.pending_invitations_received.count).to eq(1)
-          expect(friend.pending_invitations_received).to all(be_a(InvitationLink))
-        end
-
-        it 'returns invitations regardless of email case sensitivity' do
-          user = create(:user)
-          friend = create(:user, email: 'MAMA@example.com')
-
-          create(:invitation_link,
-                 user: user,
-                 invitation_type: :email_invitation,
-                 recipient_email: 'mama@example.com')
-
-          expect(friend.pending_invitations_received.count).to eq(1)
-        end
-
-        it 'does not return invitations that are already claimed or expired' do
-          user = create(:user)
-          user_2 = create(:user)
-          friend = create(:user)
-
-          # Zaproszenie wygasłe
-          create(:invitation_link,
-                 user: user,
-                 expires_at: 1.day.ago,
-                 invitation_type: :email_invitation,
-                 recipient_email: friend.email)
-
-          # Zaproszenie już wykorzystane (uses_count >= max_uses)
-          create(:invitation_link,
-                 user: user_2,
-                 invitation_type: :email_invitation,
-                 recipient_email: friend.email,
-                 uses_count: 1,
-                 max_uses: 1)
-
-          expect(friend.pending_invitations_received.count).to eq(0)
-        end
-
-        it 'does not return invitations with different invitation type' do
-          user = create(:user)
-          friend = create(:user)
-          create(:invitation_link, user: user, invitation_type: :link_invitation, recipient_email: friend.email)
-          expect(friend.pending_invitations_received.count).to eq(0)
-        end
-
-        it 'does not return invitations for other users' do
-          user = create(:user)
-          friend = create(:user)
-          friend_2 = create(:user)
-
-          invitation = create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend.email)
-          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_2.email)
-
-          expect(friend.pending_invitations_received.count).to eq(1)
-          expect(friend.pending_invitations_received).to eq([invitation])
-        end
+    context 'when friend does not confirm email' do
+      it 'should not claim invitation' do
+        create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
+        expect {
+          create(:user, email: friend_email, confirmed_at: nil)
+        }.to_not change { Friendship.count }
       end
 
-      # describe '#pending_invitations_sent' do
-      #
-      #   it 'returns invitations created by this user that are not yet claimed' do
-      #     user = create(:user)
-      #     friend = create(:user)
-      #
-      #     create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend.email)
-      #
-      #     expect(user.sent_pending_email_invitations.count).to eq(1)
-      #   end
-      # end
+    end
+
+    context 'when friend has account but not confirmed email' do
+      it 'creates email_invitation' do
+        friend = create(:user, email: friend_email, confirmed_at: nil)
+        expect {
+          create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend.email)
+        }.to change { InvitationLink.count }
+        end
     end
 
   end

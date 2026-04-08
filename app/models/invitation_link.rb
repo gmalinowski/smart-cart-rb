@@ -4,8 +4,16 @@ class InvitationLink < ApplicationRecord
   belongs_to :user
 
   validates :user_id, presence: true
-  validates :recipient_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :email_invitation?
-  validates :max_uses, inclusion: { in: [1] }, if: :email_invitation?
+
+  validate :user_must_be_confirmed, on: :create
+
+  with_options if: :email_invitation? do |email_invitation|
+    if :email_invitation?
+      email_invitation.validates :recipient_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+      email_invitation.validates :max_uses, inclusion: { in: [1] }
+      email_invitation.validate :recipient_must_not_be_confirmed
+    end
+  end
 
   before_validation :normalize_email, if: :email_invitation?
 
@@ -19,7 +27,7 @@ class InvitationLink < ApplicationRecord
 
   scope :for_recipient_email, ->(email) do
     where("LOWER(metadata->>'recipient_email') = ?", email.downcase)
-    .where(invitation_type: :email_invitation)
+      .where(invitation_type: :email_invitation)
   end
 
   def active?
@@ -36,13 +44,23 @@ class InvitationLink < ApplicationRecord
 
   def self.find_or_initialize_email_invitation(inviter:, recipient_email:)
     inviter.invitation_links.for_recipient_email(recipient_email).first ||
-    inviter.invitation_links.build(
-      recipient_email: recipient_email,
-      invitation_type: :email_invitation
-    )
+      inviter.invitation_links.build(
+        recipient_email: recipient_email,
+        invitation_type: :email_invitation
+      )
   end
 
   private
+
+  def user_must_be_confirmed
+    return if user&.confirmed?
+    errors.add(:user, :not_confirmed)
+  end
+
+  def recipient_must_not_be_confirmed
+    return if recipient_email.blank?
+    errors.add(:recipient_email, :already_registered) if User.find_by(email: recipient_email)&.confirmed?
+  end
 
   def normalize_email
     return if recipient_email.blank?
