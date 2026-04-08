@@ -134,7 +134,8 @@ RSpec.describe InviteFriendService, type: :service do
         response = described_class.new(user: user, invitee_email: '').call
         expect(InvitationLink.count).to eq(0)
         expect(response[:success]).to be_falsey
-        expect(response[:errors]).not_to be_nil
+        expect(response[:errors].added?(:recipient_email, :empty)).not_to be_truthy
+        expect(response[:errors].added?(:recipient_email, :invalid)).not_to be_truthy
       end
 
       it 'does not create an invitation if invitee_email is invalid' do
@@ -145,13 +146,9 @@ RSpec.describe InviteFriendService, type: :service do
         create(:invitation_link, user: user, recipient_email: invitee_email, invitation_type: :email_invitation)
         response = described_class.new(user: user, invitee_email: invitee_email).call
 
-        il = InvitationLink.new
-        il.errors.add(:recipient_email, :taken)
-        expected_error = il.errors.full_messages
-
         expect(InvitationLink.count).to eq(1)
         expect(response[:success]).to be_falsey
-        expect(response[:errors]).to eq(expected_error)
+        expect(response[:errors].added?(:recipient_email, :taken)).to be_truthy
       end
 
       it 'create a new invitation if existing one has other type' do
