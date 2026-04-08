@@ -46,6 +46,14 @@ en:
         recipient_email: "Recipient email"
     errors:
       models:
+        friendship:
+          attributes:
+            user:
+              blank: "cannot be empty"
+            friend_id:
+              blank: "cannot be empty"
+              taken: "is already a friend"
+              pending: "is already pending friendship"
         invitation_link:
           attributes:
             recipient_email:

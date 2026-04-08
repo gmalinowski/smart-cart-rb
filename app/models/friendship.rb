@@ -16,9 +16,9 @@ class Friendship < ApplicationRecord
   def friendship_already_exists
     return unless user && friend
     if user.friends_with?(friend)
-      errors.add(:friend, "is already friend")
+      errors.add(:friend_id, :taken)
     elsif user.pending_friendship_with?(friend)
-      errors.add(:friend, "friendship already pending")
+      errors.add(:friend_id, :pending)
     end
   end
 

@@ -1,5 +1,5 @@
-
 class InviteFriendService
+
   def initialize(user:, invitee_email:)
     @user = user
     @invitee_email = invitee_email&.downcase&.strip
@@ -25,18 +25,33 @@ class InviteFriendService
     friendship = Friendship.new(user: user, friend: friend, status: :pending)
     if friendship.save
       FriendshipMailer.invitation_email(inviter: user, invitee_email: friend.email).deliver_later
-      { success: true, message: :success }
+      { success: true, message: :friendship_requested }
     else
       { success: false, errors: friendship.errors.full_messages }
     end
   end
+
   def create_email_invitation_link(user:, invitee_email:)
-    invitation_link = InvitationLink.new(user: user, recipient_email: invitee_email)
-    if invitation_link.save
-      # FriendshipMailer.invitation_email(inviter: user, invitee_email: invitee_email).deliver_later
-      { success: true, message: :email_invitation_created }
-    else
-      { success: false, errors: invitation_link.errors.full_messages }
+    link = user.invitation_links.find_or_initialize_email_invitation(inviter: user, recipient_email: invitee_email)
+
+    case [link.persisted?, link.active?]
+    in [true, true]
+      link.errors.add(:recipient_email, :taken)
+      return { success: false, errors: link.errors.full_messages }
+    in [true, false]
+      execute_invitation_process(link, :renew!, user, invitee_email)
+    in [false, _]
+      execute_invitation_process(link, :save, user, invitee_email)
     end
   end
+
+  def execute_invitation_process(link, method, user, invitee_email)
+    if link.send(method)
+      InvitationMailer.friend_invitation_to_signup(inviter: user, invitee_email: invitee_email).deliver_later
+      { success: true, message: :email_invitation_sent }
+    else
+      { success: false, errors: link.errors.full_messages }
+    end
+  end
+
 end

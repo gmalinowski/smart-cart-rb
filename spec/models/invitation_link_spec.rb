@@ -22,10 +22,40 @@ RSpec.describe InvitationLink, type: :model do
     end
   end
 
+  describe '#renew!' do
+    let(:user) { create(:user) }
+    let(:friend) { create(:user) }
+
+    let(:expired_email_link) { create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email, expires_at: 1.day.ago) }
+
+    it 'update expires_at to the future' do
+      expired_email_link.renew!
+      expect(expired_email_link.expires_at).to be_within(1.minute).of(30.day.from_now)
+    end
+
+    it 'generates a new token' do
+      expect {
+        expired_email_link.renew!
+      }.to change { expired_email_link.token }
+    end
+
+    context 'when link is NOT email_invitation type' do
+      let(:link) { create(:invitation_link, invitation_type: :link_invitation, user: user, expires_at: 1.day.ago) }
+      it 'raises an error and does not change the record' do
+        expect {
+          link.renew!
+        }.to raise_error(RuntimeError, "Cannot renew a link that is not an email invitation")
+        expect(link.expires_at).to be_within(1.minute).of(1.day.ago)
+      end
+    end
+  end
+
   describe 'scopes' do
+
     describe '.for_recipient (all email invitations)' do
       let(:user) { create(:user) }
       let(:friend) { create(:user) }
+
       it "returns email invitations for the given user" do
         create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: friend.email)
 
@@ -89,6 +119,16 @@ RSpec.describe InvitationLink, type: :model do
         expect(link.active?).to be true
       end
 
+      it 'returns false when expires_at is nil' do
+        link = build(:invitation_link, expires_at: nil)
+        expect(link.active?).to be false
+      end
+
+      it 'returns false when max_uses is nil' do
+        link = build(:invitation_link, max_uses: nil)
+        expect(link.active?).to be false
+      end
+
       it "returns false when expired" do
         link = build(:invitation_link, expires_at: 1.day.ago)
         expect(link.active?).to be false
@@ -97,6 +137,58 @@ RSpec.describe InvitationLink, type: :model do
       it "returns false when max uses reached" do
         link = build(:invitation_link, max_uses: 1, uses_count: 1)
         expect(link.active?).to be false
+      end
+    end
+  end
+
+  describe '.find_or_initialize_email_invitation' do
+    let(:user) { create(:user) }
+    let(:email) { 'test@example.com' }
+
+    context 'when no invitation exists' do
+      it 'initializes a new email invitation' do
+        invitation = InvitationLink.find_or_initialize_email_invitation(inviter: user, recipient_email: email)
+        expect(invitation).to be_a(InvitationLink)
+        expect(invitation.invitation_type).to eq('email_invitation')
+        expect(invitation.recipient_email).to eq(email)
+        expect(invitation.user).to eq(user)
+      end
+
+      it 'does not save the link to the database' do
+        expect {
+          InvitationLink.find_or_initialize_email_invitation(inviter: user, recipient_email: email)
+        }.not_to change(InvitationLink, :count)
+      end
+    end
+
+    context 'when an invitation exists' do
+      let!(:existing_invitation) { create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: email) }
+
+      it 'returns the existing invitation' do
+        link = InvitationLink.find_or_initialize_email_invitation(inviter: user, recipient_email: email)
+        expect(link).to eq(existing_invitation)
+        expect(link).to be_persisted
+      end
+    end
+
+    context 'when an invitation exists but is expired' do
+      let!(:existing_invitation) { create(:invitation_link, invitation_type: :email_invitation, user: user, recipient_email: email, expires_at: 1.day.ago) }
+      it 'returns the existing invitation' do
+        link = InvitationLink.find_or_initialize_email_invitation(inviter: user, recipient_email: email)
+        expect(link).to eq(existing_invitation)
+        expect(link).to be_persisted
+        expect(link.active?).to be false
+      end
+    end
+
+    context 'when an invitation exists but for a different user' do
+      let!(:existing_invitation) { create(:invitation_link, invitation_type: :email_invitation, user: create(:user), recipient_email: email) }
+      it 'initializes a new email invitation for the current user' do
+        invitation = InvitationLink.find_or_initialize_email_invitation(inviter: user, recipient_email: email)
+        expect(invitation).to be_a(InvitationLink)
+        expect(invitation.invitation_type).to eq('email_invitation')
+        expect(invitation.recipient_email).to eq(email)
+        expect(invitation.user).to eq(user)
       end
     end
   end
@@ -132,6 +224,7 @@ RSpec.describe InvitationLink, type: :model do
       expect(link).not_to be_valid
       expect(link.errors[:max_uses]).to include(link.errors.generate_message(:max_uses, :inclusion))
     end
+
   end
 
   describe 'recipient_email (metadata accessor)' do
