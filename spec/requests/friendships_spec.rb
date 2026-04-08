@@ -7,83 +7,106 @@ RSpec.describe "Friendships", type: :request do
 
     context 'when user is logged in' do
       before { sign_in_with_session user }
-      context 'when friend is signed up' do
-        it "calls Pundit authorization for Friendship" do
-          expect_any_instance_of(FriendshipsController).to receive(:authorize)
-                                                             .with(:friendship, :create?)
-                                                             .and_call_original
 
-          post friendships_path, params: { friendship_invitation: { email: friend.email } }
+      it "calls Pundit authorization for Friendship" do
+        expect_any_instance_of(FriendshipsController).to receive(:authorize)
+                                                           .with(:friendship, :create?)
+                                                           .and_call_original
+
+        post friendships_path, params: { friendship_invitation: { email: friend.email } }
+      end
+
+      context 'when params are invalid (e.g. empty email)' do
+        it "renders the new template" do
+          post friendships_path, params: { friendship_invitation: { email: "" } }, as: :turbo_stream
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(response).to render_template(:new)
         end
+      end
+
+      context 'when Pundit denies access' do
+        before do
+          allow_any_instance_of(FriendshipPolicy).to receive(:create?).and_return(false)
+        end
+
+        it "redirects or shows error" do
+          post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+          expect(response).to have_http_status(:redirect)
+          expect(flash[:alert]).not_to be_nil
+        end
+      end
+
+      context 'when friend is signed up' do
 
         context 'when service returns success' do
           it "redirects to friends page with success flash" do
             post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
             expect(response).to redirect_to(friends_path)
-            expect(flash[:success]).to eq(I18n.t("friendships.create.success"))
+            expect(flash[:notice]).to eq(I18n.t("friendships.create.requested"))
+          end
+          it "creates an friendship record" do
+            expect {
+              post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            }.to change(Friendship, :count).by(1)
           end
         end
 
         context 'when service returns failure' do
           it "redirects to friends page with error flash" do
             allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
-                                                                                              success: false,
-                                                                                              errors: ["Email is invalid", "Already invited"]
-                                                                                            })
-            post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+                                                                                      success: false,
+                                                                                      errors: ["Email is invalid", "Already invited"]
+                                                                                    })
+            expect {
+              post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            }.not_to change(Friendship, :count)
+
             expect(response).to redirect_to(friends_path)
             expect(flash[:alert]).to eq("Email is invalid and Already invited")
           end
         end
 
-        context 'when params are invalid (e.g. empty email)' do
-          it "renders the new template" do
-            post friendships_path, params: { friendship_invitation: { email: "" } }, as: :turbo_stream
-            expect(response).to have_http_status(:unprocessable_content)
-            expect(response).to render_template(:new)
-          end
+      end
+    end
+
+    context 'when friend is not signed up' do
+      let(:recipient_email) { "kjfiosajf@example.com" }
+      before { sign_in_with_session user }
+
+      context 'when service returns success' do
+
+        it "redirects and show flash message for successful email invitation" do
+          post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
+          expect(response).to redirect_to(friends_path)
+          expect(flash[:notice]).to eq(I18n.t("friendships.create.email_invitation_sent"))
         end
 
-        context 'when Pundit denies access' do
-          before do
-            allow_any_instance_of(FriendshipPolicy).to receive(:create?).and_return(false)
-          end
+        it "creates an invitation record" do
+          expect {
+            post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
+          }.to change(InvitationLink, :count).by(1)
+        end
+      end
 
-          it "redirects or shows error" do
-            post friendships_path, params: { friendship_invitation: { email: friend.email } }
-            expect(response).to have_http_status(:redirect)
-            expect(flash[:alert]).not_to be_nil
-          end
+      context 'when service returns failure' do
+        it "redirects and show flash message for unsuccessful email invitation" do
+          allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
+                                                                                      success: false,
+                                                                                      errors: ["Email is invalid", "Already invited"]
+                                                                                    })
+          expect {
+            post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
+          }.not_to change(InvitationLink, :count)
+          expect(response).to redirect_to(friends_path)
+          expect(flash[:alert]).to include("Email is invalid").and include("Already invited")
         end
       end
     end
 
-    # context 'when friend is not signed up' do
-    #
-    #
-    #
-    #   it 'shows flash message for successful email invitation' do
-    #     post friendships_path, params: { friendship_invitation: { email: "test@example.com" } }
-    #     expect(response).to redirect_to(friends_path)
-    #     expect(flash[:notice]).to eq(I18n.t("friendships.create.email_invitation_sent"))
-    #   end
-    #
-    #
-
-    #
-    #     it 'shows flash message when something goes wrong' do
-    #       allow_any_instance_of(InvitationLink).to receive(:save).and_return(false)
-    #       post friendships_path, params: { friendship_invitation: { email: friend.email } }
-    #       expect(response).to redirect_to(friends_path)
-    #       expect(flash[:alert]).to eq(I18n.t("friendships.create.error"))
-    #     end
-    #
-    # end
-
     context 'when user is not logged in' do
       it "redirects to sign in page" do
         expect {
-          post friendships_path, params: { friend_id: friend.id }
+          post friendships_path, params: { friendship_invitation: { email: friend.email }}, as: :turbo_stream
         }.not_to change(Friendship, :count)
         expect(response).to redirect_to(new_user_session_path)
       end

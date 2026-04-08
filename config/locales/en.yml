@@ -74,7 +74,9 @@ en:
     create:
       error: "Something went wrong with the friendship"
       success: "Friend request sent"
+      requested: "Friend request sent"
       already_exists: "Friendship already exists"
+      email_invitation_sent: "Friendship invitation sent"
     destroy:
       error: "Something went wrong with the deletion"
       success: "You are no longer friends"
