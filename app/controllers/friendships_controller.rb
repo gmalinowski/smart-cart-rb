@@ -14,14 +14,13 @@ class FriendshipsController < ApplicationController
     if @friendship_invitation.valid?
       case InviteFriendService.new(user: current_user, invitee_email: @friendship_invitation.email).call
       in { success: true, message: :friendship_requested }
-        flash[:success] = I18n.t("friendships.create.success")
-        redirect_to friends_path
+        flash[:notice] = I18n.t("friendships.create.requested")
       in { success: true, message: :email_invitation_sent }
-
+        flash[:notice] = I18n.t("friendships.create.email_invitation_sent")
       in { success: false, errors: errs }
         flash[:alert] = errs.to_sentence
-        redirect_to friends_path
       end
+      redirect_to friends_path
     else
       render :new, status: :unprocessable_content
     end
