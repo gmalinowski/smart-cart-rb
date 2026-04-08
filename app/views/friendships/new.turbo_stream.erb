@@ -2,7 +2,7 @@
   <%= render Modal::ModalComponent.new(id: "invitation_email_modal", title: t(".title")) do |modal| %>
     <% modal.with_body do %>
 
-      <%= form_with model: @friendship_invitation, url: friendships_path, data: {turbo_frame: "_top"}, method: :post, class: "mt-4" do |f| %>
+      <%= form_with model: @friendship_invitation, url: friendships_path, data: { turbo_frame: "_top" }, method: :post, class: "mt-4" do |f| %>
 
         <%= f.label :email, class: "floating-label" do %>
           <span><%= FriendshipInvitation.human_attribute_name(:email) %></span>
@@ -11,7 +11,7 @@
 
         <% if @friendship_invitation.errors[:email].any? %>
           <p class="text-sm text-error">
-              <%= @friendship_invitation.errors.full_messages_for(:email).to_sentence %>
+            <%= @friendship_invitation.errors.full_messages_for(:email).first %>
           </p>
         <% end %>
 

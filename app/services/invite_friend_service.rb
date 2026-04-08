@@ -27,7 +27,7 @@ class InviteFriendService
       FriendshipMailer.invitation_email(inviter: user, invitee_email: friend.email).deliver_later
       { success: true, message: :friendship_requested }
     else
-      { success: false, errors: friendship.errors.full_messages }
+      { success: false, errors: friendship.errors }
     end
   end
 
@@ -37,7 +37,7 @@ class InviteFriendService
     case [link.persisted?, link.active?]
     in [true, true]
       link.errors.add(:recipient_email, :taken)
-      return { success: false, errors: link.errors.full_messages }
+      return { success: false, errors: link.errors }
     in [true, false]
       execute_invitation_process(link, :renew!, user, invitee_email)
     in [false, _]
@@ -50,7 +50,7 @@ class InviteFriendService
       InvitationMailer.friend_invitation_to_signup(inviter: user, invitee_email: invitee_email).deliver_later
       { success: true, message: :email_invitation_sent }
     else
-      { success: false, errors: link.errors.full_messages }
+      { success: false, errors: link.errors }
     end
   end
 
