@@ -27,7 +27,7 @@ class User < ApplicationRecord
   def friends_with?(other_user)
     return false if other_user.nil?
     friends.exists?(id: other_user.id)
-  end
+end
 
   def pending_friendship_with?(other_user)
     return false if other_user.nil?
