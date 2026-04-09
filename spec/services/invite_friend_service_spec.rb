@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe InviteFriendService, type: :service do
+  Status = InviteFriendService::Status
+  Result = InviteFriendService::Result
+
   context 'invitee is registered' do
     let(:user) { create(:user) }
     let(:invitee) { create(:user) }
@@ -16,8 +19,7 @@ RSpec.describe InviteFriendService, type: :service do
     end
     it 'returns success when friendship is created' do
       response = described_class.new(user: user, invitee_email: invitee.email).call
-      expect(response[:success]).to be_truthy
-      expect(response[:message]).to eq(:friendship_requested)
+      expect(response).to eq(Result.new(success: true, status: Status::FRIENDSHIP_REQUESTED, errors: nil))
     end
     it 'sends a notification to invitee via email' do
       ActionMailer::Base.deliveries.clear
@@ -32,18 +34,14 @@ RSpec.describe InviteFriendService, type: :service do
         create(:friendship, user: user, friend: invitee, status: :accepted)
 
         response = described_class.new(user: user, invitee_email: invitee.email).call
-
-        expect(response[:success]).to be_truthy
-        expect(response[:message]).to eq(:friendship_already_exists)
+        expect(response).to eq(Result.new(success: true, status: Status::ALREADY_EXISTS, errors: nil))
         expect(Friendship.count).to eq(1)
       end
 
       it 'finds existing user even with uppercase and spaces in email' do
         invitee = create(:user, email: 'serwis@test.pl')
         response = described_class.new(user: user, invitee_email: ' SERWIS@test.pl ').call
-
-        expect(response[:success]).to be_truthy
-        expect(response[:message]).to eq(:friendship_requested)
+        expect(response).to eq(Result.new(success: true, status: Status::FRIENDSHIP_REQUESTED, errors: nil))
         expect(Friendship.last.friend).to eq(invitee)
       end
 
@@ -76,12 +74,9 @@ RSpec.describe InviteFriendService, type: :service do
 
       it 'does not create a duplicate friendship request' do
         described_class.new(user: user, invitee_email: invitee.email).call
-        model_instance = Friendship.new
-        error_message = model_instance.errors.generate_message(:friend_id, :pending)
         expect {
           response = described_class.new(user: user, invitee_email: invitee.email).call
-          expect(response[:success]).to be_truthy
-          expect(response[:message]).to eq(:friendship_already_pending)
+          expect(response).to eq(Result.new(success: true, status: Status::ALREADY_PENDING, errors: nil))
         }.not_to change { Friendship.count }
       end
     end
@@ -116,10 +111,8 @@ RSpec.describe InviteFriendService, type: :service do
 
         it 'returns friendship_accepted message' do
           service = described_class.new(user: user, invitee_email: invitee.email)
-          result = service.call
 
-          expect(result[:success]).to be_truthy
-          expect(result[:message]).to eq(:friendship_accepted)
+          expect(service.call).to eq(Result.new(success: true, status: Status::FRIENDSHIP_ACCEPTED, errors: nil))
         end
       end
 
@@ -132,10 +125,7 @@ RSpec.describe InviteFriendService, type: :service do
 
         it 'returns a success message without creating duplicates' do
           service = described_class.new(user: user, invitee_email: invitee.email)
-
-          result = service.call
-          expect(result[:success]).to be_truthy
-          expect(result[:message]).to eq(:friendship_already_pending)
+          expect(service.call).to eq(Result.new(success: true, status: Status::ALREADY_PENDING, errors: nil))
           expect(Friendship.where(user: user, friend: invitee).count).to eq(1)
         end
       end
@@ -169,8 +159,7 @@ RSpec.describe InviteFriendService, type: :service do
 
     it 'returns success when invitation is created' do
       response = described_class.new(user: user, invitee_email: invitee_email).call
-      expect(response[:success]).to be_truthy
-      expect(response[:message]).to eq(:email_invitation_sent)
+      expect(response).to eq(Result.new(success: true, status: Status::EMAIL_INVITATION_SENT, errors: nil))
     end
 
     it 'sends an email to invitee' do
@@ -192,9 +181,9 @@ RSpec.describe InviteFriendService, type: :service do
       it 'does not create an invitation if invitee_email is empty' do
         response = described_class.new(user: user, invitee_email: '').call
         expect(InvitationLink.count).to eq(0)
-        expect(response[:success]).to be_falsey
-        expect(response[:errors].added?(:recipient_email, :empty)).not_to be_truthy
-        expect(response[:errors].added?(:recipient_email, :invalid)).not_to be_truthy
+        expect(response.success).to be_falsey
+        expect(response.errors.added?(:recipient_email, :empty)).not_to be_truthy
+        expect(response.errors.added?(:recipient_email, :invalid)).not_to be_truthy
       end
 
       it 'does not create an invitation if invitee_email is invalid' do
@@ -205,9 +194,7 @@ RSpec.describe InviteFriendService, type: :service do
 
         create(:invitation_link, user: user, recipient_email: invitee_email, invitation_type: :email_invitation)
         response = described_class.new(user: user, invitee_email: invitee_email).call
-
-        expect(response[:success]).to be_truthy
-        expect(response[:message]).to eq(:already_invited)
+        expect(response).to eq(Result.new(success: true, status: Status::ALREADY_INVITED, errors: nil))
       end
 
       it 'does not duplicate invitation if already has an active invitation for the same email' do
