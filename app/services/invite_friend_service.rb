@@ -13,7 +13,11 @@ class InviteFriendService
   def call
     invitee = User.find_by(email: @invitee_email)
     if invitee
-      create_friendship(user: @user, friend: invitee)
+      if @user.pending_received_friendships.exists?(user: invitee)
+        accept_friendship(user: @user, friend: invitee)
+      else
+        create_friendship(user: @user, friend: invitee)
+      end
     else
       create_email_invitation_link(user: @user, invitee_email: @invitee_email)
     end
@@ -21,13 +25,28 @@ class InviteFriendService
 
   private
 
+  def accept_friendship(user:, friend:)
+    friendship = friend.pending_friendships.find_by(friend: user)
+    if friendship.update(status: :accepted)
+      { success: true, message: :friendship_accepted }
+    else
+      { success: false, errors: friendship.errors }
+    end
+  end
+
   def create_friendship(user:, friend:)
     friendship = Friendship.new(user: user, friend: friend, status: :pending)
     if friendship.save
       FriendshipMailer.invitation_email(inviter: user, invitee_email: friend.email).deliver_later
       { success: true, message: :friendship_requested }
     else
-      { success: false, errors: friendship.errors }
+      if friendship.errors.added?(:friend_id, :taken)
+        { success: true, message: :friendship_already_exists }
+      elsif friendship.errors.added?(:friend_id, :pending)
+        { success: true, message: :friendship_already_pending }
+      else
+        { success: false, errors: friendship.errors }
+      end
     end
   end
 
@@ -36,8 +55,7 @@ class InviteFriendService
 
     case [link.persisted?, link.active?]
     in [true, true]
-      link.errors.add(:recipient_email, :taken)
-      return { success: false, errors: link.errors }
+      return { success: true, message: :already_invited }
     in [true, false]
       execute_invitation_process(link, :renew!, user, invitee_email)
     in [false, _]

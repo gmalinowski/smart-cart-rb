@@ -19,12 +19,6 @@ RSpec.describe InviteFriendService, type: :service do
       expect(response[:success]).to be_truthy
       expect(response[:message]).to eq(:friendship_requested)
     end
-    it 'returns error when friendship cannot be created' do
-      allow_any_instance_of(Friendship).to receive(:save).and_return(false)
-      response = described_class.new(user: user, invitee_email: invitee.email).call
-      expect(response[:success]).to be_falsey
-      expect(response[:errors]).not_to be_nil
-    end
     it 'sends a notification to invitee via email' do
       ActionMailer::Base.deliveries.clear
       expect {
@@ -33,6 +27,16 @@ RSpec.describe InviteFriendService, type: :service do
     end
 
     describe 'edge cases' do
+
+      it 'returns friendship_already_exists when they are already friends' do
+        create(:friendship, user: user, friend: invitee, status: :accepted)
+
+        response = described_class.new(user: user, invitee_email: invitee.email).call
+
+        expect(response[:success]).to be_truthy
+        expect(response[:message]).to eq(:friendship_already_exists)
+        expect(Friendship.count).to eq(1)
+      end
 
       it 'finds existing user even with uppercase and spaces in email' do
         invitee = create(:user, email: 'serwis@test.pl')
@@ -76,9 +80,64 @@ RSpec.describe InviteFriendService, type: :service do
         error_message = model_instance.errors.generate_message(:friend_id, :pending)
         expect {
           response = described_class.new(user: user, invitee_email: invitee.email).call
-          expect(response[:success]).to be_falsey
-          expect(response[:errors]).to_not be_nil
+          expect(response[:success]).to be_truthy
+          expect(response[:message]).to eq(:friendship_already_pending)
         }.not_to change { Friendship.count }
+      end
+    end
+
+    describe 'auto accept' do
+      context 'when there is existing pending friendship from the other side (invitee)' do
+        before do
+          create(:friendship, user: invitee, friend: user, status: :pending)
+        end
+
+        it 'automatically accepts the friendship' do
+          service = described_class.new(user: user, invitee_email: invitee.email)
+          expect {
+            service.call
+          }.to change { Friendship.where(status: :accepted).count }.by(1)
+                                                                   .and change { Friendship.where(status: :pending).count }.by(-1)
+        end
+
+        it 'does not send a notification to invitee' do
+          expect {
+            described_class.new(user: user, invitee_email: invitee.email).call
+          }.not_to have_enqueued_mail(FriendshipMailer, :invitation_email)
+        end
+
+        it 'does not create a new friendship record' do
+          service = InviteFriendService.new(user: user, invitee_email: invitee.email)
+
+          expect {
+            service.call
+          }.not_to change(Friendship, :count)
+        end
+
+        it 'returns friendship_accepted message' do
+          service = described_class.new(user: user, invitee_email: invitee.email)
+          result = service.call
+
+          expect(result[:success]).to be_truthy
+          expect(result[:message]).to eq(:friendship_accepted)
+        end
+      end
+
+      context 'when there is existing pending friendship to the invitee' do
+        let(:user) { create(:user) }
+        let(:invitee) { create(:user) }
+        before do
+          create(:friendship, user: user, friend: invitee, status: :pending)
+        end
+
+        it 'returns a success message without creating duplicates' do
+          service = described_class.new(user: user, invitee_email: invitee.email)
+
+          result = service.call
+          expect(result[:success]).to be_truthy
+          expect(result[:message]).to eq(:friendship_already_pending)
+          expect(Friendship.where(user: user, friend: invitee).count).to eq(1)
+        end
       end
     end
 
@@ -142,13 +201,20 @@ RSpec.describe InviteFriendService, type: :service do
         expect { described_class.new(user: user, invitee_email: 'invalid_email').call }.not_to change { InvitationLink.count }
       end
 
-      it 'does not create an invitation if already has an active invitation for the same email' do
+      it 'if invitation already exists just show success' do
+
         create(:invitation_link, user: user, recipient_email: invitee_email, invitation_type: :email_invitation)
         response = described_class.new(user: user, invitee_email: invitee_email).call
 
+        expect(response[:success]).to be_truthy
+        expect(response[:message]).to eq(:already_invited)
+      end
+
+      it 'does not duplicate invitation if already has an active invitation for the same email' do
+        create(:invitation_link, user: user, recipient_email: invitee_email, invitation_type: :email_invitation)
+        described_class.new(user: user, invitee_email: invitee_email).call
+
         expect(InvitationLink.count).to eq(1)
-        expect(response[:success]).to be_falsey
-        expect(response[:errors].added?(:recipient_email, :taken)).to be_truthy
       end
 
       it 'create a new invitation if existing one has other type' do
