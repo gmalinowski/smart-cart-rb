@@ -34,7 +34,7 @@ RSpec.describe InviteFriendService, type: :service do
         create(:friendship, user: user, friend: invitee, status: :accepted)
 
         response = described_class.new(user: user, invitee_email: invitee.email).call
-        expect(response).to eq(Result.new(success: true, status: Status::ALREADY_EXISTS, errors: nil))
+        expect(response).to eq(Result.new(success: true, status: Status::FRIENDSHIP_ALREADY_EXISTS, errors: nil))
         expect(Friendship.count).to eq(1)
       end
 
@@ -76,7 +76,7 @@ RSpec.describe InviteFriendService, type: :service do
         described_class.new(user: user, invitee_email: invitee.email).call
         expect {
           response = described_class.new(user: user, invitee_email: invitee.email).call
-          expect(response).to eq(Result.new(success: true, status: Status::ALREADY_PENDING, errors: nil))
+          expect(response).to eq(Result.new(success: true, status: Status::FRIENDSHIP_ALREADY_PENDING, errors: nil))
         }.not_to change { Friendship.count }
       end
     end
@@ -125,7 +125,7 @@ RSpec.describe InviteFriendService, type: :service do
 
         it 'returns a success message without creating duplicates' do
           service = described_class.new(user: user, invitee_email: invitee.email)
-          expect(service.call).to eq(Result.new(success: true, status: Status::ALREADY_PENDING, errors: nil))
+          expect(service.call).to eq(Result.new(success: true, status: Status::FRIENDSHIP_ALREADY_PENDING, errors: nil))
           expect(Friendship.where(user: user, friend: invitee).count).to eq(1)
         end
       end

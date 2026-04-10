@@ -5,8 +5,8 @@ class InviteFriendService
     FRIENDSHIP_REQUESTED = :friendship_requested
     EMAIL_INVITATION_SENT = :email_invitation_sent
     ALREADY_INVITED = :already_invited
-    ALREADY_PENDING = :friendship_already_pending
-    ALREADY_EXISTS = :friendship_already_exists
+    FRIENDSHIP_ALREADY_PENDING = :friendship_already_pending
+    FRIENDSHIP_ALREADY_EXISTS = :friendship_already_exists
   end
 
   Result = Data.define(:success, :status, :errors)
@@ -52,9 +52,9 @@ class InviteFriendService
       Result.new(success: true, status: Status::FRIENDSHIP_REQUESTED, errors: nil)
     else
       if friendship.errors.added?(:friend_id, :taken)
-        Result.new(success: true, status: Status::ALREADY_EXISTS, errors: nil)
+        Result.new(success: true, status: Status::FRIENDSHIP_ALREADY_EXISTS, errors: nil)
       elsif friendship.errors.added?(:friend_id, :pending)
-        Result.new(success: true, status: Status::ALREADY_PENDING, errors: nil)
+        Result.new(success: true, status: Status::FRIENDSHIP_ALREADY_PENDING, errors: nil)
       else
         Result.new(success: false, status: nil, errors: friendship.errors)
       end
