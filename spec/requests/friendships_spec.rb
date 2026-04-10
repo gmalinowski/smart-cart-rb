@@ -38,7 +38,7 @@ RSpec.describe "Friendships", type: :request do
 
       context 'when friend is signed up' do
 
-        context 'when service returns success' do
+        context 'when returns FRIENDSHIP_REQUESTED' do
           it "redirects to friends page with success flash" do
             post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
             expect(response).to redirect_to(friends_path)
@@ -51,26 +51,63 @@ RSpec.describe "Friendships", type: :request do
           end
         end
 
-        context 'when service returns failure' do
-          it "redirects to friends page with error flash" do
-            real_errors = ActiveModel::Errors.new(FriendshipInvitation.new)
-            real_errors.add(:email, "Already invited")
-            allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
-                                                                                      success: false,
-                                                                                      errors: real_errors
-                                                                                    })
+        context 'when returns FRIENDSHIP_ACCEPTED (auto-accepting)' do
+          it 'redirects to friends page with success flash' do
+            create(:friendship, user: friend, friend: user, status: :pending)
+            post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            expect(response).to redirect_to(friends_path)
+            expect(flash[:notice]).to eq(I18n.t('friendships.create.success'))
+          end
+
+          it 'changes friendship status to accepted' do
+            create(:friendship, user: friend, friend: user, status: :pending)
+            post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            expect(friend.friendships.accepted.count).to eq(1)
+          end
+        end
+
+        context 'when returns FRIENDSHIP_ALREADY_EXISTS' do
+          it 'redirects to friends page with info flash' do
+            create(:friendship, user: friend, friend: user, status: :accepted)
+            post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            expect(response).to redirect_to(friends_path)
+            expect(flash[:info]).to eq(I18n.t('friendships.create.already_exists'))
+          end
+
+          it 'does not create a new friendship record' do
+            create(:friendship, user: friend, friend: user, status: :accepted)
             expect {
               post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
             }.not_to change(Friendship, :count)
-
-            expect(response).to redirect_to(friends_path)
-            expect(flash[:alert]).to be_present
           end
-          it "does not crash and displays errors as a sentence" do
-            post friendships_path, params: { friendship_invitation: { email: user.email } }
+          it 'does not create invitation record' do
+            create(:friendship, user: friend, friend: user, status: :accepted)
+            expect {
+              post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            }.not_to change(InvitationLink, :count)
+          end
+        end
 
+        context 'when returns FRIENDSHIP_ALREADY_PENDING' do
+          it 'redirects to friends page with info flash' do
+            create(:friendship, user: user, friend: friend, status: :pending)
+            post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
             expect(response).to redirect_to(friends_path)
-            expect(flash[:alert]).to be_present
+            expect(flash[:info]).to eq(I18n.t('friendships.create.already_pending'))
+          end
+
+          it 'does not create a new friendship record' do
+            create(:friendship, user: friend, friend: user, status: :pending)
+            expect {
+              post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            }.not_to change(Friendship, :count)
+          end
+
+          it 'does not create invitation record' do
+            create(:friendship, user: friend, friend: user, status: :pending)
+            expect {
+              post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
+            }.not_to change(InvitationLink, :count)
           end
         end
 
@@ -81,8 +118,7 @@ RSpec.describe "Friendships", type: :request do
       let(:recipient_email) { "kjfiosajf@example.com" }
       before { sign_in_with_session user }
 
-      context 'when service returns success' do
-
+      context 'when service returns EMAIL_INVITATION_SENT' do
         it "redirects and show flash message for successful email invitation" do
           post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
           expect(response).to redirect_to(friends_path)
@@ -96,17 +132,35 @@ RSpec.describe "Friendships", type: :request do
         end
       end
 
-      context 'when service returns failure' do
-        it "redirects and show flash message for unsuccessful email invitation" do
-          real_errors = ActiveModel::Errors.new(InvitationLink.new)
-          real_errors.add(:email, "Already invited")
-          allow_any_instance_of(InviteFriendService).to receive(:call).and_return({
-                                                                                      success: false,
-                                                                                      errors: real_errors
-                                                                                    })
+      context 'when service returns ALREADY_INVITED' do
+        it "redirects and show flash message for already invited email" do
+          create(:invitation_link, recipient_email: recipient_email, user: user, invitation_type: :email_invitation)
           expect {
             post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
           }.not_to change(InvitationLink, :count)
+          expect(response).to redirect_to(friends_path)
+          expect(flash[:info]).to eq(I18n.t("invitation_links.create.already_invited"))
+        end
+      end
+
+      context 'when service failed' do
+        it "redirects and show flash message for unsuccessful email invitation" do
+          errors = ActiveModel::Errors.new(InvitationLink.new)
+          errors.add(:base, :invalid)
+          allow_any_instance_of(InviteFriendService).to receive(:call).and_return(
+            InviteFriendService::Result.new(success: false, status: nil, errors: errors))
+          expect {
+            post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
+          }.not_to change(InvitationLink, :count)
+          expect(response).to redirect_to(friends_path)
+          expect(flash[:alert]).to be_present
+        end
+        it 'sets real errors' do
+          errors = ActiveModel::Errors.new(InvitationLink.new)
+          errors.add(:base, :invalid)
+          allow_any_instance_of(InviteFriendService).to receive(:call).and_return(
+            InviteFriendService::Result.new(success: false, status: nil, errors: errors))
+          post friendships_path, params: { friendship_invitation: { email: recipient_email } }, as: :turbo_stream
           expect(response).to redirect_to(friends_path)
           expect(flash[:alert]).to be_present
         end
@@ -116,7 +170,7 @@ RSpec.describe "Friendships", type: :request do
     context 'when user is not logged in' do
       it "redirects to sign in page" do
         expect {
-          post friendships_path, params: { friendship_invitation: { email: friend.email }}, as: :turbo_stream
+          post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
         }.not_to change(Friendship, :count)
         expect(response).to redirect_to(new_user_session_path)
       end

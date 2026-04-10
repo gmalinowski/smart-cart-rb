@@ -69,6 +69,7 @@ en:
   errors:
     messages:
       not_found: "Sorry, we couldn't find what you were looking for"
+      unknown: "Sorry, something went wrong"
   pundit:
     user_not_authorized: "You are not authorized to perform this action"
   friendships:
@@ -80,6 +81,7 @@ en:
       requested: "Friend request sent"
       already_exists: "Friendship already exists"
       email_invitation_sent: "Friendship invitation sent"
+      already_pending: "Friendship already pending"
     destroy:
       error: "Something went wrong with the deletion"
       success: "You are no longer friends"
@@ -101,6 +103,7 @@ en:
     create:
       error: "Error creating invitation link"
       already_exists: "Invitation link already exists"
+      already_invited: "Invitation already sent"
   mailer:
     footer_note: "This is an automated message. Please do not reply."
     greeting: "Hello!"

@@ -12,14 +12,29 @@ class FriendshipsController < ApplicationController
     authorize :friendship, :create?
 
     if @friendship_invitation.valid?
-      case InviteFriendService.new(user: current_user, invitee_email: @friendship_invitation.email).call
-      in { success: true, message: :friendship_requested }
-        flash[:notice] = I18n.t("friendships.create.requested")
-      in { success: true, message: :email_invitation_sent }
-        flash[:notice] = I18n.t("friendships.create.email_invitation_sent")
-      in { success: false, errors: errs }
-        flash[:alert] = errs.full_messages.to_sentence
+
+      result = InviteFriendService.new(user: current_user, invitee_email: @friendship_invitation.email).call
+      if result.success
+        case result.status
+        in InviteFriendService::Status::FRIENDSHIP_REQUESTED
+          flash[:notice] = I18n.t("friendships.create.requested")
+        in InviteFriendService::Status::FRIENDSHIP_ACCEPTED
+          flash[:notice] = I18n.t("friendships.create.success")
+        in InviteFriendService::Status::EMAIL_INVITATION_SENT
+          flash[:notice] = I18n.t("friendships.create.email_invitation_sent")
+        in InviteFriendService::Status::FRIENDSHIP_ALREADY_PENDING
+          flash[:info] = I18n.t("friendships.create.already_pending")
+        in InviteFriendService::Status::FRIENDSHIP_ALREADY_EXISTS
+          flash[:info] = I18n.t("friendships.create.already_exists")
+        in InviteFriendService::Status::ALREADY_INVITED
+          flash[:info] = I18n.t("invitation_links.create.already_invited")
+        else
+          flash[:alert] = I18n.t("errors.messages.unknown")
+        end
+      else
+        flash[:alert] = result.errors.full_messages.to_sentence
       end
+
       redirect_to friends_path
     else
       render :new, status: :unprocessable_content
