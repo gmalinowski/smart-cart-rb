@@ -37,7 +37,6 @@ RSpec.describe "Friendships", type: :request do
       end
 
       context 'when friend is signed up' do
-
         context 'when returns FRIENDSHIP_REQUESTED' do
           it "redirects to friends page with success flash" do
             post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
@@ -110,7 +109,6 @@ RSpec.describe "Friendships", type: :request do
             }.not_to change(InvitationLink, :count)
           end
         end
-
       end
     end
 

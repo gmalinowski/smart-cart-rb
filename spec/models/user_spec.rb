@@ -22,9 +22,7 @@ RSpec.describe User, type: :model do
     let(:user_2) { create(:user) }
     let(:friend_email) { "friend_xyz@example.com" }
     context 'when user signs up' do
-
       context 'when user confirms email or create confirmed account' do
-
         it 'should claim one pending invitation on confirm' do
           create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend_email)
           friend = create(:user, email: friend_email, confirmed_at: nil)
@@ -93,7 +91,6 @@ RSpec.describe User, type: :model do
           create(:user, email: friend_email, confirmed_at: nil)
         }.to_not change { Friendship.count }
       end
-
     end
 
     context 'when friend has account but not confirmed email' do
@@ -104,7 +101,6 @@ RSpec.describe User, type: :model do
         }.to change { InvitationLink.count }
         end
     end
-
   end
 
   describe 'email' do
