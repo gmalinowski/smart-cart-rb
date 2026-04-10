@@ -10,7 +10,7 @@ RSpec.describe InvitationMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq(I18n.t("invitation_mailer.friend_invitation_to_signup.subject", sender: inviter.email))
-      expect(mail.to).to eq([invitee_email])
+      expect(mail.to).to eq([ invitee_email ])
     end
 
     it "renders the body" do
@@ -26,5 +26,4 @@ RSpec.describe InvitationMailer, type: :mailer do
       expect(mail.body.encoded).to include(new_user_registration_url)
     end
   end
-
 end

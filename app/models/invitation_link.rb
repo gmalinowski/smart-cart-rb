@@ -10,7 +10,7 @@ class InvitationLink < ApplicationRecord
   with_options if: :email_invitation? do |email_invitation|
     if :email_invitation?
       email_invitation.validates :recipient_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-      email_invitation.validates :max_uses, inclusion: { in: [1] }
+      email_invitation.validates :max_uses, inclusion: { in: [ 1 ] }
       email_invitation.validate :recipient_must_not_be_confirmed
     end
   end

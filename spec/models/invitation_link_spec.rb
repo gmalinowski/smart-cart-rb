@@ -51,7 +51,6 @@ RSpec.describe InvitationLink, type: :model do
   end
 
   describe 'scopes' do
-
     describe '.for_recipient (all email invitations)' do
       let(:user) { create(:user) }
       let(:friend) { create(:user, confirmed_at: nil) }
@@ -262,7 +261,6 @@ RSpec.describe InvitationLink, type: :model do
       expect(link).not_to be_valid
       expect(link.errors[:max_uses]).to include(link.errors.generate_message(:max_uses, :inclusion))
     end
-
   end
 
   describe 'recipient_email (metadata accessor)' do

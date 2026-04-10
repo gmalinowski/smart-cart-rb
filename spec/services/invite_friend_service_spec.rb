@@ -29,7 +29,6 @@ RSpec.describe InviteFriendService, type: :service do
     end
 
     describe 'edge cases' do
-
       it 'returns friendship_already_exists when they are already friends' do
         create(:friendship, user: user, friend: invitee, status: :accepted)
 
@@ -51,7 +50,6 @@ RSpec.describe InviteFriendService, type: :service do
         expect {
           described_class.new(user: user, invitee_email: invitee.email).call
         }.to_not change { Friendship.count }
-
       end
 
       it 'does not create a friendship if invitee is the same as user' do
@@ -130,7 +128,6 @@ RSpec.describe InviteFriendService, type: :service do
         end
       end
     end
-
   end
 
   context 'invitee is not registered' do
@@ -191,7 +188,6 @@ RSpec.describe InviteFriendService, type: :service do
       end
 
       it 'if invitation already exists just show success' do
-
         create(:invitation_link, user: user, recipient_email: invitee_email, invitation_type: :email_invitation)
         response = described_class.new(user: user, invitee_email: invitee_email).call
         expect(response).to eq(Result.new(success: true, status: Status::ALREADY_INVITED, errors: nil))

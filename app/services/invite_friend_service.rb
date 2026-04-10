@@ -1,5 +1,4 @@
 class InviteFriendService
-
   module Status
     FRIENDSHIP_ACCEPTED = :friendship_accepted
     FRIENDSHIP_REQUESTED = :friendship_requested
@@ -64,12 +63,12 @@ class InviteFriendService
   def create_email_invitation_link(user:, invitee_email:)
     link = user.invitation_links.find_or_initialize_email_invitation(inviter: user, recipient_email: invitee_email)
 
-    case [link.persisted?, link.active?]
-    in [true, true]
+    case [ link.persisted?, link.active? ]
+    in [ true, true ]
       Result.new(success: true, status: Status::ALREADY_INVITED, errors: nil)
-    in [true, false]
+    in [ true, false ]
       execute_invitation_process(link, :renew!, user, invitee_email)
-    in [false, _]
+    in [ false, _ ]
       execute_invitation_process(link, :save, user, invitee_email)
     end
   end
@@ -82,5 +81,4 @@ class InviteFriendService
       Result.new(success: false, status: nil, errors: link.errors)
     end
   end
-
 end
