@@ -17,6 +17,35 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'validations' do
+    it { should validate_presence_of(:email) }
+
+    it 'does not allow to be friends with oneself' do
+      user = create(:user)
+      friendship = build(:friendship, user: user, friend: user)
+      expect(friendship).not_to be_valid
+      expect(friendship.errors[:friend]).to be_present
+    end
+
+    it 'does not allow a friendship to exist if one already exists in the opposite direction' do
+      user_a = create(:user)
+      user_b = create(:user)
+      create(:friendship, user: user_a, friend: user_b)
+
+      reverse_friendship = build(:friendship, user: user_b, friend: user_a)
+      expect(reverse_friendship).not_to be_valid
+    end
+
+    it 'does not allow duplicate friendship records' do
+      user_a = create(:user)
+      user_b = create(:user)
+      create(:friendship, user: user_a, friend: user_b)
+
+      duplicate = build(:friendship, user: user_a, friend: user_b)
+      expect(duplicate).not_to be_valid
+    end
+  end
+
   describe 'email_invitations' do
     let(:user) { create(:user) }
     let(:user_2) { create(:user) }
@@ -83,6 +112,22 @@ RSpec.describe User, type: :model do
         end
       end
     end
+    context 'transactional integrity' do
+      it 'does not increment uses_count if friendship creation fails' do
+        invitation_link = create(:invitation_link, user: user, recipient_email: friend_email)
+
+        allow(Friendship).to receive(:create).and_raise(ActiveRecord::Rollback)
+
+        expect {
+          begin
+            create(:user, email: friend_email)
+          rescue
+            nil
+          end
+          invitation_link.reload
+        }.not_to change { invitation_link.uses_count }
+      end
+    end
 
     context 'when friend does not confirm email' do
       it 'should not claim invitation' do
@@ -116,7 +161,15 @@ RSpec.describe User, type: :model do
   end
 
   describe 'dependencies' do
+    let!(:user) { create(:user) }
     it 'destroys associated shopping_lists when destroyed'
+
+    it 'destroys sent and received friendships when destroyed' do
+      create(:friendship, user: user, friend: create(:user))
+      create(:friendship, user: create(:user), friend: user)
+
+      expect { user.destroy }.to change { Friendship.count }.by(-2)
+    end
   end
 
   describe 'helpers' do
@@ -145,6 +198,14 @@ RSpec.describe User, type: :model do
         friend = create(:user)
         create(:friendship, user: user, friend: friend)
         expect(user.friends_with?(friend)).to be_falsey
+      end
+
+      it 'returns false if friendship is declined' do
+        user = create(:user)
+        friend = create(:user)
+        create(:friendship, user: user, friend: friend, status: :rejected)
+        expect(user.friends_with?(friend)).to be_falsey
+        expect(user.pending_friendship_with?(friend)).to be_falsey
       end
     end
 
@@ -181,11 +242,64 @@ RSpec.describe User, type: :model do
     it { should have_many(:shopping_lists).with_foreign_key('owner_id') }
     it { should have_many(:groups).with_foreign_key('owner_id') }
 
-    it { should have_many(:friendships) }
-    it { should have_many(:friends).through(:user_friend_views) }
-    it { should have_many(:pending_friendships).with_foreign_key('user_id').class_name('Friendship').conditions(status: :pending) }
-    it { should have_many(:pending_received_friendships).with_foreign_key('friend_id').class_name('Friendship').conditions(status: :pending) }
+    it { should have_many(:user_friend_views).with_foreign_key('user_id') }
+    it { should have_many(:friends).through(:user_friend_views).source(:friend) }
+    it { should have_many(:pending_friends).through(:user_friend_views).source(:friend).conditions(friendships: { status: :pending }) }
+    it { should have_many(:pending_received_friends).through(:user_friend_views).source(:friend).conditions(friendships: { status: :pending }) }
+    it { should have_many(:pending_sent_friends).through(:user_friend_views).source(:friend).conditions(friendships: { status: :pending }) }
+
+    it { should have_many(:sent_friendships).with_foreign_key('user_id').dependent(:destroy) }
+    it { should have_many(:received_friendships).with_foreign_key('friend_id').dependent(:destroy) }
+    it { should have_many(:pending_sent_friendships).with_foreign_key('user_id').conditions(status: :pending).dependent(:destroy) }
+    it { should have_many(:pending_received_friendships).with_foreign_key('friend_id').conditions(status: :pending).dependent(:destroy) }
 
     it { should have_many(:invitation_links) }
+
+    describe '#friends' do
+      let(:user) { create(:user) }
+      let(:friend_accepted) { create(:user) }
+      let(:friend_pending) { create(:user) }
+      let(:friend_2) { create(:user) }
+
+      before do
+        create(:friendship, user: user, friend: friend_accepted, status: :accepted)
+        create(:friendship, user: user, friend: friend_pending, status: :pending)
+        create(:friendship, user: friend_2, friend: user, status: :pending)
+      end
+
+      it 'returns all pending friends regardless of who is sender' do
+        expect(user.pending_friends).to include(friend_pending)
+        expect(user.pending_friends).to include(friend_2)
+      end
+
+      it 'returns only pending friends where user is the sender' do
+        expect(user.pending_sent_friends).to include(friend_pending)
+        expect(user.pending_sent_friends).not_to include(friend_accepted)
+        expect(user.pending_sent_friends).not_to include(friend_2)
+      end
+
+      it 'returns only pending friends where user is the recipient' do
+        expect(user.pending_received_friends).to include(friend_2)
+        expect(user.pending_received_friends).not_to include(friend_accepted)
+        expect(user.pending_received_friends).not_to include(friend_pending)
+      end
+
+      it 'does not include accepted friends in pending lists' do
+        accepted_friend = create(:user)
+        create(:friendship, user: user, friend: accepted_friend, status: :accepted)
+
+        expect(user.pending_friends).not_to include(accepted_friend)
+      end
+
+      it 'returns accepted friends' do
+        expect(user.friends).to include(friend_accepted)
+        expect(user.friends).not_to include(friend_pending)
+      end
+
+      it 'returns pending friends' do
+        expect(user.pending_friends).to include(friend_pending)
+        expect(user.pending_friends).not_to include(friend_accepted)
+      end
+    end
   end
 end

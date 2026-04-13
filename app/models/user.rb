@@ -12,13 +12,18 @@ class User < ApplicationRecord
 
   has_many :invitation_links
 
-  has_many :user_friend_views, foreign_key: :user_id, class_name: "UserFriendView"
-  has_many :friends, through: :user_friend_views, source: :friend
+  # START read-only
+  has_many :user_friend_views, foreign_key: :user_id
+  has_many :friends, -> { merge(UserFriendView.accepted) }, through: :user_friend_views, source: :friend
+  has_many :pending_friends, -> { merge(UserFriendView.pending) }, through: :user_friend_views, source: :friend
+  has_many :pending_sent_friends, -> { merge(UserFriendView.pending.where(is_sender: true)) }, through: :user_friend_views, source: :friend
+  has_many :pending_received_friends, -> { merge(UserFriendView.pending.where(is_sender: false)) }, through: :user_friend_views, source: :friend
+  # END read-only
 
-  has_many :friendships, foreign_key: :user_id
-  # has_many :received_friendships, foreign_key: :friend_id, class_name: "Friendship"
-  has_many :pending_friendships, -> { where(status: :pending) }, foreign_key: :user_id, class_name: "Friendship"
-  has_many :pending_received_friendships, -> { where(status: :pending) }, foreign_key: :friend_id, class_name: "Friendship"
+  has_many :sent_friendships, foreign_key: :user_id, dependent: :destroy, class_name: "Friendship"
+  has_many :received_friendships, foreign_key: :friend_id, dependent: :destroy, class_name: "Friendship"
+  has_many :pending_sent_friendships, -> { where(status: :pending) }, foreign_key: :user_id, class_name: "Friendship", dependent: :destroy
+  has_many :pending_received_friendships, -> { where(status: :pending) }, foreign_key: :friend_id, class_name: "Friendship", dependent: :destroy
 
   def after_confirmation
     claim_pending_friendships
@@ -31,8 +36,7 @@ end
 
   def pending_friendship_with?(other_user)
     return false if other_user.nil?
-    pending_friendships.exists?(friend_id: other_user.id) ||
-      pending_received_friendships.exists?(user_id: other_user.id)
+    pending_friends.exists?(id: other_user.id)
   end
 
   private

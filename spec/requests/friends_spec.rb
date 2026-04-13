@@ -38,15 +38,28 @@ RSpec.describe "Friends", type: :request do
         create(:friendship, user: user, friend: create(:user), status: :pending)
         create(:friendship, user: user, friend: create(:user), status: :pending)
         get friends_path
-        expect(assigns(:pending_friendships)).to eq(user.pending_friendships)
-        expect(assigns(:pending_friendships).size).to eq(2)
+        expect(assigns(:pending_sent_friendships)).to eq(user.pending_sent_friendships)
+        expect(assigns(:pending_sent_friendships).size).to eq(2)
+      end
+
+      context "N+1 queries", :n_plus_one do
+        populate { |n|
+          n.times do
+            create(:friendship, user: user, friend: create(:user), status: :accepted)
+            create(:friendship, user: user, friend: create(:user), status: :pending)
+            create(:friendship, user: create(:user), friend: user, status: :pending)
+          end
+        }
+        specify do
+          expect { get friends_path }.to perform_constant_number_of_queries
+        end
       end
     end
     context 'when user is not logged in' do
       it "redirects to sign in page" do
         get friends_path
         expect(response).to redirect_to(new_user_session_path)
-        end
       end
+    end
   end
 end

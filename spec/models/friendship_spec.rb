@@ -7,6 +7,14 @@ RSpec.describe Friendship, type: :model do
   end
 
   describe 'validations' do
+    it { should define_enum_for(:status).with_values([ :pending, :accepted, :rejected ]) }
+
+    it 'updates status to rejected' do
+      friendship = create(:friendship, status: :pending)
+      friendship.rejected!
+      expect(friendship.reload.status).to eq('rejected')
+    end
+
     it 'user_id and friend_id must be present' do
       user = create(:user)
       friend = create(:user)
@@ -43,13 +51,6 @@ RSpec.describe Friendship, type: :model do
 
       reverse = build(:friendship, user: friend, friend: user)
       expect(reverse).not_to be_valid
-    end
-
-    it "should be invalid if friendships is duplicated" do
-      user = create(:user)
-      friend = create(:user)
-      create(:friendship, user: user, friend: friend, status: :accepted)
-      expect(build(:friendship, user: friend, friend: user)).to_not be_valid
     end
 
     it "should be invalid if friendship exists and is not accepted" do

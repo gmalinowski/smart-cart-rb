@@ -29,7 +29,7 @@ class InvitationLinksController < ApplicationController
     @inviter = @invitation_link.user
     @invitee = current_user
 
-    received_request = current_user.pending_friendships.find_by(friend: @inviter)
+    received_request = current_user.pending_sent_friendships.find_by(friend: @inviter)
     if received_request
       authorize received_request, :auto_confirm?
       if received_request.accepted!

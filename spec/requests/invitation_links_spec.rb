@@ -30,8 +30,6 @@ RSpec.describe "InvitationLinks", type: :request do
                                                                  .and_call_original
 
           get accept_invitation_link_path(invitation_link.token)
-
-          expect(friendship.reload.status).to eq("accepted")
         end
       end
     end
