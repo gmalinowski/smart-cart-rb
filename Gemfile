@@ -85,6 +85,7 @@ group :test do
   gem "spring"
   gem "spring-commands-rspec"
   gem "simplecov", require: false
+  gem "n_plus_one_control"
 end
 
 gem "view_component", "~> 4.6"

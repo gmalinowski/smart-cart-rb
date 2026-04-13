@@ -12,6 +12,8 @@
 # the additional setup, and require it from the spec files that actually need
 # it.
 
+require "n_plus_one_control/rspec"
+
 require 'simplecov'
 SimpleCov.start 'rails' do
 end

@@ -61,7 +61,7 @@ RSpec.describe "Friendships", type: :request do
           it 'changes friendship status to accepted' do
             create(:friendship, user: friend, friend: user, status: :pending)
             post friendships_path, params: { friendship_invitation: { email: friend.email } }, as: :turbo_stream
-            expect(friend.friendships.accepted.count).to eq(1)
+            expect(friend.friends.count).to eq(1)
           end
         end
 

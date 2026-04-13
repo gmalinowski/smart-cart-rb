@@ -23,8 +23,12 @@ class InviteFriendService
   def call
     invitee = User.find_by(email: @invitee_email)
     if invitee
-      if @user.pending_received_friendships.exists?(user: invitee)
+      if @user.pending_received_friends.exists?(id: invitee.id)
         accept_friendship(user: @user, friend: invitee)
+      elsif @user.friends.exists?(id: invitee.id)
+        Result.new(success: true, status: Status::FRIENDSHIP_ALREADY_EXISTS, errors: nil)
+      elsif @user.pending_sent_friends.exists?(id: invitee.id)
+        Result.new(success: true, status: Status::FRIENDSHIP_ALREADY_PENDING, errors: nil)
       else
         create_friendship(user: @user, friend: invitee)
       end
@@ -36,11 +40,18 @@ class InviteFriendService
   private
 
   def accept_friendship(user:, friend:)
-    friendship = friend.pending_friendships.find_by(friend: user)
-    if friendship.update(status: :accepted)
+    friendship = user.received_friendships.find_by(user_id: friend.id)
+    if friendship&.update(status: :accepted)
       Result.new(success: true, status: Status::FRIENDSHIP_ACCEPTED, errors: nil)
     else
-      Result.new(success: false, status: nil, errors: friendship.errors)
+      errors = if friendship
+                 friendship.errors
+      else
+                 f = Friendship.new
+                 f.errors.add(:base, I18n.t("errors.messages.unknown"))
+                 f.errors
+      end
+      Result.new(success: false, status: nil, errors: errors)
     end
   end
 

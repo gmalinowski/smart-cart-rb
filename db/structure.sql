@@ -135,7 +135,7 @@ CREATE TABLE public.shopping_list_public_links (
     shopping_list_id uuid NOT NULL,
     created_by_id uuid NOT NULL,
     permission integer DEFAULT 0 NOT NULL,
-    share_token character varying DEFAULT '81615d78-8a43-4ae0-9425-69e157c3f23b'::character varying NOT NULL,
+    share_token character varying DEFAULT '52d8d4c2-423a-440c-ad08-b0a9c77ea93c'::character varying NOT NULL,
     expires_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -161,19 +161,17 @@ CREATE TABLE public.shopping_lists (
 --
 
 CREATE VIEW public.user_friends_view AS
- SELECT friendships.user_id,
+ SELECT friendships.id AS friendship_id,
+    friendships.user_id,
     friendships.friend_id,
-    friendships.created_at,
-    friendships.updated_at
+    true AS is_sender
    FROM public.friendships
-  WHERE (friendships.status = 1)
 UNION
- SELECT friendships.friend_id AS user_id,
+ SELECT friendships.id AS friendship_id,
+    friendships.friend_id AS user_id,
     friendships.user_id AS friend_id,
-    friendships.created_at,
-    friendships.updated_at
-   FROM public.friendships
-  WHERE (friendships.status = 1);
+    false AS is_sender
+   FROM public.friendships;
 
 
 --
@@ -490,6 +488,7 @@ ALTER TABLE ONLY public.friendships
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260411205416'),
 ('20260403175316'),
 ('20260331091351'),
 ('20260329211344'),
