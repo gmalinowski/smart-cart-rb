@@ -77,7 +77,7 @@ en:
       title: "Send friend request"
     create:
       error: "Something went wrong with the friendship"
-      success: "Friend request sent"
+      success: "You are now friends!"
       requested: "Friend request sent"
       already_exists: "Friendship already exists"
       email_invitation_sent: "Friendship invitation sent"

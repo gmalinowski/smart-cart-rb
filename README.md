@@ -1,5 +1,6 @@
-# SmartCart 🛒
+# SmartCart (internal codename) 🛒
 
+<<<<<<< Updated upstream
 > ### For a more detailed look at the development process and decisions, see [DEVLOG.md](DEVLOG.md).
 > ### Documentation: [docs](docs)
  
@@ -97,3 +98,36 @@ Visit `http://localhost:3000`
 bundle exec rspec
 ```
  
+=======
+A collaborative, real-time shopping assistant built with **Ruby on Rails 8**. Share lists with groups, friends, or via public links with instant updates for all collaborators.
+
+## 🏛️ Architecture & Decisions
+
+This project follows a **"Documentation as Code"** approach. For deep dives into the system design and specific technical choices, please refer to:
+
+* [**System Architecture Overview**](./docs/architecture.md) – A high-level view of modules, data flow, and the sharing model.
+* [**Architecture Decision Records (ADR)**](./doc/adr/) – Detailed justifications for key technical choices (e.g., UUIDs, Solid Stack).
+* [**Development Guide**](./docs/development.md) – Detailed setup and contribution instructions.
+
+## 🚀 Key Technical Challenges & Solutions
+
+### 🔐 Global Session Invalidation
+Implemented a `session_version` mechanism on the `User` model to allow instant logout across all devices without the overhead of database-backed sessions. Any change in security credentials increments the version, invalidating existing browser cookies.
+
+### ⚡ Real-time UX without the "Scroll Jump"
+Solved common Turbo Stream UI issues, such as unwanted browser scrolling when elements are replaced. Implemented a Stimulus-based focus management system that ensures a seamless experience during rapid list updates.
+
+### 🧠 Async AI Suggestions
+Built an asynchronous pipeline using **Solid Queue** to analyze purchase patterns via **Claude AI (Anthropic)**. This ensures that heavy AI computations never block the main web thread.
+
+## 🛠️ Tech Stack
+
+### Backend
+- **Ruby on Rails 8** (Solid Queue, Solid Cable, ViewComponent)
+- **PostgreSQL** & **Pundit** (AuthZ)
+- **ruby_llm** (Anthropic Claude integration)
+
+### Frontend
+- **Hotwire** (Turbo & Stimulus) & **Alpine.js**
+- **Vite** & **Tailwind CSS v4** (DaisyUI)
+>>>>>>> Stashed changes
