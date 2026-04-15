@@ -1,5 +1,5 @@
 ARG RUBY_VERSION=4.0.1
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+FROM docker.io/library/ruby:$RUBY_VERSION AS base
 
 WORKDIR /app
 
@@ -13,6 +13,7 @@ RUN apt-get update -qq && \
     nodejs \
     npm \
     procps \
+    graphviz \
     postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
