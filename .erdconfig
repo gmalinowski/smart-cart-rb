@@ -1,0 +1,12 @@
+attributes:
+  - content
+  - foreign_key
+  - primary_key
+filetype: png
+filename: doc/assets/db_schema
+orientation: horizontal
+notation: bachman
+exclude:
+  - ActionAuth::Record
+  - ActiveStorage::Attachment
+  - ActiveStorage::Blob
