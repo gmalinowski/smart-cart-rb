@@ -51,6 +51,7 @@ The project follows the **Majestic Monolith** philosophy using **Rails 8**.
 ### For detailed technical specifications, please refer to our dedicated documentation files:
 
 - 🗺️ [Architecture & Design Decisions (doc/architecture.md)](./doc/architecture.md)
+- ⚖️ [ADR - Architecture Decision Records (doc/adr/)](./doc/adr/)
 - 🔐 [Authorization Matrix](./doc/authorization-matrix.md)
 - 📈 [Database Schema](./doc/assets/db_schema.png)
 
