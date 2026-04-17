@@ -10,6 +10,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   rails:
+    user: 1000:1000
     build:
       context: .
       dockerfile: Dockerfile_dev
