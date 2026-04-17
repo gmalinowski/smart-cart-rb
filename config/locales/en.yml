@@ -70,6 +70,7 @@ en:
     messages:
       not_found: "Sorry, we couldn't find what you were looking for"
       unknown: "Sorry, something went wrong"
+      noscript: "Please enable JavaScript to use this application"
   pundit:
     user_not_authorized: "You are not authorized to perform this action"
   friendships:
