@@ -47,5 +47,16 @@
 <%= render "layouts/modal" %>
 
 <%= render "layouts/dock" %>
+
 </body>
+<noscript>
+  <style>
+    main {
+        opacity: 0.5;
+    }
+  </style>
+  <div class="fixed z-1000 top-8 left-[50%] -translate-x-50 text-lg font-bold text-center alert alert-error">
+    <p class="w-full text-center"><%= t('errors.messages.noscript') %></p>
+  </div>
+</noscript>
 </html>
