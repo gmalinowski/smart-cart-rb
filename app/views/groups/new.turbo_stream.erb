@@ -1,0 +1,21 @@
+<%= turbo_stream.update "modal_content" do %>
+
+  <%= render Modal::ModalComponent.new(id: "new_group_modal", title: "New group") do |modal| %>
+    <% modal.with_body do %>
+      <%= form_with model: @group, data: { turbo_frame: "_top" }, class: "flex flex-col items-center gap-2 mt-6" do
+          |f| %>
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">New group name</legend>
+
+          <% if @group.errors[:name].any? %>
+            <span class="text-error-content"><%= @group.errors[:name].first %></span>
+          <% end %>
+          <%= f.text_field :name, class: "input input-secondary input-sm", autofocus: true, required: true %>
+        </fieldset>
+        <%= f.submit "save", class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+
+<% end %>
