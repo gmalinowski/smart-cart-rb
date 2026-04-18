@@ -25,7 +25,7 @@ RSpec.describe 'Group', type: :request do
     context 'when user is logged in' do
       before { sign_in_with_session user }
       it 'renders new group form' do
-        get new_group_path, headers: { "Accept" => "text/vnd.turbo-stream.html"}
+        get new_group_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
         expect(response).to render_template(:new)
       end
       it 'assigns a new group with owner' do
@@ -75,7 +75,7 @@ RSpec.describe 'Group', type: :request do
 
       it 'does not create a group with invalid params' do
         expect {
-          post groups_path, params: { group: { name: '' } }, headers: { "Accept" => "text/vnd.turbo-stream.html"}
+          post groups_path, params: { group: { name: '' } }, headers: { "Accept" => "text/vnd.turbo-stream.html" }
         }.not_to change(Group, :count)
         expect(response).to have_http_status(:unprocessable_content)
         expect(response).to render_template(:new)
