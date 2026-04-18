@@ -11,7 +11,7 @@ RSpec.describe 'Folder', type: :request do
       end
 
       it 'loads drafts' do
-        draft = CreateShoppingListWithItem.new(item_name: 'test', owner_id: user.id).call
+        draft = ShoppingLists::CreateWithItem.new(item_name: 'test', owner_id: user.id).call
         get folder_path
         expect(assigns(:drafts)).to include(draft)
       end
@@ -27,7 +27,7 @@ RSpec.describe 'Folder', type: :request do
       it 'redirects to sign in page' do
         get folder_path
         expect(response).to redirect_to(new_user_session_path)
-        end
+      end
     end
   end
 end
