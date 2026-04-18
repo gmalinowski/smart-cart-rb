@@ -12,7 +12,7 @@ services:
   rails:
     build:
       context: .
-      dockerfile: Containerfile.dev
+      dockerfile: Dockerfile_dev
     container_name: smartcart_rails
     ports:
       - "3000:3000"
