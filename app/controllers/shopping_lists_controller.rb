@@ -1,6 +1,6 @@
 class ShoppingListsController < ApplicationController
   before_action :authenticate_user!, except: []
-  skip_after_action :verify_policy_scoped, only: [:show, :create, :destroy]
+  skip_after_action :verify_policy_scoped, only: [ :show, :create, :destroy ]
 
   def show
     @shopping_list = ShoppingList.find(params[:id])
