@@ -1,8 +1,8 @@
 <%= turbo_stream.update "modal_content" do %>
 
-  <%= render Modal::ModalComponent.new(id: "new_group_modal", title: "New group") do |modal| %>
+  <%= render Modal::ModalComponent.new(id: "new_group_modal", title: nil) do |modal| %>
     <% modal.with_body do %>
-      <%= form_with model: @group, data: { turbo_frame: "_top" }, class: "flex flex-col items-center gap-2 mt-6" do
+      <%= form_with model: @group, data: { turbo_frame: "_top" }, class: "flex items-end gap-2 mt-6" do
           |f| %>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">New group name</legend>
