@@ -9,7 +9,7 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker Compose
+- Podman (or Docker)
 
 
 ### Setup
@@ -20,8 +20,8 @@
    ```
 2. **Start docker containers & enter rails container**
    ```bash
-   docker compose up -d
-   docker compose exec rails bash
+   podman compose up -d
+   podman compose exec rails bash
    ```
 3. **Setup database**
    ```bash
