@@ -9,7 +9,7 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Podman (or Docker)
+- Podman + podman-compose
 
 
 ### Setup
