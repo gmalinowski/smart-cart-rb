@@ -79,8 +79,8 @@ RSpec.describe ShoppingList, type: :model do
   describe '.drafts' do
     it 'returns only drafts' do
       user = create(:user)
-      CreateShoppingListWithItem.new(item_name: 'test', owner_id: user.id).call
-      CreateShoppingListWithItem.new(item_name: 'test', owner_id: user.id).call
+      ShoppingLists::CreateWithItem.new(item_name: 'test', owner_id: user.id).call
+      ShoppingLists::CreateWithItem.new(item_name: 'test', owner_id: user.id).call
       expect(ShoppingList.drafts.count).to eq(2)
     end
 

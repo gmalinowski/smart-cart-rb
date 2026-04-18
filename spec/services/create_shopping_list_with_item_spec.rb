@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe CreateShoppingListWithItem do
+RSpec.describe ShoppingLists::CreateWithItem do
   describe '#call' do
     let(:user) { create(:user) }
     it 'creates a shopping list' do
@@ -24,7 +24,7 @@ RSpec.describe CreateShoppingListWithItem do
       Timecop.freeze(Time.zone.local(2021, 1, 1)) do
         shopping_list = described_class.new(item_name: 'test', owner_id: user.id).call
         expect(shopping_list.name).to eq('2021-01-01')
-        end
+      end
     end
   end
 end
