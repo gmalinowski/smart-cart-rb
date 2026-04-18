@@ -100,6 +100,19 @@ CREATE TABLE public.invitation_links (
 
 
 --
+-- Name: list_visits; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.list_visits (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    shopping_list_id uuid NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -236,6 +249,14 @@ ALTER TABLE ONLY public.invitation_links
 
 
 --
+-- Name: list_visits list_visits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.list_visits
+    ADD CONSTRAINT list_visits_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -346,6 +367,34 @@ CREATE UNIQUE INDEX index_invitation_links_on_user_id_and_recipient_email ON pub
 
 
 --
+-- Name: index_list_visits_on_shopping_list_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_list_visits_on_shopping_list_id ON public.list_visits USING btree (shopping_list_id);
+
+
+--
+-- Name: index_list_visits_on_shopping_list_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_list_visits_on_shopping_list_id_and_created_at ON public.list_visits USING btree (shopping_list_id, created_at);
+
+
+--
+-- Name: index_list_visits_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_list_visits_on_user_id ON public.list_visits USING btree (user_id);
+
+
+--
+-- Name: index_list_visits_on_user_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_list_visits_on_user_id_and_created_at ON public.list_visits USING btree (user_id, created_at);
+
+
+--
 -- Name: index_shopping_list_items_on_shopping_list_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -407,6 +456,14 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON public.users USING bt
 
 ALTER TABLE ONLY public.shopping_list_public_links
     ADD CONSTRAINT fk_rails_332a8a9b66 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
+
+
+--
+-- Name: list_visits fk_rails_53d96cae0a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.list_visits
+    ADD CONSTRAINT fk_rails_53d96cae0a FOREIGN KEY (shopping_list_id) REFERENCES public.shopping_lists(id) ON DELETE CASCADE;
 
 
 --
@@ -482,12 +539,21 @@ ALTER TABLE ONLY public.friendships
 
 
 --
+-- Name: list_visits fk_rails_f2d476f02b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.list_visits
+    ADD CONSTRAINT fk_rails_f2d476f02b FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260418114314'),
 ('20260411205416'),
 ('20260403175316'),
 ('20260331091351'),
