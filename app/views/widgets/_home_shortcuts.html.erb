@@ -1,43 +1,27 @@
 <!-- name of each tab group should be unique -->
 <div class="tabs tabs-box m-2 mt-8">
   <label class="tab">
-    <input type="radio" name="home_widget_tabs"/>
+    <input checked type="radio" name="home_widget_tabs"/>
     <%= heroicon "clock", class: "size-5 me-2" %>
     Recently visited
   </label>
-  <div class="tab-content bg-base-100 border-base-300 p-3 min-h-[50dvh]">Recently visited</div>
+  <div class="tab-content bg-base-100 border-base-300 p-3 min-h-[50dvh]">
+    <%= render partial: "widgets/shortcut_item",
+               collection: @recently_visited,
+               as: :shopping_list %>
+  </div>
 
 
   <% groups.each_with_index do |group, index| %>
     <label class="tab">
-      <input <%= "checked" if index == 0 %> type="radio" name="home_widget_tabs"/>
+      <input type="radio" name="home_widget_tabs"/>
       <%= heroicon "rectangle-group", class: "size-5 me-2" %>
       <%= group.name %>
     </label>
     <div class="tab-content bg-base-100 border-base-300 p-3 min-h-[50dvh]">
-      <% group.shopping_lists.each do |shopping_list| %>
-        <details class="bg-primary/50 rounded-lg shadow-sm mb-2">
-          <summary class="font-medium p-2 cursor-pointer">
-            <%= shopping_list.name %>
-          </summary>
-          <div class="shadow-xs rounded-lg p-2 bg-[color-mix(in_oklab,var(--color-primary)_20%,white)]">
-            <ul class="flex flex-col gap-1 p-1">
-              <li>
-                items: <%= shopping_list.shopping_list_items.size %>
-              </li>
-              <li>
-                note: <%= shopping_list.note %>
-              </li>
-              <li>
-                <%= shopping_list.created_at %>
-              </li>
-              <li class="text-right">
-                <%= link_to "View", shopping_list_path(shopping_list), class: "btn btn-sm btn-secondary" %>
-              </li>
-            </ul>
-          </div>
-        </details>
-      <% end %>
+      <%= render partial: "widgets/shortcut_item",
+                 collection: group.shopping_lists,
+                 as: :shopping_list %>
     </div>
   <% end %>
 </div>
