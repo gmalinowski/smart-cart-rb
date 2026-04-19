@@ -107,9 +107,10 @@ CREATE TABLE public.list_visits (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     user_id uuid NOT NULL,
     shopping_list_id uuid NOT NULL,
+    visited_at timestamp(6) without time zone NOT NULL,
+    interaction_count integer DEFAULT 0 NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    visited_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -149,7 +150,7 @@ CREATE TABLE public.shopping_list_public_links (
     shopping_list_id uuid NOT NULL,
     created_by_id uuid NOT NULL,
     permission integer DEFAULT 0 NOT NULL,
-    share_token character varying DEFAULT '52d8d4c2-423a-440c-ad08-b0a9c77ea93c'::character varying NOT NULL,
+    share_token character varying DEFAULT '71b3fd3a-e536-449d-b14d-91b57d003495'::character varying NOT NULL,
     expires_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -375,10 +376,10 @@ CREATE INDEX index_list_visits_on_shopping_list_id ON public.list_visits USING b
 
 
 --
--- Name: index_list_visits_on_shopping_list_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_list_visits_on_shopping_list_id_and_visited_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_list_visits_on_shopping_list_id_and_created_at ON public.list_visits USING btree (shopping_list_id, created_at);
+CREATE INDEX index_list_visits_on_shopping_list_id_and_visited_at ON public.list_visits USING btree (shopping_list_id, visited_at);
 
 
 --
@@ -389,17 +390,24 @@ CREATE INDEX index_list_visits_on_user_id ON public.list_visits USING btree (use
 
 
 --
--- Name: index_list_visits_on_user_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_list_visits_on_user_id_and_interaction_count; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_list_visits_on_user_id_and_created_at ON public.list_visits USING btree (user_id, created_at);
+CREATE INDEX index_list_visits_on_user_id_and_interaction_count ON public.list_visits USING btree (user_id, interaction_count);
+
+
+--
+-- Name: index_list_visits_on_user_id_and_shopping_list_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_list_visits_on_user_id_and_shopping_list_id ON public.list_visits USING btree (user_id, shopping_list_id);
 
 
 --
 -- Name: index_list_visits_on_user_id_and_visited_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_list_visits_on_user_id_and_visited_at ON public.list_visits USING btree (user_id, visited_at DESC);
+CREATE INDEX index_list_visits_on_user_id_and_visited_at ON public.list_visits USING btree (user_id, visited_at);
 
 
 --
@@ -561,8 +569,6 @@ ALTER TABLE ONLY public.list_visits
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20260419105251'),
-('20260419062804'),
 ('20260418114314'),
 ('20260411205416'),
 ('20260403175316'),
