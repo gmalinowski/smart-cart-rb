@@ -13,6 +13,5 @@ class VisitTrackingJob < ApplicationJob
 
   rescue ActiveRecord::RecordNotFound => e
     Rails.logger.error "Error tracking visit: #{e.message}"
-
   end
 end
