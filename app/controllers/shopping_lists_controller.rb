@@ -1,11 +1,12 @@
 class ShoppingListsController < ApplicationController
   before_action :authenticate_user!, except: []
-  skip_after_action :verify_policy_scoped, only: [ :show, :create, :destroy ]
+  skip_after_action :verify_policy_scoped, only: [:show, :create, :destroy]
 
   def show
     @shopping_list = ShoppingList.find(params[:id])
     authorize @shopping_list
     @empty_shopping_list_item = ShoppingListItem.new(shopping_list: @shopping_list)
+    Visits::Track.call(user: current_user, shopping_list: @shopping_list)
   end
 
   def destroy
