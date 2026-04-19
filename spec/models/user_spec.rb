@@ -144,7 +144,7 @@ RSpec.describe User, type: :model do
         expect {
           create(:invitation_link, user: user, invitation_type: :email_invitation, recipient_email: friend.email)
         }.to change { InvitationLink.count }
-        end
+      end
     end
   end
 
@@ -253,7 +253,33 @@ RSpec.describe User, type: :model do
     it { should have_many(:pending_sent_friendships).with_foreign_key('user_id').conditions(status: :pending).dependent(:destroy) }
     it { should have_many(:pending_received_friendships).with_foreign_key('friend_id').conditions(status: :pending).dependent(:destroy) }
 
+    it { should have_many(:list_visits).dependent(:destroy) }
+    it { should have_one(:last_list_visit).order(visited_at: :desc).class_name('ListVisit') }
+    it { should have_one(:last_visited_shopping_list).through(:last_list_visit).source(:shopping_list) }
+
     it { should have_many(:invitation_links) }
+
+    describe '#last_visited_shopping_list' do
+      let(:user) { create(:user) }
+      let(:shopping_list) { create(:shopping_list, owner: user) }
+      let(:shopping_list_2) { create(:shopping_list, owner: create(:user)) }
+
+      it 'returns the most recently visited shopping list if only one visited' do
+        create(:list_visit, user: user, shopping_list: shopping_list)
+        expect(user.last_visited_shopping_list).to eq(shopping_list)
+      end
+
+      it 'returns the most recently visited shopping list if many visited' do
+        create(:list_visit, user: user, shopping_list: shopping_list)
+        create(:list_visit, user: user, shopping_list: shopping_list_2)
+        expect(user.last_visited_shopping_list).to eq(shopping_list_2)
+      end
+
+      it 'returns nil if no shopping lists have been visited' do
+        expect(user.last_visited_shopping_list).to be_nil
+      end
+
+    end
 
     describe '#friends' do
       let(:user) { create(:user) }
