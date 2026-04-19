@@ -396,6 +396,13 @@ CREATE INDEX index_list_visits_on_user_id_and_created_at ON public.list_visits U
 
 
 --
+-- Name: index_list_visits_on_user_id_and_visited_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_list_visits_on_user_id_and_visited_at ON public.list_visits USING btree (user_id, visited_at DESC);
+
+
+--
 -- Name: index_shopping_list_items_on_shopping_list_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -554,6 +561,7 @@ ALTER TABLE ONLY public.list_visits
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260419105251'),
 ('20260419062804'),
 ('20260418114314'),
 ('20260411205416'),

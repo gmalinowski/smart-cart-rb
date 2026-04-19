@@ -24,6 +24,26 @@ RSpec.describe 'Home', type: :request do
         shopping_lists = groups.first.shopping_lists
         expect(shopping_lists.first.association(:shopping_list_items).loaded?).to be true
       end
+
+      it 'has assigned visited shopping lists' do
+        shopping_list1 = create(:shopping_list, owner: user)
+        shopping_list2 = create(:shopping_list, owner: user)
+        create(:list_visit, user: user, shopping_list: shopping_list1, created_at: 1.day.ago)
+        create(:list_visit, user: user, shopping_list: shopping_list2, created_at: 2.days.ago)
+        get root_path
+        expect(assigns(:recently_visited)).to eq(user.visited_shopping_lists.order(visited_at: :desc))
+      end
+
+      it 'visited lists are limited to 10' do
+        11.times do |inex|
+          create(:list_visit, user: user, shopping_list: create(:shopping_list, owner: user), created_at: inex.days.ago)
+        end
+
+        expect(user.visited_shopping_lists.count).to eq(11)
+
+        get root_path
+        expect(assigns(:recently_visited).count).to eq(10)
+      end
     end
 
     context 'when user is not logged in' do
@@ -34,7 +54,11 @@ RSpec.describe 'Home', type: :request do
       it 'has no asigned groups' do
         get root_path
         expect(assigns(:groups)).to be_empty
-        end
+      end
+      it 'has no asigned visited shopping lists' do
+        get root_path
+        expect(assigns(:recently_visited)).to be_empty
+      end
     end
   end
 end

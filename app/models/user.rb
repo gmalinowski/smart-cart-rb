@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :groups, foreign_key: "owner_id"
 
   has_many :list_visits, dependent: :destroy
+  has_many :visited_shopping_lists, through: :list_visits, source: :shopping_list
   has_one :last_list_visit, -> { order(visited_at: :desc) }, class_name: "ListVisit"
   has_one :last_visited_shopping_list, through: :last_list_visit, source: :shopping_list
 
