@@ -19,6 +19,12 @@ RSpec.describe "ShoppingLists", type: :request do
         get shopping_list_path(list)
         expect(assigns(:empty_shopping_list_item)).to be_a_new(ShoppingListItem)
       end
+
+      it "call Visits::track" do
+        list = create(:shopping_list, owner: user)
+        expect(Visits::Track).to receive(:call).with(user: user, shopping_list: list)
+        get shopping_list_path(list)
+      end
     end
 
     context 'when user is not logged in' do
@@ -26,7 +32,13 @@ RSpec.describe "ShoppingLists", type: :request do
         list = create(:shopping_list)
         get shopping_list_path(list)
         expect(response).to redirect_to(new_user_session_path)
-        end
+      end
+
+      it 'does not call Visits::track' do
+        list = create(:shopping_list)
+        expect(Visits::Track).to_not receive(:call)
+        get shopping_list_path(list)
+      end
     end
   end
 
@@ -38,7 +50,7 @@ RSpec.describe "ShoppingLists", type: :request do
           delete shopping_list_path(list)
         }.to change(ShoppingList, :count).by(0)
         expect(response).to redirect_to(new_user_session_path)
-        end
+      end
     end
 
     context 'when user is logged in' do
