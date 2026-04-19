@@ -254,10 +254,24 @@ RSpec.describe User, type: :model do
     it { should have_many(:pending_received_friendships).with_foreign_key('friend_id').conditions(status: :pending).dependent(:destroy) }
 
     it { should have_many(:list_visits).dependent(:destroy) }
+    it { should have_many(:visited_shopping_lists).through(:list_visits).source(:shopping_list) }
     it { should have_one(:last_list_visit).order(visited_at: :desc).class_name('ListVisit') }
     it { should have_one(:last_visited_shopping_list).through(:last_list_visit).source(:shopping_list) }
 
     it { should have_many(:invitation_links) }
+
+    describe '#visited_shopping_lists' do
+      let(:user) { create(:user) }
+      let(:shopping_list) { create(:shopping_list, owner: user) }
+      let(:shopping_list_2) { create(:shopping_list, owner: create(:user)) }
+      let(:shopping_list_3) { create(:shopping_list, owner: create(:user)) }
+      it 'returns all shopping lists visited by user' do
+        create(:list_visit, user: user, shopping_list: shopping_list)
+        create(:list_visit, user: user, shopping_list: shopping_list_2)
+        create(:list_visit, user: user, shopping_list: shopping_list_3)
+        expect(user.visited_shopping_lists).to include(shopping_list, shopping_list_2, shopping_list_3)
+      end
+    end
 
     describe '#last_visited_shopping_list' do
       let(:user) { create(:user) }

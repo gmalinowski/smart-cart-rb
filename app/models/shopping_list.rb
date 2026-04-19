@@ -5,6 +5,9 @@ class ShoppingList < ApplicationRecord
   has_many :groups, through: :group_shopping_lists
   belongs_to :owner, class_name: "User", foreign_key: "owner_id"
 
+  has_many :list_visits, dependent: :destroy
+  has_many :visitors, through: :list_visits, source: :user
+
   validates :owner_id, presence: true
   validates :name, presence: true
 
