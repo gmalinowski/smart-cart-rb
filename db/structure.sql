@@ -108,7 +108,8 @@ CREATE TABLE public.list_visits (
     user_id uuid NOT NULL,
     shopping_list_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    visited_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -553,6 +554,7 @@ ALTER TABLE ONLY public.list_visits
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260419062804'),
 ('20260418114314'),
 ('20260411205416'),
 ('20260403175316'),
