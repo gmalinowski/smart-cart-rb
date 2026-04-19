@@ -278,7 +278,6 @@ RSpec.describe User, type: :model do
       it 'returns nil if no shopping lists have been visited' do
         expect(user.last_visited_shopping_list).to be_nil
       end
-
     end
 
     describe '#friends' do

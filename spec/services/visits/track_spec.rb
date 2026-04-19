@@ -5,7 +5,6 @@ RSpec.describe Visits::Track, type: :service do
   let(:shopping_list) { create(:shopping_list, owner: user) }
 
   describe '.call' do
-
     it 'enqueues a job to track the visit with correct parameters' do
       travel_to Time.zone.local(2023, 1, 1, 12, 0, 0) do
         expect {
