@@ -10,7 +10,7 @@ RSpec.describe ShoppingLists::RecentlyVisited, type: :query do
   it "returns only lists visited by the specific user" do
     create(:list_visit, user: user, shopping_list: list)
     create(:list_visit, user: other_user, shopping_list: list_2)
-    expect(described_class.new(user, scope: ShoppingList.all).call).to eq([list])
+    expect(described_class.new(user, scope: ShoppingList.all).call).to eq([ list ])
   end
 
   it 'raises error when scope is not provided' do
@@ -21,7 +21,7 @@ RSpec.describe ShoppingLists::RecentlyVisited, type: :query do
     create(:list_visit, user: user, shopping_list: list, visited_at: 1.day.ago)
     create(:list_visit, user: user, shopping_list: list_2, visited_at: 1.hour.ago)
     create(:list_visit, user: user, shopping_list: list_3, visited_at: 2.days.ago)
-    expect(described_class.new(user, scope: ShoppingList.all).call).to eq([list_2, list, list_3])
+    expect(described_class.new(user, scope: ShoppingList.all).call).to eq([ list_2, list, list_3 ])
   end
 
   it "respects the provided scope" do
@@ -35,7 +35,6 @@ RSpec.describe ShoppingLists::RecentlyVisited, type: :query do
     result = described_class.new(other_user, scope: restricted_scope).call
     expect(restricted_scope.count).to eq(2)
     expect(ShoppingList.count).to eq(3)
-    expect(result).to eq([list_2, list_3])
+    expect(result).to eq([ list_2, list_3 ])
   end
-
 end

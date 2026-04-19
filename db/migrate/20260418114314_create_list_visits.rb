@@ -8,10 +8,10 @@ class CreateListVisits < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :list_visits, [:user_id, :shopping_list_id], unique: true
+    add_index :list_visits, [ :user_id, :shopping_list_id ], unique: true
 
-    add_index :list_visits, [:user_id, :visited_at]
-    add_index :list_visits, [:shopping_list_id, :visited_at]
-    add_index :list_visits, [:user_id, :interaction_count]
+    add_index :list_visits, [ :user_id, :visited_at ]
+    add_index :list_visits, [ :shopping_list_id, :visited_at ]
+    add_index :list_visits, [ :user_id, :interaction_count ]
   end
 end

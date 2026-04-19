@@ -73,5 +73,4 @@ RSpec.describe Visits::Track, type: :service do
       end
     end
   end
-
 end
