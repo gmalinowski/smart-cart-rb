@@ -1,0 +1,21 @@
+<details class="bg-primary/50 rounded-lg shadow-sm mb-2">
+  <summary class="font-medium p-2 cursor-pointer">
+    <%= shopping_list.name %>
+  </summary>
+  <div class="shadow-xs rounded-lg p-2 bg-[color-mix(in_oklab,var(--color-primary)_20%,white)]">
+    <ul class="flex flex-col gap-1 p-1">
+      <li>
+        items: <%= shopping_list.shopping_list_items.size %>
+      </li>
+      <li>
+        note: <%= shopping_list.note %>
+      </li>
+      <li>
+        <%= shopping_list.created_at %>
+      </li>
+      <li class="text-right">
+        <%= link_to "View", shopping_list_path(shopping_list), class: "btn btn-sm btn-secondary" %>
+      </li>
+    </ul>
+  </div>
+</details>
