@@ -10,6 +10,10 @@ class User < ApplicationRecord
   has_many :shopping_lists, foreign_key: "owner_id"
   has_many :groups, foreign_key: "owner_id"
 
+  has_many :list_visits, dependent: :destroy
+  has_one :last_list_visit, -> { order(visited_at: :desc) }, class_name: "ListVisit"
+  has_one :last_visited_shopping_list, through: :last_list_visit, source: :shopping_list
+
   has_many :invitation_links
 
   # START read-only
@@ -32,7 +36,7 @@ class User < ApplicationRecord
   def friends_with?(other_user)
     return false if other_user.nil?
     friends.exists?(id: other_user.id)
-end
+  end
 
   def pending_friendship_with?(other_user)
     return false if other_user.nil?
@@ -50,6 +54,7 @@ end
       claim_pending_friendships
     end
   end
+
   def claim_pending_friendships
     ActiveRecord::Base.transaction do
       InvitationLink.active_for_recipient(self).each do |invitation|
