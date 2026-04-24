@@ -87,7 +87,7 @@ group :test do
   gem "n_plus_one_control"
 end
 
-gem "view_component", "~> 4.6"
+gem "view_component", "~> 4.8"
 
 gem "devise", "~> 5.0.3"
 
