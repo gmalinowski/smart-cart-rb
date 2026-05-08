@@ -57,7 +57,7 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  gem "vite_rails", "~> 3.0"
+  gem "vite_rails", "~> 3.11"
 
   gem "rspec-rails"
 
