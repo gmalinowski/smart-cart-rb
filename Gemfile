@@ -89,7 +89,7 @@ end
 
 gem "view_component", "~> 4.6"
 
-gem "devise", "~> 5.0.3"
+gem "devise", "~> 5.0.4"
 
 gem "rails_heroicon", "~> 2.3"
 
