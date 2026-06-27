@@ -1,0 +1,7 @@
+<div class="m-4">
+  <%= button_to "Usuń listę",
+                @shopping_list,
+                method: :delete,
+                form: { data: { turbo_confirm: "Czy jest Pan/Pani pewna?" } },
+                class: "btn btn-error" %>
+</div>
